@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="基于 2024–2026 公开资料的调研报告：用大模型开发 RTL（Verilog/SystemVerilog）的可达成路径与现状，涵盖 LLM 代码生成、验证自动化、Agent 化设计闭环与 EDA 生态。">
+<meta name="color-scheme" content="light">
+<title>AI × RTL 调研 · 用大模型开发 RTL 的可达成路径与现状</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Exo:wght@300;400;500;600;700&family=Roboto+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ============ Design Tokens（设计系统：Minimalism & Swiss / Dark） ============ */
+:root{
+  color-scheme:light;
+  --bg:#F8FAFC;
+  --fg:#0F172A;
+  --card:#FFFFFF;
+  --card-2:#F1F5F9;
+  --muted:#E2E8F0;
+  --muted-fg:#475569;
+  --border:#CBD5E1;
+  --accent:#DB2777;
+  --accent-strong:#BE185D;
+  --ring:#DB2777;
+  --ok:#047857;
+  --warn:#B45309;
+  --danger:#B91C1C;
+  --code:#155E75;
+  --radius:14px;
+  --font-head:'Exo',system-ui,'PingFang SC','Microsoft YaHei',sans-serif;
+  --font-body:system-ui,-apple-system,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;
+  --font-mono:'Roboto Mono',ui-monospace,'Cascadia Code',Consolas,monospace;
+  --space:clamp(4rem,8vw,7rem);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--fg);
+  font-family:var(--font-body);
+  font-size:16px;
+  line-height:1.75;
+  -webkit-font-smoothing:antialiased;
+}
+::selection{background:rgba(219,39,119,.16)}
+a{color:var(--accent-strong);text-decoration:none;border-radius:4px}
+a:hover{text-decoration:underline}
+a:focus-visible,button:focus-visible,summary:focus-visible{
+  outline:2px solid var(--ring);
+  outline-offset:3px;
+}
+:target{scroll-margin-top:96px}
+section{padding:var(--space) 0;scroll-margin-top:96px}
+.container{max-width:1120px;margin:0 auto;padding:0 24px}
+.mono{font-family:var(--font-mono)}
+.stat,.tldr,.path,.fact,.diagram,.table-wrap,.phase,.chal,.sources{
+  box-shadow:0 1px 2px rgba(15,23,42,.05),0 12px 30px -18px rgba(15,23,42,.18);
+}
+
+/* ============ Header / Nav ============ */
+header{
+  position:sticky;top:0;z-index:50;
+  background:rgba(248,250,252,.85);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+}
+.nav-inner{display:flex;align-items:center;gap:20px;max-width:1120px;margin:0 auto;padding:14px 24px}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--font-head);font-weight:700;font-size:15px;letter-spacing:.04em;color:var(--fg);white-space:nowrap}
+.brand svg{flex:none}
+.brand:hover{text-decoration:none}
+nav{display:flex;gap:4px;margin-left:auto;overflow-x:auto;scrollbar-width:none}
+nav::-webkit-scrollbar{display:none}
+nav a{
+  color:var(--muted-fg);font-size:13.5px;font-weight:500;
+  padding:6px 11px;border-radius:8px;white-space:nowrap;
+  transition:color .2s,background .2s;
+}
+nav a:hover{color:var(--fg);background:var(--muted);text-decoration:none}
+nav a.active{color:var(--fg);background:var(--muted)}
+.date-badge{
+  font-family:var(--font-mono);font-size:11px;color:#fff;
+  background:#DB2777;padding:3px 9px;border-radius:99px;
+  white-space:nowrap;font-weight:600;letter-spacing:.02em;
+}
+
+/* ============ Hero ============ */
+.hero{position:relative;padding:clamp(72px,10vw,120px) 0 clamp(48px,7vw,84px);overflow:hidden}
+.hero::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(720px 340px at 78% -10%,rgba(219,39,119,.10),transparent 65%),
+    radial-gradient(560px 300px at 8% 12%,rgba(14,116,144,.07),transparent 60%),
+    linear-gradient(rgba(148,163,184,.28) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(148,163,184,.28) 1px,transparent 1px);
+  background-size:auto,auto,44px 44px,44px 44px;
+  mask-image:linear-gradient(to bottom,black 30%,transparent 92%);
+  -webkit-mask-image:linear-gradient(to bottom,black 30%,transparent 92%);
+}
+.hero .container{position:relative}
+.kicker{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:var(--font-mono);font-size:12.5px;letter-spacing:.14em;
+  color:var(--accent-strong);text-transform:uppercase;
+  border:1px solid var(--border);border-radius:99px;padding:6px 14px;margin-bottom:22px;
+  background:rgba(255,255,255,.65);
+}
+.kicker .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:pulse 2.4s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.hero h1{
+  font-family:var(--font-head);
+  font-size:clamp(30px,5.2vw,54px);
+  font-weight:700;line-height:1.18;letter-spacing:.005em;max-width:15em;
+}
+.hero h1 em{font-style:normal;color:var(--accent-strong)}
+.hero .sub{
+  margin-top:22px;max-width:42em;font-size:clamp(15.5px,2vw,18px);
+  color:var(--muted-fg);
+}
+.hero .meta{
+  margin-top:28px;display:flex;flex-wrap:wrap;gap:10px;
+  font-family:var(--font-mono);font-size:12px;color:var(--muted-fg);
+}
+.hero .meta span{border:1px solid var(--border);border-radius:8px;padding:5px 11px;background:rgba(255,255,255,.9)}
+
+/* stats */
+.stats{
+  margin-top:clamp(36px,5vw,56px);
+  display:grid;grid-template-columns:repeat(4,1fr);gap:14px;
+}
+.stat{
+  background:linear-gradient(180deg,var(--card),var(--card-2));
+  border:1px solid var(--border);border-radius:var(--radius);
+  padding:20px 18px;
+}
+.stat b{
+  display:block;font-family:var(--font-head);font-size:clamp(26px,3.4vw,38px);
+  font-weight:700;color:var(--fg);line-height:1.1;
+}
+.stat b .unit{font-size:.5em;color:var(--accent-strong)}
+.stat span{display:block;margin-top:8px;font-size:13px;color:var(--muted-fg);line-height:1.55}
+
+/* ============ Section scaffolding ============ */
+.sec-head{max-width:760px;margin-bottom:34px}
+.sec-tag{
+  font-family:var(--font-mono);font-size:12px;letter-spacing:.16em;
+  color:var(--accent-strong);text-transform:uppercase;display:block;margin-bottom:10px;
+}
+.sec-head h2{font-family:var(--font-head);font-size:clamp(24px,3.4vw,34px);font-weight:600;line-height:1.3}
+.sec-head p{margin-top:12px;color:var(--muted-fg);font-size:15.5px}
+
+/* ============ TL;DR cards ============ */
+.grid-tldr{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.tldr{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:22px 20px;position:relative;overflow:hidden;
+  transition:transform .22s ease,border-color .22s ease;
+}
+.tldr:hover{transform:translateY(-3px);border-color:var(--accent)}
+.tldr::before{
+  content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:linear-gradient(180deg,var(--accent),transparent);
+}
+.tldr .no{font-family:var(--font-mono);font-size:12px;color:var(--accent-strong);letter-spacing:.1em}
+.tldr h3{font-family:var(--font-head);font-size:16.5px;margin:8px 0 8px;font-weight:600}
+.tldr p{font-size:14px;color:var(--muted-fg)}
+
+/* ============ State / timeline ============ */
+.timeline{position:relative;margin-top:8px;padding-left:26px}
+.timeline::before{
+  content:"";position:absolute;left:7px;top:6px;bottom:6px;width:2px;
+  background:linear-gradient(180deg,var(--accent),var(--code),transparent);
+  opacity:.6;
+}
+.tl-item{position:relative;padding:0 0 30px 18px}
+.tl-item:last-child{padding-bottom:0}
+.tl-item::before{
+  content:"";position:absolute;left:-25px;top:7px;width:12px;height:12px;border-radius:50%;
+  background:var(--bg);border:2.5px solid var(--accent);
+}
+.tl-item .yr{
+  font-family:var(--font-mono);font-size:12.5px;color:var(--accent-strong);
+  letter-spacing:.08em;display:block;margin-bottom:4px;
+}
+.tl-item h3{font-family:var(--font-head);font-size:17px;font-weight:600;margin-bottom:6px}
+.tl-item p{font-size:14.5px;color:var(--muted-fg);max-width:62em}
+.tl-item p .hl{color:var(--fg);font-weight:500}
+
+.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:40px}
+.facts-4{grid-template-columns:repeat(4,1fr)}
+.fact{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px 20px}
+.fact h3{
+  display:flex;align-items:center;gap:9px;
+  font-family:var(--font-head);font-size:15.5px;font-weight:600;margin-bottom:9px;
+}
+.fact h3 svg{color:var(--accent-strong);flex:none}
+.fact p{font-size:14px;color:var(--muted-fg)}
+.fact code{font-family:var(--font-mono);font-size:12.5px;color:var(--code);background:var(--muted);padding:1px 6px;border-radius:5px}
+
+/* ============ Agent loop diagram ============ */
+.diagram{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:clamp(16px,3vw,30px);margin-top:36px;
+}
+.diagram figcaption{
+  font-family:var(--font-mono);font-size:12px;color:var(--muted-fg);
+  margin-top:12px;text-align:center;letter-spacing:.04em;
+}
+.diagram svg{display:block;width:100%;height:auto}
+
+/* ============ Paths ============ */
+.path{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:26px 24px;margin-bottom:16px;position:relative;
+  transition:border-color .22s ease,transform .22s ease;
+}
+.path:hover{border-color:var(--accent);transform:translateY(-2px)}
+.path-top{display:flex;flex-wrap:wrap;align-items:flex-start;gap:16px}
+.path-idx{
+  font-family:var(--font-head);font-weight:700;font-size:15px;color:#fff;
+  background:linear-gradient(135deg,var(--accent),var(--accent-strong));
+  width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex:none;
+  letter-spacing:.02em;
+}
+.path-body{flex:1;min-width:250px}
+.path-body h3{font-family:var(--font-head);font-size:19px;font-weight:600;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.path-body h3 .stage{
+  font-family:var(--font-mono);font-size:10.5px;font-weight:400;
+  border:1px solid var(--border);color:var(--muted-fg);border-radius:99px;padding:2px 9px;
+}
+.path-body .desc{margin-top:8px;font-size:14.5px;color:var(--muted-fg);max-width:58em}
+.path-body ul{margin-top:10px;list-style:none}
+.path-body li{
+  font-size:13.5px;color:var(--muted-fg);padding-left:20px;position:relative;margin-top:5px;
+}
+.path-body li::before{
+  content:"";position:absolute;left:2px;top:9px;width:7px;height:7px;border-radius:2px;
+  background:var(--accent);opacity:.85;
+}
+.path-meta{
+  flex-basis:100%;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:16px;margin-top:20px;padding-top:18px;border-top:1px dashed var(--border);
+}
+.m-cell .k{display:block;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.12em;color:var(--muted-fg);text-transform:uppercase;margin-bottom:7px}
+.m-cell .v{font-size:13.5px;font-weight:500}
+.bar{height:6px;border-radius:99px;background:var(--muted);overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--accent),var(--accent-strong))}
+.risk{display:inline-block;font-family:var(--font-mono);font-size:11.5px;border-radius:7px;padding:2px 9px;font-weight:600}
+.risk.low{color:var(--ok);background:rgba(52,211,153,.12);border:1px solid rgba(52,211,153,.4)}
+.risk.mid{color:var(--warn);background:rgba(251,191,36,.12);border:1px solid rgba(251,191,36,.4)}
+.risk.high{color:var(--danger);background:rgba(248,113,113,.12);border:1px solid rgba(248,113,113,.4)}
+.path .refs{margin-top:16px;font-family:var(--font-mono);font-size:11.5px;color:var(--muted-fg)}
+.path .refs a{font-family:var(--font-body)}
+
+/* ============ Ecosystem table ============ */
+.table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:var(--radius);background:var(--card)}
+table.comp{min-width:1020px}
+table.comp td{font-size:12.8px}
+table.comp td.dim{white-space:nowrap}
+table{width:100%;border-collapse:collapse;min-width:760px;font-size:13.5px}
+caption{
+  text-align:left;padding:14px 18px;font-family:var(--font-mono);font-size:12px;
+  color:var(--muted-fg);border-bottom:1px solid var(--border);letter-spacing:.06em;
+}
+th{
+  font-family:var(--font-head);font-size:12px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--muted-fg);text-align:left;padding:12px 18px;border-bottom:1px solid var(--border);
+  background:var(--card-2);white-space:nowrap;
+}
+td{padding:12px 18px;border-bottom:1px solid rgba(203,213,225,.7);vertical-align:top}
+tr:last-child td{border-bottom:none}
+tbody tr{transition:background .18s ease}
+tbody tr:hover{background:rgba(219,39,119,.045)}
+td.name{font-weight:600;color:var(--fg);white-space:nowrap}
+td.kind .tag{
+  display:inline-block;font-family:var(--font-mono);font-size:10.5px;border-radius:6px;
+  padding:2px 8px;white-space:nowrap;
+}
+.tag.open{color:var(--ok);background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.35)}
+.tag.com{color:var(--code);background:rgba(34,211,238,.1);border:1px solid rgba(34,211,238,.35)}
+.tag.cn{color:var(--accent-strong);background:rgba(236,72,153,.1);border:1px solid rgba(236,72,153,.35)}
+td.desc{color:var(--muted-fg)}
+td.link{white-space:nowrap}
+tbody tr.grp td{
+  background:var(--card-2);
+  font-family:var(--font-head);font-size:11.5px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--accent-strong);
+  padding:9px 18px;border-bottom:1px solid var(--border);
+  white-space:nowrap;
+}
+tbody tr.grp:hover{background:var(--card-2)}
+
+/* ============ Challenges ============ */
+.chal{
+  display:grid;grid-template-columns:auto 1fr;gap:16px;
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:22px 20px;margin-bottom:14px;
+}
+.chal .n{
+  font-family:var(--font-head);font-weight:700;font-size:15px;color:#78350F;
+  background:var(--warn);width:36px;height:36px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;flex:none;margin-top:2px;
+}
+.chal h3{font-family:var(--font-head);font-size:16.5px;font-weight:600}
+.chal .fix{margin-top:8px;font-size:14px;color:var(--muted-fg)}
+.chal .fix b{color:var(--ok);font-weight:600;font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;margin-right:6px}
+
+/* ============ Special deep-dive callout ============ */
+.rule{
+  margin-top:18px;background:linear-gradient(180deg,var(--card),var(--card-2));
+  border:1px solid var(--border);border-left:4px solid var(--accent);
+  border-radius:var(--radius);padding:20px 22px;font-size:14.5px;color:var(--muted-fg);
+  box-shadow:0 1px 2px rgba(15,23,42,.05),0 12px 30px -18px rgba(15,23,42,.18);
+}
+.rule b{color:var(--fg)}
+.rule em{font-style:normal;color:var(--accent-strong);font-weight:600}
+
+/* ============ Playbook code tree ============ */
+.codebox{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:20px 22px;margin-top:18px;overflow-x:auto;
+  box-shadow:0 1px 2px rgba(15,23,42,.05),0 12px 30px -18px rgba(15,23,42,.18);
+}
+.codebox pre{
+  font-family:var(--font-mono);font-size:12.8px;line-height:1.8;color:var(--fg);
+}
+.codebox .cm{color:var(--muted-fg)}
+.codebox .ck{color:var(--accent-strong);font-weight:600}
+
+/* ============ Appendix sub-headings ============ */
+.appx-h{
+  font-family:var(--font-head);font-size:17px;font-weight:600;
+  margin:36px 0 12px;
+}
+.appx-h:first-of-type{margin-top:6px}
+
+/* ============ Roadmap ============ */
+.roadmap{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.roadmap-4{grid-template-columns:repeat(2,1fr)}
+.phase{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px 20px;position:relative}
+.phase .ph{
+  font-family:var(--font-mono);font-size:12px;color:var(--accent-strong);letter-spacing:.12em;
+  display:flex;align-items:center;gap:8px;margin-bottom:10px;
+}
+.phase .ph::after{content:"";flex:1;height:1px;background:var(--border)}
+.phase h3{font-family:var(--font-head);font-size:18px;font-weight:600;margin-bottom:12px}
+.phase ul{list-style:none}
+.phase li{font-size:13.5px;color:var(--muted-fg);padding-left:20px;position:relative;margin-top:8px}
+.phase li::before{content:"";position:absolute;left:2px;top:8px;width:7px;height:7px;border-radius:2px;background:var(--code);opacity:.9}
+
+/* ============ Sources ============ */
+.sources{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:26px 24px;
+}
+.sources ol{list-style:none;counter-reset:src}
+.sources li{
+  counter-increment:src;display:flex;gap:12px;padding:9px 0;
+  font-size:13.5px;color:var(--muted-fg);border-bottom:1px dashed rgba(203,213,225,.8);
+}
+.sources li:last-child{border-bottom:none}
+.sources li::before{
+  content:counter(src,decimal-leading-zero);
+  font-family:var(--font-mono);font-size:11.5px;color:var(--accent-strong);
+  padding-top:3px;flex:none;min-width:22px;
+}
+.sources a{word-break:break-all}
+
+/* ============ Footer ============ */
+footer{border-top:1px solid var(--border);padding:34px 0 46px;margin-top:var(--space)}
+.foot-inner{max-width:1120px;margin:0 auto;padding:0 24px;display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between}
+footer p{font-size:12.5px;color:var(--muted-fg);font-family:var(--font-mono)}
+.foot-links{display:flex;gap:18px}
+.foot-links a{font-size:12.5px;color:var(--muted-fg)}
+.foot-links a:hover{color:var(--accent-strong)}
+
+/* ============ Reveal animation ============ */
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .55s ease,transform .55s ease}
+.reveal.in{opacity:1;transform:none}
+
+/* ============ Responsive ============ */
+@media (max-width:900px){
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .roadmap,.roadmap-4{grid-template-columns:1fr}
+  .facts-4{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:640px){
+  .stats{grid-template-columns:1fr 1fr;gap:10px}
+  .facts,.facts-4{grid-template-columns:1fr}
+  .hero h1{font-size:clamp(28px,8vw,38px)}
+  .nav-inner{padding:12px 16px;gap:12px}
+  .date-badge{display:none}
+  .path{padding:20px 16px}
+  .path-meta{grid-template-columns:1fr 1fr}
+  .chal{grid-template-columns:1fr;gap:10px}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .reveal{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ======================= Header ======================= -->
+<header>
+  <div class="nav-inner">
+    <a class="brand" href="#top" aria-label="返回顶部">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M15 2v2M15 20v2M2 15h2M2 9h2M20 15h2M20 9h2M9 2v2M9 20v2"/></svg>
+      AI × RTL
+    </a>
+    <nav aria-label="页面导航">
+      <a href="#tldr">摘要</a>
+      <a href="#state">现状</a>
+      <a href="#special">专项</a>
+      <a href="#paths">路径</a>
+      <a href="#compare">对比</a>
+      <a href="#challenges">挑战</a>
+      <a href="#roadmap">路线图</a>
+      <a href="#playbook">方案</a>
+      <a href="#appendix">附录</a>
+    </nav>
+    <span class="date-badge">2026.04</span>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- ======================= Hero ======================= -->
+<div class="hero">
+  <div class="container">
+    <p class="kicker"><span class="dot" aria-hidden="true"></span>Research Brief · 联网调研报告</p>
+    <h1>用 AI 开发 RTL：<em>可达成路径</em>与<em>现状</em></h1>
+    <p class="sub">
+      从「LLM 写 Verilog」到「Agent 化芯片设计」，梳理 2024–2026 年间大模型在 RTL
+      （Register Transfer Level，寄存器传输级）开发中的真实进展、落地路径、工具生态与关键瓶颈，
+      供芯片设计团队与技术决策者参考。
+    </p>
+    <div class="meta" aria-label="报告信息">
+      <span>资料范围：2025.06 – 2026.04 公开论文 / 新闻 / 厂商发布</span>
+      <span>更新：2026 年 4 月</span>
+      <span>领域：RTL 设计 / 验证 / EDA</span>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <b>97–100<span class="unit">%</span></b>
+        <span>VerilogEval-Machine 基准上，顶级方案经自动修复后的通过率（<a href="https://arxiv.org/abs/2509.08416">AutoVeriFix</a>，2025）</span>
+      </div>
+      <div class="stat">
+        <b>60–70<span class="unit">%</span></b>
+        <span>验证在芯片项目人力中的占比（业界普遍估计）—— 验证自动化是 ROI 最高的切入点</span>
+      </div>
+      <div class="stat">
+        <b>2025</b>
+        <span>EDA 三巨头（Synopsys / Cadence / Siemens）AI Copilot 全部进入商用化阶段</span>
+      </div>
+      <div class="stat">
+        <b>10+</b>
+        <span>已公开的 RTL 专用大模型与框架：ChipMATE、DeepV、ScaleRTL、QiMeng-CodeV-R1…</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================= TL;DR ======================= -->
+<section id="tldr" aria-labelledby="tldr-h">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="sec-tag">01 · Executive Summary</span>
+      <h2 id="tldr-h">三条关键结论</h2>
+      <p>先看结论，再读细节。以下判断均可在文末参考来源中找到依据。</p>
+    </div>
+    <div class="grid-tldr">
+      <article class="tldr reveal">
+        <span class="no">结论 01</span>
+        <h3>「AI 生成 + 人工验证」是当前唯一量产主流</h3>
+        <p>LLM 写模块级 RTL 已进入企业流程，但「可流片」的最终责任仍由工程师兜底。2026 年的行业共识是：AI 负责提效，人负责正确性与时序收敛。</p>
+      </article>
+      <article class="tldr reveal">
+        <span class="no">结论 02</span>
+        <h3>基准成绩很好，工程差距仍大</h3>
+        <p>VerilogEval / RTLLM 上顶级方案通过率已近饱和（97–100%），但真实 RISC-V 全流程评估显示：功能正确率、集成与时序问题仍是硬骨头（<a href="https://ieeexplore.ieee.org/document/11570171" target="_blank" rel="noopener">IEEE 11570171</a>）。</p>
+      </article>
+      <article class="tldr reveal">
+        <span class="no">结论 06</span>
+        <h3>复杂度决定成败：译码器可用，NoC 仍不可靠</h3>
+        <p>四类典型功能呈现清晰梯度——组合译码器（AI 相对擅长）→ 总线矩阵（需仿真裁判）→ Ring（中低可靠）→ NoC（芯片级任务，需层次化+验证优先方法）。接入策略应按复杂度分级（详见「专项」章节）。</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= State ======================= -->
+<section id="state" aria-labelledby="state-h">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="sec-tag">02 · Current State</span>
+      <h2 id="state-h">现状：十个月从「工具」走到「端到端」</h2>
+      <p>2025.6 以来的演进主线：精度方法论成型 → Agent 化爆发 → 端到端芯片。注意：语法正确 ≠ 功能正确 ≠ 可流片，三者差距仍是行业核心矛盾。</p>
+    </div>
+
+    <div class="timeline reveal">
+      <div class="tl-item">
+        <span class="yr">2025.06 – 09 · 精度方法论成型</span>
+        <h3>推理缩放与自动修复并进</h3>
+        <p><span class="hl"><a href="https://arxiv.org/abs/2506.05566">ScaleRTL</a></span>（2025.6）证明「推理数据 + 测试时计算」可显著提升 RTL 生成精度；<a href="https://arxiv.org/abs/2506.07945">ProtocolLLM</a>（2025.6）建立通信协议 RTL 基准，暴露协议类代码对顶级模型的挑战；<a href="https://arxiv.org/abs/2509.08416">AutoVeriFix</a>（2025.9）以「生成 + 自动修复」闭环把 VerilogEval-Machine 推到 97–100%。</p>
+      </div>
+      <div class="tl-item">
+        <span class="yr">2025.10 – 12 · Agent 化爆发与范式定型</span>
+        <h3>RAG / PPA 感知 / 自验证 / 综述齐发</h3>
+        <p><a href="https://arxiv.org/abs/2510.05327">DeepV</a>（RAG + 知识库）、<a href="https://arxiv.org/abs/2510.15899">LLM-VeriPPA</a>（PPA 感知）、<a href="https://arxiv.org/abs/2511.13139">Backtrack-ToT</a>（自解耦自验证）、<a href="https://arxiv.org/abs/2512.03053">IBM 可逆逻辑研究</a>（2025.12）密集出现；Synopsys.ai Copilot、Cadence JedAI、Siemens AI 全线商用化。<span class="hl"><a href="https://arxiv.org/abs/2512.23189">Agentic EDA</a></span> 综述（2025.12）正式提出「从 Copilot 到 Agent」范式转移；ChipAgents（Alpha Design AI）以 VerilogEval-v2 97.4% 保持 SOTA。</p>
+      </div>
+      <div class="tl-item">
+        <span class="yr">2026 · 端到端与基准升级</span>
+        <h3>从「写代码」到「造芯片」</h3>
+        <p><a href="https://arxiv.org/abs/2603.08716">Design Conductor</a>（2026.3）实现首个「规格 → GDSII」端到端：自主 Agent 12 小时产出 1.5 GHz 可跑 Linux 的 RISC-V；2.0 版（2026.5）80 小时构建推理加速器。<a href="https://arxiv.org/abs/2604.14550">VeriGraphi</a>、<a href="https://arxiv.org/abs/2604.19856">ChipCraftBrain</a>（2026.4）验证层次化多智能体与验证优先路线；<a href="https://arxiv.org/abs/2601.21448">ChipBench</a>（2026.1）接棒已饱和的旧基准；<a href="https://arxiv.org/abs/2604.14709">HWE-Bench</a>（2026.4）转向真实硬件 bug 修复；「<a href="https://ieeexplore.ieee.org/document/11534671">Closing the Loop</a>」研究聚焦工具反馈 Gap——打通仿真/综合报错回灌成为主线。</p>
+      </div>
+    </div>
+
+    <div class="facts">
+      <article class="fact reveal">
+        <h3><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>研究端：精度方法论成熟</h3>
+        <p>推理时计算（<a href="https://arxiv.org/abs/2506.05566">ScaleRTL</a>）、PPA 感知生成（<a href="https://arxiv.org/abs/2510.15899">LLM-VeriPPA</a>）、自解耦+自验证（<a href="https://arxiv.org/abs/2511.13139">Backtrack-ToT</a>）、RAG（<a href="https://arxiv.org/abs/2510.05327">DeepV</a>）四条技术路线并行，模块级功能正确率已从「不可用」提升到「可辅助」。核心范式：<code>生成 → 仿真 → 修复</code>。</p>
+      </article>
+      <article class="fact reveal">
+        <h3><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><path d="M6 6h.01M6 18h.01"/></svg>产品端：Copilot 已进设计流程</h3>
+        <p>三大 EDA 厂商（Synopsys / Cadence / Siemens）均已提供生成式 AI 助手，覆盖 RTL 生成、文档、回归分析。企业落地方式以「私有化 + 内部代码库 RAG」为主，规避 IP 外泄风险。</p>
+      </article>
+      <article class="fact reveal">
+        <h3><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 8V4H8"/><rect x="4" y="8" width="16" height="12" rx="2"/><path d="M2 14h2M20 14h2M15 13v2M9 13v2"/></svg>实践端：验证先于设计落地</h3>
+        <p>相比直接生成 RTL，业界更早接受的是 AI 生成 testbench/断言/覆盖率补洞——因为验证产出可被现有回归工具自动判定对错，反馈闭环天然存在，风险可控（2025.6 后 AI Agents for UVM 等实践持续落地）。</p>
+      </article>
+    </div>
+
+    <figure class="diagram reveal">
+      <svg viewBox="0 0 880 190" role="img" aria-labelledby="loopTitle loopDesc">
+        <title id="loopTitle">Agent 化 RTL 设计闭环示意图</title>
+        <desc id="loopDesc">规格拆解、RTL 生成、仿真综合、错误修复四个环节构成循环，工具反馈是闭环关键。</desc>
+        <defs>
+          <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="#DB2777"/>
+          </marker>
+        </defs>
+        <g font-family="Roboto Mono, monospace">
+          <rect x="20" y="55" width="180" height="60" rx="10" fill="#FFFFFF" stroke="#CBD5E1"/>
+          <text x="110" y="82" text-anchor="middle" fill="#BE185D" font-size="13">① 规格拆解</text>
+          <text x="110" y="102" text-anchor="middle" fill="#475569" font-size="10.5">Spec → 子任务</text>
+
+          <line x1="200" y1="85" x2="250" y2="85" stroke="#DB2777" stroke-width="2" marker-end="url(#arr)"/>
+          <rect x="250" y="55" width="180" height="60" rx="10" fill="#FFFFFF" stroke="#CBD5E1"/>
+          <text x="340" y="82" text-anchor="middle" fill="#BE185D" font-size="13">② RTL 生成</text>
+          <text x="340" y="102" text-anchor="middle" fill="#475569" font-size="10.5">Verilog / SV 模块</text>
+
+          <line x1="430" y1="85" x2="480" y2="85" stroke="#DB2777" stroke-width="2" marker-end="url(#arr)"/>
+          <rect x="480" y="55" width="180" height="60" rx="10" fill="#FFFFFF" stroke="#CBD5E1"/>
+          <text x="570" y="82" text-anchor="middle" fill="#BE185D" font-size="13">③ 仿真 / 综合</text>
+          <text x="570" y="102" text-anchor="middle" fill="#475569" font-size="10.5">Verilator / 综合器</text>
+
+          <line x1="660" y1="85" x2="710" y2="85" stroke="#DB2777" stroke-width="2" marker-end="url(#arr)"/>
+          <rect x="710" y="55" width="150" height="60" rx="10" fill="#FFFFFF" stroke="#CBD5E1"/>
+          <text x="785" y="82" text-anchor="middle" fill="#BE185D" font-size="13">④ 错误修复</text>
+          <text x="785" y="102" text-anchor="middle" fill="#475569" font-size="10.5">反馈回灌</text>
+
+          <!-- loop back arrow -->
+          <path d="M785 115 L785 150 L110 150 L110 115" fill="none" stroke="#0E7490" stroke-width="1.8" stroke-dasharray="6 5" marker-end="url(#arr)"/>
+          <text x="448" y="146" text-anchor="middle" fill="#155E75" font-size="11.5">工具反馈闭环（Tool-Feedback Loop）· 当前最大瓶颈</text>
+        </g>
+      </svg>
+      <figcaption>图 1 · Agent 化 RTL 设计闭环：反馈可获取的环节（仿真）先行自动化，反馈缺失的环节（综合/时序）滞后</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ======================= Special deep dive ======================= -->
+<section id="special" aria-labelledby="special-h">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="sec-tag">03 · Deep Dive</span>
+      <h2 id="special-h">专项效果：系统译码 / Decoder / NoC / Ring</h2>
+      <p>针对 SoC 中最常见的四类功能——系统译码（指令/地址译码）、组合 Decoder、NoC（片上网络）、Ring（环形互连）——综合 2024–2026 的基准与案例评估「AI 到底能做成什么样」。核心结论：按「接口数量 × 层次深度」排列，这四类功能构成了一条从 AI 舒适区到深水区的完整梯度。</p>
+    </div>
+
+    <div class="table-wrap reveal">
+      <table>
+        <caption>表 2 · 四类典型功能的 AI 实现效果评估（综合 ProtocolLLM / RISC-V 整机评估 / 2026 多智能体工作等，2026.04）</caption>
+        <thead>
+          <tr>
+            <th scope="col">功能</th>
+            <th scope="col">典型形态</th>
+            <th scope="col">复杂度</th>
+            <th scope="col">AI 当前效果</th>
+            <th scope="col">主要失败模式</th>
+            <th scope="col">建议做法</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="name">组合译码器<br>(Decoder)</td>
+            <td class="desc">指令译码 / 地址译码 / 3-8 译码 / 属性译码</td>
+            <td class="desc">低–中</td>
+            <td class="desc"><span class="risk low">较好</span> 译码/编码类「可逆逻辑」是 LLM 相对擅长区（IBM 2025.12 研究）；近期基准评测显示该类任务通过率接近顶级方案上限</td>
+            <td class="desc">分支遗漏、非法编码处理缺失、输出位宽/极性错误</td>
+            <td class="desc">生成 + 仿真自动验证即可；RISC-V 整机评估提示：真正的错误大头在<code>模块接口约束</code>，而非译码逻辑本身</td>
+          </tr>
+          <tr>
+            <td class="name">系统译码 / 总线矩阵</td>
+            <td class="desc">AXI/AHB 互连、总线矩阵、内存映射译码</td>
+            <td class="desc">中</td>
+            <td class="desc"><span class="risk mid">中</span> 协议类 RTL 已有专门基准（ProtocolLLM）；单次生成可用率有限，必须仿真验证 + 迭代修复</td>
+            <td class="desc">协议时序违约、仲裁/优先级逻辑、默认通道与错误响应缺失</td>
+            <td class="desc">以协议文档 + 参考波形为上下文；公司历史互连代码做 RAG；先跑协议合规仿真再合入</td>
+          </tr>
+          <tr>
+            <td class="name">Ring 环形互连</td>
+            <td class="desc">环形总线、令牌环、片内环网</td>
+            <td class="desc">中–高</td>
+            <td class="desc"><span class="risk mid">中–低</span> 无专门公开基准；按复杂度介于总线矩阵与 NoC 之间处理；单节点 AI 可写，整环可靠性依赖组装与定向验证</td>
+            <td class="desc">令牌/仲裁边界、环形死锁与饥饿、节点间接口不一致</td>
+            <td class="desc">单节点（ring node）生成 + 人工审仲裁；整环用层次化组装 + 死锁/饥饿定向用例验证</td>
+          </tr>
+          <tr>
+            <td class="name">NoC 片上网络</td>
+            <td class="desc">Mesh 路由器、多模块互连网络</td>
+            <td class="desc">高</td>
+            <td class="desc"><span class="risk high">弱</span> 属芯片级任务：公开评测中单次生成完整 NoC 的通过率显著低于模块级；2025.6 后研究转向层次化/多智能体/验证优先（<a href="https://arxiv.org/abs/2604.14550">VeriGraphi</a>、<a href="https://arxiv.org/abs/2604.19856">ChipCraftBrain</a>，2026.4）与端到端 Agent（<a href="https://arxiv.org/abs/2603.08716">Design Conductor</a>，2026.3）</td>
+            <td class="desc">路由算法边界（死锁/活锁）、跨模块时序交互、接口不匹配</td>
+            <td class="desc">拆为 router 微架构子块逐级生成；validation-first（先建验证环境再写 RTL）；仿真 + 形式化路由验证兜底</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="facts">
+      <article class="fact reveal">
+        <h3><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h10M7 3v18M7 21h10M7 21V3"/><path d="M9 7h1M9 12h1M9 17h1M14 7h1M14 12h1M14 17h1"/></svg>译码器：AI 的相对舒适区</h3>
+        <p><a href="https://arxiv.org/abs/2512.03053">IBM Research</a>（arXiv:2512.03053）把译码/编码这类「可逆问题」单独研究：输入输出可逆、可被自动验证，因此 LLM 的幻觉与遗漏能被检测并纠正，效果明显优于不可验证的逻辑（SemiEngineering 有专文报道）。RISC-V 处理器全流程评估（<a href="https://ieeexplore.ieee.org/document/11570171" target="_blank" rel="noopener">IEEE 11570171</a>）则提示：译码逻辑本身不难，难在<code>模块接口与层次约束</code>——这正是工程接入时最需要人工把关的地方。</p>
+      </article>
+      <article class="fact reveal">
+        <h3><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>协议与总线互连：需要专门的裁判</h3>
+        <p><a href="https://arxiv.org/abs/2506.07945">ProtocolLLM</a>（arXiv:2506.07945，UIUC + CISPA）建立了面向通信协议 RTL 的基准（含 UART/I2C/SPI 与 AXI 等片上总线协议），结论：协议代码对顶级模型仍具挑战，功能正确率随协议复杂度明显下降，<code>仿真验证</code>是必要的裁判与迭代驱动力。2026 年的 <a href="https://arxiv.org/abs/2604.14550">VeriGraphi</a>、<a href="https://arxiv.org/abs/2604.19856">ChipCraftBrain</a> 进一步验证了「先拆层次、再逐模块生成 + 验证优先」路线——大型互连设计不再依赖一次性生成。</p>
+      </article>
+      <article class="fact reveal">
+        <h3><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 2v20M2 12h20"/></svg>NoC / Ring：2026 年的攻坚区</h3>
+        <p>芯片级任务（NoC、处理器核等）的公开评测显示通过率显著低于模块级——NoC 正是「多模块交互 + 层次化」的代表。<a href="https://arxiv.org/abs/2604.14550">VeriGraphi</a>、<a href="https://arxiv.org/abs/2604.19856">ChipCraftBrain</a>（2026.4）均以「层次化拆分 + 先验证后生成」应对；<a href="https://arxiv.org/abs/2603.08716">Design Conductor</a>（2026.3）则用端到端 Agent 证明整芯片可行，但代价是数百亿 token 与强验证闭环。Ring 无专门基准，按复杂度介于总线矩阵与 NoC 之间处理最稳妥：单节点 AI 可写，整环靠组装与定向验证。</p>
+      </article>
+    </div>
+
+    <aside class="rule reveal" aria-label="专项结论">
+      <p><b>梯度法则：</b>模块间接口越多、层次越深，LLM 单次生成的成功率越低——从「译码器≈可用」到「NoC≈不可靠」的落差，本质不是模型智力问题，而是<em>可验证性与接口约束</em>问题。任何复杂功能接入 AI 的正确姿势：<b>拆层次 + 强验证闭环 + 人工审接口</b>。</p>
+    </aside>
+  </div>
+</section>
+
+<!-- ======================= Paths ======================= -->
+<section id="paths" aria-labelledby="paths-h">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="sec-tag">04 · Achievable Paths</span>
+      <h2 id="paths-h">两条可靠路径：验证自动化先行 · Agent 化闭环</h2>
+      <p>经筛选聚焦风险收益比最优的两条主线：路径 01「验证自动化」收益确定、数周可见；路径 02「Agent 化设计闭环」是 2025–2026 研究主攻方向，投入大但上限高。原报告中的其余四条路线（个人教学、模块级 Copilot、领域模型私有化、厂商全流程 EDA）已移除——它们的价值要么并入这两条的执行细节，要么依赖这两条的成果。</p>
+    </div>
+
+    <article class="path reveal">
+      <div class="path-top">
+        <div class="path-idx" aria-hidden="true">01</div>
+        <div class="path-body">
+          <h3>验证自动化先行：AI 写 Testbench 与断言 <span class="stage">1–3 个月 · ROI 最高</span></h3>
+          <p class="desc">验证占芯片项目人力 60–70%，且验证产出（通过/失败）可被回归工具自动判定——AI 的「正确与否」无需人肉判断，反馈闭环天然成立，是两条路径中风险收益比最好的。</p>
+          <ul>
+            <li>LLM 生成 UVM testbench 骨架、sequence、SVA 断言（ChipAgents 等 2025.6 后实践已验证可行性）</li>
+            <li>AI 分析覆盖率报告，建议补洞场景并生成对应用例（多智能体 coverage-driven 方案）</li>
+            <li>形式验证辅助：LLM 生成 property/假设，与形式工具（Jasper/Goldmine/开源）联动</li>
+          </ul>
+        </div>
+        <div class="path-meta">
+          <div class="m-cell"><span class="k">成熟度</span><span class="v">★★★☆☆</span><div class="bar"><i style="width:62%"></i></div></div>
+          <div class="m-cell"><span class="k">投入成本</span><span class="v">低–中</span></div>
+          <div class="m-cell"><span class="k">见效周期</span><span class="v">数周可见</span></div>
+          <div class="m-cell"><span class="k">风险</span><span class="risk low">低–中</span></div>
+        </div>
+      </div>
+      <p class="refs">代表：<a href="https://chipagents.ai/blogs/ai-agents-uvm">AI Agents for UVM（ChipAgents）</a>、<a href="https://arxiv.org/abs/2604.14709">HWE-Bench（真实 bug 修复）</a></p>
+    </article>
+
+    <article class="path reveal">
+      <div class="path-top">
+        <div class="path-idx" aria-hidden="true">02</div>
+        <div class="path-body">
+          <h3>Agent 化设计闭环：Spec → RTL → 仿真 → 自修复 <span class="stage">6–18 个月 · 前沿</span></h3>
+          <p class="desc">多智能体系统自动完成规格拆解、RTL 生成、testbench 生成、仿真运行与错误修复的循环。2025 年成为研究主流，已在小规模模块（寄存器组、简单协议从机）上达到可用水平，但距离「无人看管」仍有距离。</p>
+          <ul>
+            <li>关键前提：打通工具反馈——把 lint、仿真、综合报错结构化回灌给 Agent（Tool-Feedback Gap 是当前最大瓶颈）</li>
+            <li>建议从「单点闭环」切入：先只自动化「testbench 生成 + 仿真修复」这一段，再向前扩展</li>
+            <li>评估基线：ChipBench / 自建模块集，跟踪 pass@k 与「零人工干预成功率」两个指标</li>
+          </ul>
+        </div>
+        <div class="path-meta">
+          <div class="m-cell"><span class="k">成熟度</span><span class="v">★★☆☆☆</span><div class="bar"><i style="width:42%"></i></div></div>
+          <div class="m-cell"><span class="k">投入成本</span><span class="v">高（工程集成）</span></div>
+          <div class="m-cell"><span class="k">见效周期</span><span class="v">1–3 个季度试点</span></div>
+          <div class="m-cell"><span class="k">风险</span><span class="risk high">高</span></div>
+        </div>
+      </div>
+      <p class="refs">代表：<a href="https://algorithmai.news/chipagents-achieves-state-of-the-art-results-on-nvidias-verilogeval-benchmark">ChipAgents（VerilogEval-v2 97.4%）</a>、<a href="https://arxiv.org/abs/2506.05566">ScaleRTL</a>、<a href="https://arxiv.org/abs/2511.13139">Backtrack-ToT</a>、<a href="https://arxiv.org/abs/2603.08716">Design Conductor（端到端）</a>、<a href="https://ieeexplore.ieee.org/document/11534671">Closing the Loop（工具反馈）</a></p>
+    </article>
+
+  </div>
+</section>
+
+<!-- ======================= AI effect comparison ======================= -->
+<section id="compare" aria-labelledby="cmp-h">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="sec-tag">05 · AI Effect Comparison</span>
+      <h2 id="cmp-h">都用 AI 来写：Verilog / Chisel / Python HDL 效果对比</h2>
+      <p>前提统一为「由 AI 直接生成代码、人负责验证」。核心结论：Verilog 效果成熟，Chisel 仅模块级可用，Python HDL 无近期进展。</p>
+    </div>
+
+    <div class="table-wrap reveal">
+      <table class="comp">
+        <caption>表 3 · AI 直写三种语言的效果对比（2026.04，评级基于论文实测定性结论）</caption>
+        <thead>
+          <tr>
+            <th scope="col">维度</th>
+            <th scope="col">AI 写 Verilog / SystemVerilog</th>
+            <th scope="col">AI 写 Chisel（Scala）</th>
+            <th scope="col">AI 写 Python HDL（MyHDL / PyRTL / Amaranth）</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="name dim">直接生成效果</td>
+            <td class="desc"><span class="risk low">高</span> 自动修复闭环达 97–100%（AutoVeriFix 2025.9）；语料海量、反馈闭环成熟</td>
+            <td class="desc"><span class="risk mid">低–中</span> <a href="https://arxiv.org/abs/2505.19734">ReChisel</a>（DAC'25）实测需「编译反馈 + 反思」循环补救，且止步模块级</td>
+            <td class="desc"><span class="risk high">低</span> 2025.6 后无新评测/案例；语料稀少 + API 碎片化的劣势未见反转</td>
+          </tr>
+          <tr>
+            <td class="name dim">2026 趋势</td>
+            <td class="desc">全流程与 Agent 化（Design Conductor 2.0 等）；验证先行落地</td>
+            <td class="desc">研究稀疏：ReChisel 后进展有限，模块级仍是上限</td>
+            <td class="desc">基本停滞：研究少、基准无更新、无新框架采用</td>
+          </tr>
+          <tr>
+            <td class="name dim">复杂芯片端到端案例</td>
+            <td class="desc"><span class="risk low">有</span> <a href="https://arxiv.org/abs/2603.08716">Design Conductor</a>：自主 Agent 12 小时从 219 词规格书产出可跑 Linux 的 1.5 GHz RISC-V（spec→GDSII，ASAP7，纯开源 EDA）；GenSoC（多智能体 SoC）同系</td>
+            <td class="desc"><span class="risk high">无</span> 处理器 / SoC 级 AI 生成尚无端到端案例</td>
+            <td class="desc"><span class="risk high">无</span> 复杂 SoC 级无 AI 研究 / 案例</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <aside class="rule reveal" aria-label="效果结论">
+      <p><b>效果公式：AI 写硬件代码的效果 ≈ 训练语料量 × 反馈闭环质量。</b>三个现实推论：① 想让 AI 直接产出可用的 RTL，选 <em>Verilog/SystemVerilog</em>——目前唯一效果成熟的语言；② Chisel 项目可用 AI，但必须配「编译反馈 + 反思」闭环（ReChisel 模式），定位是草稿与加速而非免检；③ Python HDL 暂不建议作为 AI 主战场——语料与基准都撑不起来。<b>复杂芯片开发（处理器/SoC 级）更是如此</b>：迄今唯一的端到端成功案例（Design Conductor，spec→GDSII）出自 Verilog 系，Chisel 与 Python HDL 均无先例。注意：以上为论文实测定性结论，具体数字以各论文原文为准。</p>
+    </aside>
+  </div>
+</section>
+
+
+<!-- ======================= Challenges ======================= -->
+<section id="challenges" aria-labelledby="chal-h">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="sec-tag">06 · Gaps &amp; Risks</span>
+      <h2 id="chal-h">六大瓶颈：为什么还不能全自动</h2>
+      <p>每条瓶颈均附当前主流缓解手段。理解这些瓶颈，才能为团队选择正确的路径与预期。</p>
+    </div>
+
+    <article class="chal reveal">
+      <div class="n" aria-hidden="true">1</div>
+      <div>
+        <h3>幻觉与时序盲区</h3>
+        <p class="fix"><b>现象</b>LLM 不懂时钟域、异步复位、跨时钟同步、时序收敛；语法正确但功能/时序错误率高。</p>
+        <p class="fix"><b>缓解</b>lint + 综合 + 形式验证自动化把关；PPA 感知生成方法（LLM-VeriPPA）；「生成→仿真→修复」闭环兜底。</p>
+      </div>
+    </article>
+
+    <article class="chal reveal">
+      <div class="n" aria-hidden="true">2</div>
+      <div>
+        <h3>基准饱和 vs 真实工程差距</h3>
+        <p class="fix"><b>现象</b>VerilogEval/RTLLM 顶级通过率近 100%，但 RISC-V 整机评估显示集成、时序、面积等真实问题仍大量存在（<a href="https://ieeexplore.ieee.org/document/11570171" target="_blank" rel="noopener">IEEE 11570171</a>）。</p>
+        <p class="fix"><b>缓解</b>以 ChipBench 与自建真实模块集为评估基线；用「全流程成功率」替代「单点通过率」做采购与立项决策。</p>
+      </div>
+    </article>
+
+    <article class="chal reveal">
+      <div class="n" aria-hidden="true">3</div>
+      <div>
+        <h3>工具反馈 Gap</h3>
+        <p class="fix"><b>现象</b>Agent 拿不到仿真/综合工具的报错反馈，无法形成自我修正闭环——这是 Agent 化路径（路径 02）的最大卡点（<a href="https://ieeexplore.ieee.org/document/11534671">Closing the Loop</a>，IEEE 11534671）。</p>
+        <p class="fix"><b>缓解</b>优先自动化「反馈可获取」的环节（仿真、lint、覆盖率）；推动 EDA 工具开放结构化 API/日志接口。</p>
+      </div>
+    </article>
+
+    <article class="chal reveal">
+      <div class="n" aria-hidden="true">4</div>
+      <div>
+        <h3>验证成本转移而非消失</h3>
+        <p class="fix"><b>现象</b>AI 生成代码仍需等价验证，且 AI 的「创新性 bug」更难定位；验证人力并未减少，只是从写代码转向审代码。</p>
+        <p class="fix"><b>缓解</b>让 AI 同时生成「代码 + 测试 + 断言」，把验证负担转给自动化回归；验证自动化（路径 01）先行。</p>
+      </div>
+    </article>
+
+    <article class="chal reveal">
+      <div class="n" aria-hidden="true">5</div>
+      <div>
+        <h3>数据与 IP 安全</h3>
+        <p class="fix"><b>现象</b>芯片设计数据高度敏感，云端通用 API 有 IP 外泄风险，合规部门天然保守。</p>
+        <p class="fix"><b>缓解</b>私有化部署 + 内部 RAG；优先使用厂商私有云/国产方案（DeepSeek 系）；数据脱敏流程先行。</p>
+      </div>
+    </article>
+
+    <article class="chal reveal">
+      <div class="n" aria-hidden="true">6</div>
+      <div>
+        <h3>复合人才缺口</h3>
+        <p class="fix"><b>现象</b>既懂 RTL/验证、又懂 LLM 工程（提示词、RAG、微调、评测）的工程师稀缺，「AI 生成的代码没人敢接」。</p>
+        <p class="fix"><b>缓解</b>以「个人学习 + 验证团队先行」双入口培养（验证工程师天然熟悉「证明正确性」）；建立内部 AI 评测与最佳实践库。</p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- ======================= Roadmap ======================= -->
+<section id="roadmap" aria-labelledby="road-h">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="sec-tag">07 · Suggested Roadmap</span>
+      <h2 id="road-h">给团队的落地路线图建议</h2>
+      <p>一份保守但可执行的节奏：先用低风险路径建立量化认知，再决定是否投入重资产路径。</p>
+    </div>
+    <div class="roadmap">
+      <div class="phase reveal">
+        <span class="ph">Phase 1</span>
+        <h3>0 – 6 个月 · 验证自动化落地（路径 01）</h3>
+        <ul>
+          <li>验证团队试点 AI 生成 UVM testbench / SVA 断言（AI Agents for UVM 等 2025.6 后实践思路），对比覆盖率达成时间与用例产出效率</li>
+          <li>建立公司验证语料库：历史 testbench / 断言 → RAG 知识库，把 AI 输出与公司风格对齐</li>
+          <li>量化基线：AI 用例直接采用率、覆盖率补洞速度、回归通过率，输出《验证自动化评估报告》</li>
+        </ul>
+      </div>
+      <div class="phase reveal">
+        <span class="ph">Phase 2</span>
+        <h3>6 – 18 个月 · 单点 Agent 闭环（路径 02）</h3>
+        <ul>
+          <li>打通 lint / 仿真报错回灌，把「testbench 生成 + 仿真修复」做成自动化闭环——这是 Agent 化最现实的第一步</li>
+          <li>选择寄存器组、简单协议从机等边界清晰的模块，试点 Spec → RTL → 仿真 → 自修复</li>
+          <li>用 ChipBench 级基准建立季度评测，跟踪「零人工干预成功率」与 pass@k，防流程退化</li>
+        </ul>
+      </div>
+      <div class="phase reveal">
+        <span class="ph">Phase 3</span>
+        <h3>18 个月+ · 闭环扩展与规模化</h3>
+        <ul>
+          <li>Agent 闭环从单点模块扩展到子系统与协议模块，目标「零人工干预成功率」&gt; 80%</li>
+          <li>验证自动化从用例生成扩展到覆盖率分析与形式验证辅助，形成完整 AI 验证栈</li>
+          <li>沉淀方法论：模块库 → 检索/训练数据 → 模型与流程迭代的飞轮；跟踪 Tool-Feedback Gap 研究进展（Closing the Loop）</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= Playbook ======================= -->
+<section id="playbook" aria-labelledby="pb-h">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="sec-tag">08 · Playbook</span>
+      <h2 id="pb-h">实战方案：CBB Skill × AgentTeam 组装 SoC</h2>
+      <p>面向「手头有大量已验证、但内部逻辑未完全掌握的闭源 CBB（通用构建模块）代码，想用多智能体团队完成大型 SoC 设计」的场景。核心理念一句话：<b>别让 AI 写芯片，让 AI 组装芯片</b>——把 CBB 封装成 AI 可调用的 Skill，LLM 只做规格拆解、互连装配与验证闭环，永不接触源码。</p>
+    </div>
+
+    <figure class="diagram reveal">
+      <svg viewBox="0 0 880 240" role="img" aria-labelledby="pbTitle pbDesc">
+        <title id="pbTitle">CBB Skill × AgentTeam SoC 装配编排图</title>
+        <desc id="pbDesc">六个 Agent 角色按流水线协作：架构师、互连、模块例化、集成、验证、修复，验证与修复构成反馈循环。</desc>
+        <defs>
+          <marker id="arr2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="#DB2777"/>
+          </marker>
+        </defs>
+        <g font-family="Roboto Mono, monospace">
+          <rect x="15" y="40" width="150" height="70" rx="10" fill="#FFFFFF" stroke="#CBD5E1"/>
+          <text x="90" y="66" text-anchor="middle" fill="#BE185D" font-size="12.5">SoC Architect</text>
+          <text x="90" y="86" text-anchor="middle" fill="#475569" font-size="10">规格→模块清单</text>
+          <text x="90" y="100" text-anchor="middle" fill="#475569" font-size="10">互连图·地址映射</text>
+
+          <line x1="165" y1="75" x2="200" y2="75" stroke="#DB2777" stroke-width="2" marker-end="url(#arr2)"/>
+          <rect x="200" y="40" width="150" height="70" rx="10" fill="#FFFFFF" stroke="#CBD5E1"/>
+          <text x="275" y="66" text-anchor="middle" fill="#BE185D" font-size="12.5">Interconnect</text>
+          <text x="275" y="86" text-anchor="middle" fill="#475569" font-size="10">总线/NoC 骨架</text>
+          <text x="275" y="100" text-anchor="middle" fill="#475569" font-size="10">内存映射表</text>
+
+          <line x1="350" y1="75" x2="385" y2="75" stroke="#DB2777" stroke-width="2" marker-end="url(#arr2)"/>
+          <rect x="385" y="40" width="150" height="70" rx="10" fill="#FFFFFF" stroke="#CBD5E1"/>
+          <text x="460" y="66" text-anchor="middle" fill="#BE185D" font-size="12.5">CBB Instance ×N</text>
+          <text x="460" y="86" text-anchor="middle" fill="#475569" font-size="10">调 Skill→例化</text>
+          <text x="460" y="100" text-anchor="middle" fill="#475569" font-size="10">参数化·lint</text>
+
+          <line x1="535" y1="75" x2="570" y2="75" stroke="#DB2777" stroke-width="2" marker-end="url(#arr2)"/>
+          <rect x="570" y="40" width="150" height="70" rx="10" fill="#FFFFFF" stroke="#CBD5E1"/>
+          <text x="645" y="66" text-anchor="middle" fill="#BE185D" font-size="12.5">Integration</text>
+          <text x="645" y="86" text-anchor="middle" fill="#475569" font-size="10">顶层装配</text>
+          <text x="645" y="100" text-anchor="middle" fill="#475569" font-size="10">时钟/复位/DFT</text>
+
+          <line x1="720" y1="75" x2="755" y2="75" stroke="#DB2777" stroke-width="2" marker-end="url(#arr2)"/>
+          <rect x="755" y="40" width="110" height="70" rx="10" fill="#FFFFFF" stroke="#CBD5E1"/>
+          <text x="810" y="66" text-anchor="middle" fill="#BE185D" font-size="12.5">Verification</text>
+          <text x="810" y="86" text-anchor="middle" fill="#475569" font-size="10">SoC testbench</text>
+          <text x="810" y="100" text-anchor="middle" fill="#475569" font-size="10">仿真回归</text>
+
+          <!-- repair node below -->
+          <line x1="810" y1="110" x2="810" y2="145" stroke="#DB2777" stroke-width="2" marker-end="url(#arr2)"/>
+          <rect x="735" y="145" width="150" height="60" rx="10" fill="#FFFFFF" stroke="#CBD5E1"/>
+          <text x="810" y="170" text-anchor="middle" fill="#BE185D" font-size="12.5">Repair</text>
+          <text x="810" y="190" text-anchor="middle" fill="#475569" font-size="10">读报错→调参/换配</text>
+
+          <!-- feedback loop: repair -> verification -->
+          <path d="M735 175 L340 175 L340 110" fill="none" stroke="#155E75" stroke-width="1.8" stroke-dasharray="6 5" marker-end="url(#arr2)"/>
+          <text x="520" y="168" text-anchor="middle" fill="#155E75" font-size="11">反馈闭环：lint / 仿真报错回灌（Tool-Feedback Loop）</text>
+
+          <!-- skill library bar -->
+          <rect x="15" y="215" width="850" height="0" rx="0" fill="none"/>
+          <text x="440" y="232" text-anchor="middle" fill="#475569" font-size="10.5">底层：CBB Skill 库（接口契约 + 例化模板 + 验证夹具）· 本地私有模型 · 内部仿真服务器 · 沙箱执行（源码零外泄）</text>
+        </g>
+      </svg>
+      <figcaption>图 2 · CBB Skill × AgentTeam 编排：验证与修复构成闭环，Skill 库是唯一与代码打交道的层</figcaption>
+    </figure>
+
+    <div class="codebox reveal" aria-label="Skill 包结构">
+<pre><span class="ck">cbb-skill/</span>
+├── <span class="ck">skill.json</span>       <span class="cm"># 功能摘要 / 适用场景 / 依赖关系（Agent 决策依据）</span>
+├── <span class="ck">interface.json</span>   <span class="cm"># 接口契约：端口表(方向/位宽/协议) / 参数 / 时序约束 ← 最重要</span>
+├── <span class="ck">template.sv</span>      <span class="cm"># 例化模板：Agent 填参数即可生成合法例化代码</span>
+├── <span class="ck">testbench/</span>       <span class="cm"># 验证夹具：自检 bench（集成后自动验证正确性）</span>
+├── <span class="ck">examples/</span>        <span class="cm"># 2-3 个完整可编译的典型用法</span>
+└── <span class="ck">docs.md</span>          <span class="cm"># 行为说明 / 已知限制（黑盒分析 + 人工审核生成）</span></pre>
+      <p style="font-family:var(--font-mono);font-size:11.5px;color:var(--muted-fg);margin-top:10px">铁律：Agent 只读 skill.json / interface.json / template.sv / docs.md——<b style="color:var(--danger)">.sv 源码永不进入 AI 上下文</b>，通过「实例化 + 跑验证夹具」间接使用。</p>
+    </div>
+
+    <div class="facts facts-4">
+      <article class="fact reveal">
+        <h3><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>代码零外泄</h3>
+        <p>闭源 CBB 源码只存在于内部沙箱服务器。Agent 通过工具调用间接使用：例化 → 仿真 → 拿结果，全程接触不到一行实现代码。IP 安全由架构保证，而非流程纪律。</p>
+      </article>
+      <article class="fact reveal">
+        <h3><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>黑盒契约驱动</h3>
+        <p>「不理解功能也能安全用」：interface.json 的端口/时序契约 + 验证夹具保证正确性。功能描述可通过黑盒行为分析（自动激励扫描）+ LLM 辅助摘要生成，人工只需审核打勾。</p>
+      </article>
+      <article class="fact reveal">
+        <h3><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>验证夹具兜底</h3>
+        <p>每个 Skill 自带自检 testbench。Agent 装配完模块即运行夹具，通过才算集成成功——「描述有偏差」不再可怕，错误会被仿真抓住并回灌修复。</p>
+      </article>
+      <article class="fact reveal">
+        <h3><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8v13H3V8"/><path d="M1 3h22v5H1z"/><path d="M10 12h4"/></svg>版本治理</h3>
+        <p>Skill 注册中心统一管理：CBB 升级 → skill 卡同步更新 → 全库回归测试。Agent 永远使用当前已验证版本，避免「旧 IP + 新流程」的隐性不匹配。</p>
+      </article>
+    </div>
+
+    <div class="roadmap roadmap-4" style="margin-top:36px">
+      <div class="phase reveal">
+        <span class="ph">Phase 1</span>
+        <h3>2–4 周 · PoC</h3>
+        <ul>
+          <li>挑 3–5 个最常用 CBB 建 Skill 包（接口契约 + 验证夹具）</li>
+          <li>单 Agent 试装最小 SoC：互连 + 2 个外设，跑通仿真</li>
+          <li>产出：Skill 制作规范 + 首个可复现的 AI 装配 SoC</li>
+        </ul>
+      </div>
+      <div class="phase reveal">
+        <span class="ph">Phase 2</span>
+        <h3>基础设施</h3>
+        <ul>
+          <li>本地私有模型部署（DeepSeek 系开源模型，IP 不出域）</li>
+          <li>内部仿真服务器 + Skill 注册中心（版本治理）</li>
+          <li>黑盒行为分析流水线：自动生成功能卡草稿 + 人工审核</li>
+        </ul>
+      </div>
+      <div class="phase reveal">
+        <span class="ph">Phase 3</span>
+        <h3>AgentTeam 化</h3>
+        <ul>
+          <li>打通 lint / 仿真报错回灌（Tool-Feedback Gap 是核心工程）</li>
+          <li>Repair Agent 闭环：读报错 → 调参数/换配置 → 重跑</li>
+          <li>多 Agent 并行例化模块，架构师 Agent 统筹互连与地址映射</li>
+        </ul>
+      </div>
+      <div class="phase reveal">
+        <span class="ph">Phase 4</span>
+        <h3>规模化</h3>
+        <ul>
+          <li>Skill 库扩容至全部常用 CBB，覆盖 SoC 主要外设域</li>
+          <li>验证自动化：Agent 生成 SoC 级 testbench / 断言 / 覆盖率补洞</li>
+          <li>目标：完整 SoC 装配 + 回归通过，人工只审 Skill 卡与签核</li>
+        </ul>
+      </div>
+    </div>
+
+    <div style="margin-top:20px">
+      <article class="chal reveal">
+        <div class="n" aria-hidden="true">1</div>
+        <div>
+          <h3>Skill 卡错误 = 系统性误用</h3>
+          <p class="fix"><b>对策</b>interface.json 与功能描述必须由资深工程师审核签名后方可上线；建立「Skill 评审 + 抽样回归」机制，CBB 升级强制全量回归。</p>
+        </div>
+      </article>
+      <article class="chal reveal">
+        <div class="n" aria-hidden="true">2</div>
+        <div>
+          <h3>IP 合规红线</h3>
+          <p class="fix"><b>对策</b>闭源代码不进 prompt、Agent 执行沙箱化、本地私有模型推理；对外文档只暴露接口契约与验证报告，不暴露实现细节。</p>
+        </div>
+      </article>
+      <article class="chal reveal">
+        <div class="n" aria-hidden="true">3</div>
+        <div>
+          <h3>验证仍是硬门槛</h3>
+          <p class="fix"><b>对策</b>SoC 级 testbench 质量决定成败——先搭互连与内存映射的验证骨架，再逐模块接入；Repair 闭环的报错信息结构化程度直接影响 Agent 修复成功率（参考 HWE-Bench 真实 bug 修复经验）。</p>
+        </div>
+      </article>
+    </div>
+
+    <aside class="rule reveal" aria-label="方案结论">
+      <p><b>一句话：</b>别让 AI 写芯片，让 AI <em>组装</em>芯片。用验证过的闭源 CBB 建 Skill 库（接口契约 + 例化模板 + 验证夹具），AgentTeam 负责规格拆解、互连装配、验证闭环——你只需审核每个 Skill 的接口契约。这是 2026 年 SoC 级 AI 落地中风险收益比最好的形态，与 <a href="https://arxiv.org/abs/2512.23189">Agentic EDA</a> 的「Copilot → Agent」范式和 <a href="https://arxiv.org/abs/2603.08716">Design Conductor</a> 的端到端验证互为印证。</p>
+    </aside>
+  </div>
+</section>
+
+<!-- ======================= Appendix ======================= -->
+<section id="appendix" aria-labelledby="appendix-h">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="sec-tag">09 · Appendix</span>
+      <h2 id="appendix-h">附录：工具生态 / 参考来源 / 本地论文库</h2>
+      <p>正文之外的资料区：工具生态速览、报告全部参考来源、以及已下载到本地的论文 PDF。</p>
+    </div>
+
+    <h3 class="appx-h">工具生态速览</h3>
+    <div class="table-wrap reveal">
+      <table>
+        <caption>表 1 · AI × RTL 关键工具与基准（2026.04）</caption>
+        <thead>
+          <tr>
+            <th scope="col">名称</th>
+            <th scope="col">形态</th>
+            <th scope="col">定位 / 一句话说明</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="grp"><td colspan="3">自动修复方法</td></tr>
+          <tr>
+            <td class="name">AutoVeriFix</td>
+            <td class="kind"><span class="tag open">研究方法</span></td>
+            <td class="desc">自动修复生成代码的功能错误；VerilogEval-Machine 达 97–100%（<a href="https://ar5iv.labs.arxiv.org/html/2509.08416">arXiv:2509.08416</a>）</td>
+          </tr>
+          <tr class="grp"><td colspan="3">Agent 平台</td></tr>
+          <tr>
+            <td class="name">ChipAgents</td>
+            <td class="kind"><span class="tag com">创业公司</span></td>
+            <td class="desc">Agentic AI for RTL 设计与验证（Alpha Design AI）；<b>VerilogEval-v2 97.4%、Human 99.4% SOTA</b>；工具增强 + 搜索迭代（<a href="https://chipagents.ai/">官网</a> · <a href="https://algorithmai.news/chipagents-achieves-state-of-the-art-results-on-nvidias-verilogeval-benchmark">SOTA 报道</a>）</td>
+          </tr>
+          <tr>
+            <td class="name">Design Conductor</td>
+            <td class="kind"><span class="tag open">研究 Agent</span></td>
+            <td class="desc">端到端自主 Agent：spec→GDSII 构建 1.5 GHz RISC-V（<a href="https://arxiv.org/abs/2603.08716">arXiv:2603.08716</a>）</td>
+          </tr>
+          <tr class="grp"><td colspan="3">EDA Copilot（商业）</td></tr>
+          <tr>
+            <td class="name">Synopsys.ai / Copilot</td>
+            <td class="kind"><span class="tag com">商业 EDA</span></td>
+            <td class="desc">生成式 AI 嵌入 Synopsys 全流程：RTL 生成、回归、文档、覆盖率解读（<a href="https://qacf-www.synopsys.com/zh-cn/ai/ai-powered-eda.html">官网</a>）；DSO.ai 为后端设计空间优化标杆</td>
+          </tr>
+          <tr>
+            <td class="name">Cadence JedAI</td>
+            <td class="kind"><span class="tag com">商业 EDA</span></td>
+            <td class="desc">Cadence 生成式 AI 平台 + Copilot，覆盖设计与验证（<a href="https://www.electronicdesign.com/technologies/eda/article/55309344/electronic-design-staying-current-midyear-2025-eda-tools-for-engineers-part-1">报道</a>）</td>
+          </tr>
+          <tr class="grp"><td colspan="3">基准与综述</td></tr>
+          <tr>
+            <td class="name">ChipBench</td>
+            <td class="kind"><span class="tag open">下一代基准</span></td>
+            <td class="desc">更复杂的真实工程任务基准，接棒已饱和的旧基准（<a href="https://ar5iv.labs.arxiv.org/html/2601.21448">arXiv</a>）</td>
+          </tr>
+          <tr>
+            <td class="name">VerilogEval / RTLLM</td>
+            <td class="kind"><span class="tag open">旧基准</span></td>
+            <td class="desc">早期主流基准，通过率已饱和（97–100%），参考意义下降（<a href="https://ar5iv.labs.arxiv.org/html/2509.08416">相关评测</a>）</td>
+          </tr>
+          <tr>
+            <td class="name">Agentic EDA 综述</td>
+            <td class="kind"><span class="tag open">综述</span></td>
+            <td class="desc">「从 Copilot 到 Agent」范式综述，自治数字芯片设计全景（<a href="https://ar5iv.labs.arxiv.org/html/2512.23189">arXiv</a>）</td>
+          </tr>
+          <tr class="grp"><td colspan="3">开源工具链</td></tr>
+          <tr>
+            <td class="name">Verilator / Icarus</td>
+            <td class="kind"><span class="tag open">开源工具链</span></td>
+            <td class="desc">开源仿真器：AI 生成代码的「自动裁判」，Agent 闭环的基础设施（<a href="https://www.veripool.org/verilator/">官网</a>）</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="appx-h">参考来源</h3>
+    <div class="sources reveal">
+      <ol>
+        <li><a href="https://ar5iv.labs.arxiv.org/html/2509.08416">AutoVeriFix：自动修复 LLM 生成 Verilog 错误，VerilogEval-Machine 97–100%（arXiv:2509.08416）</a></li>
+        <li><a href="https://arxiv.org/abs/2506.05566">ScaleRTL：推理数据与测试时计算提升 RTL 生成精度（arXiv:2506.05566）</a></li>
+        <li><a href="https://arxiv.org/abs/2510.05327">DeepV：RAG + 高质量知识库增强 Verilog 生成（arXiv:2510.05327）</a></li>
+        <li><a href="https://arxiv.org/abs/2510.15899">LLM-VeriPPA：功耗/性能/面积感知的 Verilog 生成（arXiv:2510.15899）</a></li>
+        <li><a href="https://arxiv.org/abs/2511.13139">Backtrack-ToT：自解耦与自验证的自动化 RTL 设计（arXiv:2511.13139）</a></li>
+        <li><a href="https://ar5iv.labs.arxiv.org/html/2512.23189">The Dawn of Agentic EDA：自治数字芯片设计综述（arXiv:2512.23189）</a></li>
+        <li><a href="https://ieeexplore.ieee.org/document/11570171">LLM-Aided Design and Evaluation of a RISC-V Processor：基准饱和与真实差距（IEEE）</a></li>
+        <li><a href="https://ieeexplore.ieee.org/document/11534671">Closing the Loop：Agentic 硬件设计中的工具反馈 Gap（IEEE）</a></li>
+        <li><a href="https://ar5iv.labs.arxiv.org/html/2601.21448">ChipBench：AI 辅助芯片设计下一代基准（arXiv:2601.21448）</a></li>
+        <li><a href="https://chipagents.ai/blogs/ai-agents-uvm">AI Agents for UVM：UVM 验证的智能体前沿（ChipAgents）</a></li>
+        <li><a href="https://algorithmai.news/chipagents-achieves-state-of-the-art-results-on-nvidias-verilogeval-benchmark">ChipAgents 在 NVIDIA VerilogEval 上取得 SOTA</a></li>
+        <li><a href="https://qacf-www.synopsys.com/zh-cn/ai/ai-powered-eda.html">Synopsys AI：AI 驱动的芯片设计套件（官网）</a></li>
+        <li><a href="https://www.electronicdesign.com/technologies/eda/article/55309344/electronic-design-staying-current-midyear-2025-eda-tools-for-engineers-part-1">Midyear 2025 EDA 工具综述（Electronic Design）</a></li>
+        <li><a href="https://www.zidonghua.com.cn/news/eda/68521.html">合见工软发布数字设计 AI 智能平台 UDA，集成 DeepSeek</a></li>
+        <li><a href="https://huggingface.co/core12345/ChipMATE-V-9B">ChipMATE-V-9B：开源 Verilog 生成模型（HuggingFace）</a></li>
+        <li><a href="https://m.x-techcon.com/article/59770.html">AI RTL Agent 进展综述（中文）</a></li>
+        <li><a href="https://www.eetrend.com/content/2025/100591747.html">AI 为 EDA 插上智能之翼，加持国产芯片设计创新（EETrend）</a></li>
+        <li><a href="https://m.elecfans.com/article/6720611.html">各大厂商与新兴企业的 EDA Copilot 工具盘点（电子发烧友）</a></li>
+        <li><a href="https://itbrief.com.au/story/synopsys-expands-generative-ai-to-boost-chip-design-workflows">Synopsys 扩展生成式 AI 设计工作流（IT Brief）</a></li>
+        <li><a href="https://shazoo.ru/2026/04/15/182450">NVIDIA 用 AI 将芯片设计周期从 10 个月压缩到一夜（俄媒报道，转述）</a></li>
+        <li><a href="https://www.game7staffing.com/resources/blog/ai-wont-replace-semiconductor-engineers-its-creating-demand-for-a-new-kind">AI 不会取代芯片工程师，而是创造新需求（Game7）</a></li>
+        <li><a href="https://arxiv.org/abs/2506.07945">ProtocolLLM：通信协议 SystemVerilog 生成基准，UART/I2C/SPI/AXI 等（UIUC + CISPA）</a></li>
+        <li><a href="https://arxiv.org/abs/2512.03053">IBM：缓解 LLM 在可逆问题（译码/编码）上的幻觉与遗漏</a></li>
+        <li><a href="https://arxiv.org/abs/2604.14550">VeriGraphi：层次化 RTL 生成的多智能体框架</a></li>
+        <li><a href="https://arxiv.org/abs/2604.19856">ChipCraftBrain：验证优先（Validation-First）的多智能体 RTL 生成</a></li>
+        <li><a href="https://semiengineering.com/evaluation-of-llms-on-hdl-based-communication-protocol-generation-u-of-illinois-urbana-cispa/">SemiEngineering：LLM 生成 HDL 通信协议的评估报道（UIUC + CISPA）</a></li>
+        <li><a href="https://ieeexplore.ieee.org/document/11132940">ReChisel：基于反思（Reflection）的 LLM 自动生成 Chisel 代码（DAC 2025）</a></li>
+        <li><a href="https://pypi.org/project/torii/">Torii：Amaranth 社区分支接续的 Python 硬件描述语言（PyPI）</a></li>
+        <li><a href="https://raw.githubusercontent.com/chipsalliance/chisel/main/ROADMAP.md">Chisel 官方路线图（chipsalliance，v6.x → Chisel 7）</a></li>
+        <li><a href="https://github.com/enjoy-digital/litex">LiteX：基于 Python（Migen）的 FPGA SoC 构建框架（GitHub）</a></li>
+        <li><a href="https://urca.ucsb.edu/posters/mitigating-errors-llm-generated-pyrtl-code-siddhi-mundhra-prisha-bobde-yutong-sui-megan-fu">UCSB：缓解 LLM 生成 PyRTL 代码错误的研究</a></li>
+        <li><a href="https://arxiv.org/abs/2603.08716">Design Conductor：自主 Agent 构建 1.5 GHz 可跑 Linux 的 RISC-V CPU（spec→GDSII，12 小时）</a></li>
+        <li><a href="https://arxiv.org/abs/2605.05170">Design Conductor 2.0：Agent 80 小时构建 TurboQuant 推理加速器</a></li>
+        <li><a href="https://arxiv.org/abs/2604.14709">HWE-Bench：真实世界硬件 bug 修复任务的 LLM Agent 基准</a></li>
+        <li><a href="https://spectrum.ieee.org/ai-chip-design">IEEE Spectrum：AI Agent 12 小时构建 RISC-V CPU 核报道</a></li>
+        <li><a href="https://riscv-europe.org/summit/2025/media/proceedings/2025-05-13-RISC-V-Summit-Europe-15h06-WANG-slides.pdf">RISC-V Summit Europe 2025：ChipAgents Agentic AI 设计验证流程演讲（David Wang）</a></li>
+        <li><a href="https://dvcon-proceedings.org/wp-content/uploads/5014-Accelerating-Design-Verification-with-AI-Agents.pdf">DVCon 2025：Agentic AI for Chip Design（Alpha Design AI / ChipAgents）</a></li>
+      </ol>
+    </div>
+
+    <h3 class="appx-h">本地论文库（papers/）</h3>
+    <div class="sources reveal">
+      <p style="font-size:13px;color:var(--muted-fg);margin-bottom:12px">18 篇论文 PDF 已下载至本网页同目录的 <code>papers/</code> 文件夹（仅收录 2025.6 后的资料）——点击文件名即可本地打开；「原文」为在线来源。IEEE 付费论文（RISC-V 处理器评估、Closing the Loop）无法免费下载，仅保留在线链接。</p>
+      <ol>
+        <li><a href="papers/ScaleRTL_2506.05566.pdf">ScaleRTL：推理数据 + 测试时计算</a> · <a href="https://arxiv.org/abs/2506.05566">原文</a></li>
+        <li><a href="papers/ProtocolLLM_2506.07945.pdf">ProtocolLLM：通信协议 SystemVerilog 基准</a> · <a href="https://arxiv.org/abs/2506.07945">原文</a></li>
+        <li><a href="papers/ReChisel_2505.19734.pdf">ReChisel：LLM with Reflection 生成 Chisel（DAC 2025）</a> · <a href="https://arxiv.org/abs/2505.19734">原文</a></li>
+        <li><a href="papers/AutoVeriFix_2509.08416.pdf">AutoVeriFix：自动修复 LLM 生成 Verilog</a> · <a href="https://arxiv.org/abs/2509.08416">原文</a></li>
+        <li><a href="papers/LLM-VeriPPA_2510.15899.pdf">LLM-VeriPPA：PPA 感知的 Verilog 生成</a> · <a href="https://arxiv.org/abs/2510.15899">原文</a></li>
+        <li><a href="papers/DeepV_2510.05327.pdf">DeepV：RAG + 高质量知识库增强生成</a> · <a href="https://arxiv.org/abs/2510.05327">原文</a></li>
+        <li><a href="papers/Backtrack-ToT_2511.13139.pdf">Backtrack-ToT：自解耦与自验证 RTL 设计</a> · <a href="https://arxiv.org/abs/2511.13139">原文</a></li>
+        <li><a href="papers/AgenticEDA_2512.23189.pdf">The Dawn of Agentic EDA：自治数字芯片设计综述</a> · <a href="https://arxiv.org/abs/2512.23189">原文</a></li>
+        <li><a href="papers/IBM_Invertible_2512.03053.pdf">IBM：缓解 LLM 在可逆问题上的幻觉与遗漏</a> · <a href="https://arxiv.org/abs/2512.03053">原文</a></li>
+        <li><a href="papers/ChipBench_2601.21448.pdf">ChipBench：AI 辅助芯片设计下一代基准</a> · <a href="https://arxiv.org/abs/2601.21448">原文</a></li>
+        <li><a href="papers/VeriGraphi_2604.14550.pdf">VeriGraphi：层次化 RTL 多智能体生成</a> · <a href="https://arxiv.org/abs/2604.14550">原文</a></li>
+        <li><a href="papers/ChipCraftBrain_2604.19856.pdf">ChipCraftBrain：验证优先的多智能体 RTL 生成</a> · <a href="https://arxiv.org/abs/2604.19856">原文</a></li>
+        <li><a href="papers/ChipMATE_2605.12857.pdf">ChipMATE：强化学习多智能体 RTL 生成</a> · <a href="https://arxiv.org/abs/2605.12857">原文</a></li>
+        <li><a href="papers/DesignConductor_2603.08716.pdf">Design Conductor：自主 Agent 构建 1.5 GHz 可跑 Linux 的 RISC-V CPU（spec→GDSII）</a> · <a href="https://arxiv.org/abs/2603.08716">原文</a></li>
+        <li><a href="papers/DesignConductor2_2605.05170.pdf">Design Conductor 2.0：80 小时构建 TurboQuant 推理加速器</a> · <a href="https://arxiv.org/abs/2605.05170">原文</a></li>
+        <li><a href="papers/HWE-Bench_2604.14709.pdf">HWE-Bench：真实世界硬件 bug 修复任务的 LLM Agent 基准</a> · <a href="https://arxiv.org/abs/2604.14709">原文</a></li>
+        <li><a href="papers/ChipAgents_RISCVSummit2025.pdf">ChipAgents：Agentic AI 设计验证流程（RISC-V Summit Europe 2025 演讲）</a> · <a href="https://riscv-europe.org/summit/2025/media/proceedings/2025-05-13-RISC-V-Summit-Europe-15h06-WANG-slides.pdf">原文</a></li>
+        <li><a href="papers/ChipAgents_DVCon2025.pdf">ChipAgents（Alpha Design AI）：Agentic AI for Chip Design（DVCon 2025）</a> · <a href="https://dvcon-proceedings.org/wp-content/uploads/5014-Accelerating-Design-Verification-with-AI-Agents.pdf">原文</a></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ======================= Footer ======================= -->
+<footer>
+  <div class="foot-inner">
+    <p>AI × RTL 调研报告 · 资料截至 2026 年 4 月 · 本页为调研整理，事实以所引来源为准</p>
+    <div class="foot-links">
+      <a href="#tldr">摘要</a>
+      <a href="#paths">路径</a>
+      <a href="#appendix">附录</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* 滚动显现：尊重 prefers-reduced-motion */
+  var reveals = document.querySelectorAll(".reveal");
+  if (reduce || !("IntersectionObserver" in window)) {
+    reveals.forEach(function(el){ el.classList.add("in"); });
+  } else {
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if (en.isIntersecting){ en.target.classList.add("in"); io.unobserve(en.target); }
+      });
+    }, { threshold: 0.12, rootMargin: "0px 0px -8% 0px" });
+    reveals.forEach(function(el){ io.observe(el); });
+  }
+
+  /* 导航高亮当前章节 */
+  var navLinks = Array.prototype.slice.call(document.querySelectorAll("nav a"));
+  var sections = navLinks.map(function(a){
+    return document.querySelector(a.getAttribute("href"));
+  }).filter(Boolean);
+  if ("IntersectionObserver" in window && sections.length) {
+    var spy = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if (!en.isIntersecting) return;
+        var id = "#" + en.target.id;
+        navLinks.forEach(function(a){
+          a.classList.toggle("active", a.getAttribute("href") === id);
+        });
+      });
+    }, { rootMargin: "-30% 0px -60% 0px" });
+    sections.forEach(function(s){ spy.observe(s); });
+  }
+})();
+</script>
+</body>
+</html>

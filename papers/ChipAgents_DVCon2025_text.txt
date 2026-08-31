@@ -1,0 +1,38 @@
+Agentic AI for Chip Design
+Alpha Design AI Confidential
+Challenges in Design and Verification
+We observe the following problems after working with leading companies in chip design 
+and verification: 
+●Increasing complexity of RTL design and testbench.
+●Lengthy cycles and verification bottlenecks.
+●Limited scalability with traditional methods.
+●Cost and time pressures for first-time silicon success.
+Proprietary and Confidential
+ChipAgents: AI Agents and large language models for IC
+We propose novel solutions of specialized AI Agents and large language models to 
+transform IC into language-based AI design: using natural language and AI for design, 
+debugging, and verification.
+●Reduce 80% Development Time
+●Increase Accuracy and Precision
+●Optimization, Predictive Analysis and Simulation
+●Personalization and Customized Designs
+Proprietary and Confidential
+Specific Breakdown of Net Time Saved
+●Specification: 75% of time, net 7.5%
+●Design: 80% of time, net 12%
+●Verification: 90% of time, net 49.5%
+●Debugging: 80% of time, net 12%
+●T ape-Out: absorbed into early steps.
+●T otal Time Saved: ~80%
+Proprietary and Confidential
+
+Specification-to-RTL Generation:
+State-of-the-Art Agentic AI Performances
+Approach VerilogEval-Human Pass RateVerilogEval-v2 Pass Rate
+Generic LLM (GPT -4o)
+Claude-3.5-Sonnet
+51.3 N/A
+75.0 72.4 (113/156)
+VerilogCoder (NVIDIA)N/A 94.2 (147/156)
+MAGE 94.8 95.5 (149/156)
+ChipAgents (Ours)99.4 (155/156) 97.4 (152/156)

@@ -1,0 +1,1567 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="profile" href="https://gmpg.org/xfn/11">
+<title>ChipAgents Achieves State-of-the-Art Results on NVIDIA&#8217;s VerilogEval Benchmark &#8211; Algorithm</title>
+<meta name='robots' content='max-image-preview:large' />
+
+<!-- Google Tag Manager for WordPress by gtm4wp.com -->
+<script data-cfasync="false" data-pagespeed-no-defer>
+	var gtm4wp_datalayer_name = "dataLayer";
+	var dataLayer = dataLayer || [];
+</script>
+<!-- End Google Tag Manager for WordPress by gtm4wp.com --><link rel='dns-prefetch' href='//www.googletagmanager.com' />
+<link rel='dns-prefetch' href='//fonts.googleapis.com' />
+<link rel='dns-prefetch' href='//pagead2.googlesyndication.com' />
+<link rel="alternate" type="application/rss+xml" title="Algorithm &raquo; Feed" href="https://algorithmai.news/feed" />
+<link rel="alternate" type="application/rss+xml" title="Algorithm &raquo; Comments Feed" href="https://algorithmai.news/comments/feed" />
+<link rel="alternate" type="application/rss+xml" title="Algorithm &raquo; ChipAgents Achieves State-of-the-Art Results on NVIDIA&#8217;s VerilogEval Benchmark Comments Feed" href="https://algorithmai.news/chipagents-achieves-state-of-the-art-results-on-nvidias-verilogeval-benchmark/feed" />
+<link rel="alternate" title="oEmbed (JSON)" type="application/json+oembed" href="https://algorithmai.news/wp-json/oembed/1.0/embed?url=https%3A%2F%2Falgorithmai.news%2Fchipagents-achieves-state-of-the-art-results-on-nvidias-verilogeval-benchmark" />
+<link rel="alternate" title="oEmbed (XML)" type="text/xml+oembed" href="https://algorithmai.news/wp-json/oembed/1.0/embed?url=https%3A%2F%2Falgorithmai.news%2Fchipagents-achieves-state-of-the-art-results-on-nvidias-verilogeval-benchmark&#038;format=xml" />
+<style id="wp-img-auto-sizes-contain-inline-css">
+img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
+/*# sourceURL=wp-img-auto-sizes-contain-inline-css */
+</style>
+<style id="wp-emoji-styles-inline-css">
+
+	img.wp-smiley, img.emoji {
+		display: inline !important;
+		border: none !important;
+		box-shadow: none !important;
+		height: 1em !important;
+		width: 1em !important;
+		margin: 0 0.07em !important;
+		vertical-align: -0.1em !important;
+		background: none !important;
+		padding: 0 !important;
+	}
+/*# sourceURL=wp-emoji-styles-inline-css */
+</style>
+<style id="wp-block-library-inline-css">
+:root{--wp-block-synced-color:#7a00df;--wp-block-synced-color--rgb:122,0,223;--wp-bound-block-color:var(--wp-block-synced-color);--wp-editor-canvas-background:#ddd;--wp-admin-theme-color:#007cba;--wp-admin-theme-color--rgb:0,124,186;--wp-admin-theme-color-darker-10:#006ba1;--wp-admin-theme-color-darker-10--rgb:0,107,160.5;--wp-admin-theme-color-darker-20:#005a87;--wp-admin-theme-color-darker-20--rgb:0,90,135;--wp-admin-border-width-focus:2px}@media (min-resolution:192dpi){:root{--wp-admin-border-width-focus:1.5px}}.wp-element-button{cursor:pointer}:root .has-very-light-gray-background-color{background-color:#eee}:root .has-very-dark-gray-background-color{background-color:#313131}:root .has-very-light-gray-color{color:#eee}:root .has-very-dark-gray-color{color:#313131}:root .has-vivid-green-cyan-to-vivid-cyan-blue-gradient-background{background:linear-gradient(135deg,#00d084,#0693e3)}:root .has-purple-crush-gradient-background{background:linear-gradient(135deg,#34e2e4,#4721fb 50%,#ab1dfe)}:root .has-hazy-dawn-gradient-background{background:linear-gradient(135deg,#faaca8,#dad0ec)}:root .has-subdued-olive-gradient-background{background:linear-gradient(135deg,#fafae1,#67a671)}:root .has-atomic-cream-gradient-background{background:linear-gradient(135deg,#fdd79a,#004a59)}:root .has-nightshade-gradient-background{background:linear-gradient(135deg,#330968,#31cdcf)}:root .has-midnight-gradient-background{background:linear-gradient(135deg,#020381,#2874fc)}:root{--wp--preset--font-size--normal:16px;--wp--preset--font-size--huge:42px}.has-regular-font-size{font-size:1em}.has-larger-font-size{font-size:2.625em}.has-normal-font-size{font-size:var(--wp--preset--font-size--normal)}.has-huge-font-size{font-size:var(--wp--preset--font-size--huge)}:root .has-text-align-center{text-align:center}:root .has-text-align-left{text-align:left}:root .has-text-align-right{text-align:right}.has-fit-text{white-space:nowrap!important}#end-resizable-editor-section{display:none}.aligncenter{clear:both}.items-justified-left{justify-content:flex-start}.items-justified-center{justify-content:center}.items-justified-right{justify-content:flex-end}.items-justified-space-between{justify-content:space-between}.screen-reader-text{word-wrap:normal!important;border:0;clip-path:inset(50%);height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute;width:1px;word-break:normal!important}.screen-reader-text:focus{background-color:#ddd;clip-path:none;color:#444;display:block;font-size:1em;height:auto;left:5px;line-height:normal;padding:15px 23px 14px;text-decoration:none;top:5px;width:auto;z-index:100000}html :where(.has-border-color){border-style:solid}html :where([style^=border-color],[style*=";border-color"],[style*="; border-color"]){border-style:solid}html :where([style^=border-top-color],[style*=";border-top-color"],[style*="; border-top-color"]){border-top-style:solid}html :where([style^=border-right-color],[style*=";border-right-color"],[style*="; border-right-color"]){border-right-style:solid}html :where([style^=border-bottom-color],[style*=";border-bottom-color"],[style*="; border-bottom-color"]){border-bottom-style:solid}html :where([style^=border-left-color],[style*=";border-left-color"],[style*="; border-left-color"]){border-left-style:solid}html :where([style^=border-width],[style*=";border-width"],[style*="; border-width"]){border-style:solid}html :where([style^=border-top-width],[style*=";border-top-width"],[style*="; border-top-width"]){border-top-style:solid}html :where([style^=border-right-width],[style*=";border-right-width"],[style*="; border-right-width"]){border-right-style:solid}html :where([style^=border-bottom-width],[style*=";border-bottom-width"],[style*="; border-bottom-width"]){border-bottom-style:solid}html :where([style^=border-left-width],[style*=";border-left-width"],[style*="; border-left-width"]){border-left-style:solid}html :where(img[class*=wp-image-]){height:auto;max-width:100%}:where(figure){margin:0 0 1em}html :where(.is-position-sticky){--wp-admin--admin-bar--position-offset:var(--wp-admin--admin-bar--height,0px)}@media screen and (max-width:600px){html :where(.is-position-sticky){--wp-admin--admin-bar--position-offset:0px}}
+
+/*# sourceURL=/wp-includes/css/dist/block-library/common.min.css */
+</style>
+<style id="wp-block-archives-inline-css">
+.wp-block-archives{box-sizing:border-box}.wp-block-archives-dropdown label{display:block}
+/*# sourceURL=https://algorithmai.news/wp-includes/blocks/archives/style.min.css */
+</style>
+<style id="wp-block-categories-inline-css">
+.wp-block-categories{box-sizing:border-box}.wp-block-categories.alignleft{margin-right:2em}.wp-block-categories.alignright{margin-left:2em}.wp-block-categories.wp-block-categories-dropdown.aligncenter{text-align:center}.wp-block-categories .wp-block-categories__label:not(.screen-reader-text){display:block;width:100%}
+/*# sourceURL=https://algorithmai.news/wp-includes/blocks/categories/style.min.css */
+</style>
+<style id="wp-block-heading-inline-css">
+h1:where(.wp-block-heading).has-background,h2:where(.wp-block-heading).has-background,h3:where(.wp-block-heading).has-background,h4:where(.wp-block-heading).has-background,h5:where(.wp-block-heading).has-background,h6:where(.wp-block-heading).has-background{padding:1.25em 2.375em}h1.has-text-align-left[style*=writing-mode]:where([style*=vertical-lr]),h1.has-text-align-right[style*=writing-mode]:where([style*=vertical-rl]),h2.has-text-align-left[style*=writing-mode]:where([style*=vertical-lr]),h2.has-text-align-right[style*=writing-mode]:where([style*=vertical-rl]),h3.has-text-align-left[style*=writing-mode]:where([style*=vertical-lr]),h3.has-text-align-right[style*=writing-mode]:where([style*=vertical-rl]),h4.has-text-align-left[style*=writing-mode]:where([style*=vertical-lr]),h4.has-text-align-right[style*=writing-mode]:where([style*=vertical-rl]),h5.has-text-align-left[style*=writing-mode]:where([style*=vertical-lr]),h5.has-text-align-right[style*=writing-mode]:where([style*=vertical-rl]),h6.has-text-align-left[style*=writing-mode]:where([style*=vertical-lr]),h6.has-text-align-right[style*=writing-mode]:where([style*=vertical-rl]){rotate:180deg}
+/*# sourceURL=https://algorithmai.news/wp-includes/blocks/heading/style.min.css */
+</style>
+<style id="wp-block-latest-posts-inline-css">
+.wp-block-latest-posts{box-sizing:border-box}.wp-block-latest-posts.alignleft{margin-right:2em}.wp-block-latest-posts.alignright{margin-left:2em}.wp-block-latest-posts.wp-block-latest-posts__list{list-style:none}.wp-block-latest-posts.wp-block-latest-posts__list li{clear:both;overflow-wrap:break-word}.wp-block-latest-posts.is-grid:not(.is-layout-grid){display:flex;flex-wrap:wrap}.wp-block-latest-posts.is-grid:not(.is-layout-grid) li{margin:0 1.25em 1.25em 0;width:100%}@media (min-width:600px){.wp-block-latest-posts.columns-2:not(.is-layout-grid) li{width:calc(50% - .625em)}.wp-block-latest-posts.columns-2:not(.is-layout-grid) li:nth-child(2n){margin-right:0}.wp-block-latest-posts.columns-3:not(.is-layout-grid) li{width:calc(33.33333% - .83333em)}.wp-block-latest-posts.columns-3:not(.is-layout-grid) li:nth-child(3n){margin-right:0}.wp-block-latest-posts.columns-4:not(.is-layout-grid) li{width:calc(25% - .9375em)}.wp-block-latest-posts.columns-4:not(.is-layout-grid) li:nth-child(4n){margin-right:0}.wp-block-latest-posts.columns-5:not(.is-layout-grid) li{width:calc(20% - 1em)}.wp-block-latest-posts.columns-5:not(.is-layout-grid) li:nth-child(5n){margin-right:0}.wp-block-latest-posts.columns-6:not(.is-layout-grid) li{width:calc(16.66667% - 1.04167em)}.wp-block-latest-posts.columns-6:not(.is-layout-grid) li:nth-child(6n){margin-right:0}}@media (max-width:600px){.wp-block-latest-posts-is-layout-grid[class*=columns-]:not(.has-native-responsive-grid){grid-template-columns:1fr}}:root :where(.wp-block-latest-posts.is-grid){padding:0}:root :where(.wp-block-latest-posts.wp-block-latest-posts__list){padding-left:0}.wp-block-latest-posts__post-author,.wp-block-latest-posts__post-date{display:block;font-size:.8125em}.wp-block-latest-posts__post-excerpt,.wp-block-latest-posts__post-full-content{margin-bottom:1em;margin-top:.5em}.wp-block-latest-posts__featured-image a{display:inline-block}.wp-block-latest-posts__featured-image img{height:auto;max-width:100%;width:auto}.wp-block-latest-posts__featured-image.alignleft{float:left;margin-right:1em}.wp-block-latest-posts__featured-image.alignright{float:right;margin-left:1em}.wp-block-latest-posts__featured-image.aligncenter{margin-bottom:1em;text-align:center}
+/*# sourceURL=https://algorithmai.news/wp-includes/blocks/latest-posts/style.min.css */
+</style>
+<style id="wp-block-list-inline-css">
+ol,ul{box-sizing:border-box}:root :where(.wp-block-list.has-background){padding:1.25em 2.375em}
+/*# sourceURL=https://algorithmai.news/wp-includes/blocks/list/style.min.css */
+</style>
+<style id="wp-block-paragraph-inline-css">
+.is-small-text{font-size:.875em}.is-regular-text{font-size:1em}.is-large-text{font-size:2.25em}.is-larger-text{font-size:3em}.has-drop-cap:not(:focus):first-letter{float:left;font-size:8.4em;font-style:normal;font-weight:100;line-height:.68;margin:.05em .1em 0 0;text-transform:uppercase}body.rtl .has-drop-cap:not(:focus):first-letter{float:none;margin-left:.1em}p.has-drop-cap.has-background{overflow:hidden}:root :where(p.has-background){padding:1.25em 2.375em}:where(p.has-text-color:not(.has-link-color)) a{color:inherit}p.has-text-align-left[style*="writing-mode:vertical-lr"],p.has-text-align-right[style*="writing-mode:vertical-rl"]{rotate:180deg}
+/*# sourceURL=https://algorithmai.news/wp-includes/blocks/paragraph/style.min.css */
+</style>
+<style id="wp-block-search-inline-css">
+.wp-block-search__button{margin-left:10px;word-break:normal}.wp-block-search__button.has-icon{line-height:0}.wp-block-search__button svg{fill:currentColor;height:1.25em;min-height:24px;min-width:24px;vertical-align:text-bottom;width:1.25em}:where(.wp-block-search__button){border:1px solid #ccc;padding:6px 10px}.wp-block-search__inside-wrapper{display:flex;flex:auto;flex-wrap:nowrap;max-width:100%}.wp-block-search__label{width:100%}.wp-block-search.wp-block-search__button-only .wp-block-search__button{box-sizing:border-box;display:flex;flex-shrink:0;justify-content:center;margin-left:0;max-width:100%}.wp-block-search.wp-block-search__button-only .wp-block-search__inside-wrapper{min-width:0!important;transition-property:width}.wp-block-search.wp-block-search__button-only .wp-block-search__input{flex-basis:100%;transition-duration:.3s}.wp-block-search.wp-block-search__button-only.wp-block-search__searchfield-hidden,.wp-block-search.wp-block-search__button-only.wp-block-search__searchfield-hidden .wp-block-search__inside-wrapper{overflow:hidden}.wp-block-search.wp-block-search__button-only.wp-block-search__searchfield-hidden .wp-block-search__input{border-left-width:0!important;border-right-width:0!important;flex-basis:0;flex-grow:0;margin:0;min-width:0!important;padding-left:0!important;padding-right:0!important;width:0!important}:where(.wp-block-search__input){-webkit-appearance:initial;-moz-appearance:initial;appearance:none;border:1px solid #949494;flex-grow:1;font-family:inherit;font-size:inherit;font-style:inherit;font-weight:inherit;letter-spacing:inherit;line-height:inherit;margin-left:0;margin-right:0;min-width:3rem;padding:8px;text-decoration:unset!important;text-transform:inherit}:where(.wp-block-search__button-inside .wp-block-search__inside-wrapper){background-color:#fff;border:1px solid #949494;box-sizing:border-box;padding:4px}:where(.wp-block-search__button-inside .wp-block-search__inside-wrapper) .wp-block-search__input{border:none;border-radius:0;padding:0 4px}:where(.wp-block-search__button-inside .wp-block-search__inside-wrapper) .wp-block-search__input:focus{outline:none}:where(.wp-block-search__button-inside .wp-block-search__inside-wrapper) :where(.wp-block-search__button){padding:4px 8px}.wp-block-search.aligncenter .wp-block-search__inside-wrapper{margin:auto}.wp-block[data-align=right] .wp-block-search.wp-block-search__button-only .wp-block-search__inside-wrapper{float:right}
+/*# sourceURL=https://algorithmai.news/wp-includes/blocks/search/style.min.css */
+</style>
+<style id="wp-block-search-theme-inline-css">
+.wp-block-search .wp-block-search__label{font-weight:700}.wp-block-search__button{border:1px solid #ccc;padding:.375em .625em}
+/*# sourceURL=https://algorithmai.news/wp-includes/blocks/search/theme.min.css */
+</style>
+<style id="wp-block-tag-cloud-inline-css">
+.wp-block-tag-cloud{box-sizing:border-box}.wp-block-tag-cloud.aligncenter{justify-content:center;text-align:center}.wp-block-tag-cloud a{display:inline-block;margin-right:5px}.wp-block-tag-cloud span{display:inline-block;margin-left:5px;text-decoration:none}:root :where(.wp-block-tag-cloud.is-style-outline){display:flex;flex-wrap:wrap;gap:1ch}:root :where(.wp-block-tag-cloud.is-style-outline a){border:1px solid;font-size:unset!important;margin-right:0;padding:1ch 2ch;text-decoration:none!important}
+/*# sourceURL=https://algorithmai.news/wp-includes/blocks/tag-cloud/style.min.css */
+</style>
+<style id="wp-block-group-inline-css">
+.wp-block-group{box-sizing:border-box}:where(.wp-block-group.wp-block-group-is-layout-constrained){position:relative}
+/*# sourceURL=https://algorithmai.news/wp-includes/blocks/group/style.min.css */
+</style>
+<style id="wp-block-group-theme-inline-css">
+:where(.wp-block-group.has-background){padding:1.25em 2.375em}
+/*# sourceURL=https://algorithmai.news/wp-includes/blocks/group/theme.min.css */
+</style>
+<style id="wp-block-spacer-inline-css">
+.wp-block-spacer{clear:both}
+/*# sourceURL=https://algorithmai.news/wp-includes/blocks/spacer/style.min.css */
+</style>
+
+<style id="classic-theme-styles-inline-css">
+/*! This file is auto-generated */
+.wp-block-button__link{color:#fff;background-color:#32373c;border-radius:9999px;box-shadow:none;text-decoration:none;padding:calc(.667em + 2px) calc(1.333em + 2px);font-size:1.125em}.wp-block-file__button{background:#32373c;color:#fff;text-decoration:none}
+/*# sourceURL=/wp-includes/css/classic-themes.min.css */
+</style>
+
+<style id="global-styles-inline-css">
+:root{--wp--preset--aspect-ratio--square: 1;--wp--preset--aspect-ratio--4-3: 4/3;--wp--preset--aspect-ratio--3-4: 3/4;--wp--preset--aspect-ratio--3-2: 3/2;--wp--preset--aspect-ratio--2-3: 2/3;--wp--preset--aspect-ratio--16-9: 16/9;--wp--preset--aspect-ratio--9-16: 9/16;--wp--preset--color--black: #000000;--wp--preset--color--cyan-bluish-gray: #abb8c3;--wp--preset--color--white: #ffffff;--wp--preset--color--pale-pink: #f78da7;--wp--preset--color--vivid-red: #cf2e2e;--wp--preset--color--luminous-vivid-orange: #ff6900;--wp--preset--color--luminous-vivid-amber: #fcb900;--wp--preset--color--light-green-cyan: #7bdcb5;--wp--preset--color--vivid-green-cyan: #00d084;--wp--preset--color--pale-cyan-blue: #8ed1fc;--wp--preset--color--vivid-cyan-blue: #0693e3;--wp--preset--color--vivid-purple: #9b51e0;--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple: linear-gradient(135deg,rgb(6,147,227) 0%,rgb(155,81,224) 100%);--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan: linear-gradient(135deg,rgb(122,220,180) 0%,rgb(0,208,130) 100%);--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange: linear-gradient(135deg,rgb(252,185,0) 0%,rgb(255,105,0) 100%);--wp--preset--gradient--luminous-vivid-orange-to-vivid-red: linear-gradient(135deg,rgb(255,105,0) 0%,rgb(207,46,46) 100%);--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray: linear-gradient(135deg,rgb(238,238,238) 0%,rgb(169,184,195) 100%);--wp--preset--gradient--cool-to-warm-spectrum: linear-gradient(135deg,rgb(74,234,220) 0%,rgb(151,120,209) 20%,rgb(207,42,186) 40%,rgb(238,44,130) 60%,rgb(251,105,98) 80%,rgb(254,248,76) 100%);--wp--preset--gradient--blush-light-purple: linear-gradient(135deg,rgb(255,206,236) 0%,rgb(152,150,240) 100%);--wp--preset--gradient--blush-bordeaux: linear-gradient(135deg,rgb(254,205,165) 0%,rgb(254,45,45) 50%,rgb(107,0,62) 100%);--wp--preset--gradient--luminous-dusk: linear-gradient(135deg,rgb(255,203,112) 0%,rgb(199,81,192) 50%,rgb(65,88,208) 100%);--wp--preset--gradient--pale-ocean: linear-gradient(135deg,rgb(255,245,203) 0%,rgb(182,227,212) 50%,rgb(51,167,181) 100%);--wp--preset--gradient--electric-grass: linear-gradient(135deg,rgb(202,248,128) 0%,rgb(113,206,126) 100%);--wp--preset--gradient--midnight: linear-gradient(135deg,rgb(2,3,129) 0%,rgb(40,116,252) 100%);--wp--preset--font-size--small: 13px;--wp--preset--font-size--medium: 20px;--wp--preset--font-size--large: 36px;--wp--preset--font-size--x-large: 42px;--wp--preset--spacing--20: 0.44rem;--wp--preset--spacing--30: 0.67rem;--wp--preset--spacing--40: 1rem;--wp--preset--spacing--50: 1.5rem;--wp--preset--spacing--60: 2.25rem;--wp--preset--spacing--70: 3.38rem;--wp--preset--spacing--80: 5.06rem;--wp--preset--shadow--natural: 6px 6px 9px rgba(0, 0, 0, 0.2);--wp--preset--shadow--deep: 12px 12px 50px rgba(0, 0, 0, 0.4);--wp--preset--shadow--sharp: 6px 6px 0px rgba(0, 0, 0, 0.2);--wp--preset--shadow--outlined: 6px 6px 0px -3px rgb(255, 255, 255), 6px 6px rgb(0, 0, 0);--wp--preset--shadow--crisp: 6px 6px 0px rgb(0, 0, 0);}.wp-block-button{--wp--preset--dimension--25: 25%;--wp--preset--dimension--50: 50%;--wp--preset--dimension--75: 75%;--wp--preset--dimension--100: 100%;}:where(body) { margin: 0; }:where(.is-layout-flex){gap: 0.5em;}:where(.is-layout-grid){gap: 0.5em;}body .is-layout-flex{display: flex;}.is-layout-flex{flex-wrap: wrap;align-items: center;}.is-layout-flex > :is(*, div){margin: 0;}body .is-layout-grid{display: grid;}.is-layout-grid > :is(*, div){margin: 0;}body{padding-top: 0px;padding-right: 0px;padding-bottom: 0px;padding-left: 0px;}:root :where(.wp-element-button, .wp-block-button__link){background-color: #32373c;border-width: 0;color: #fff;font-family: inherit;font-size: inherit;font-style: inherit;font-weight: inherit;letter-spacing: inherit;line-height: inherit;padding-top: calc(0.667em + 2px);padding-right: calc(1.333em + 2px);padding-bottom: calc(0.667em + 2px);padding-left: calc(1.333em + 2px);text-decoration: none;text-transform: inherit;}.has-black-color{color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-color{color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-color{color: var(--wp--preset--color--white) !important;}.has-pale-pink-color{color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-color{color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-color{color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-color{color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-color{color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-color{color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-color{color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-color{color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-color{color: var(--wp--preset--color--vivid-purple) !important;}.has-black-background-color{background-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-background-color{background-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-background-color{background-color: var(--wp--preset--color--white) !important;}.has-pale-pink-background-color{background-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-background-color{background-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-background-color{background-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-background-color{background-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-background-color{background-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-background-color{background-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-background-color{background-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-background-color{background-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-background-color{background-color: var(--wp--preset--color--vivid-purple) !important;}.has-black-border-color{border-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-border-color{border-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-border-color{border-color: var(--wp--preset--color--white) !important;}.has-pale-pink-border-color{border-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-border-color{border-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-border-color{border-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-border-color{border-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-border-color{border-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-border-color{border-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-border-color{border-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-border-color{border-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-border-color{border-color: var(--wp--preset--color--vivid-purple) !important;}.has-vivid-cyan-blue-to-vivid-purple-gradient-background{background: var(--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple) !important;}.has-light-green-cyan-to-vivid-green-cyan-gradient-background{background: var(--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan) !important;}.has-luminous-vivid-amber-to-luminous-vivid-orange-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange) !important;}.has-luminous-vivid-orange-to-vivid-red-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-orange-to-vivid-red) !important;}.has-very-light-gray-to-cyan-bluish-gray-gradient-background{background: var(--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray) !important;}.has-cool-to-warm-spectrum-gradient-background{background: var(--wp--preset--gradient--cool-to-warm-spectrum) !important;}.has-blush-light-purple-gradient-background{background: var(--wp--preset--gradient--blush-light-purple) !important;}.has-blush-bordeaux-gradient-background{background: var(--wp--preset--gradient--blush-bordeaux) !important;}.has-luminous-dusk-gradient-background{background: var(--wp--preset--gradient--luminous-dusk) !important;}.has-pale-ocean-gradient-background{background: var(--wp--preset--gradient--pale-ocean) !important;}.has-electric-grass-gradient-background{background: var(--wp--preset--gradient--electric-grass) !important;}.has-midnight-gradient-background{background: var(--wp--preset--gradient--midnight) !important;}.has-small-font-size{font-size: var(--wp--preset--font-size--small) !important;}.has-medium-font-size{font-size: var(--wp--preset--font-size--medium) !important;}.has-large-font-size{font-size: var(--wp--preset--font-size--large) !important;}.has-x-large-font-size{font-size: var(--wp--preset--font-size--x-large) !important;}
+:where(.wp-block-latest-posts.is-layout-flex){gap: 1.25em;}:where(.wp-block-latest-posts.is-layout-grid){gap: 1.25em;}
+/*# sourceURL=global-styles-inline-css */
+</style>
+
+<link rel='stylesheet' id='ansar-import-css' href='https://algorithmai.news/wp-content/plugins/ansar-import/public/css/ansar-import-public.css?ver=2.0.4' media='all' />
+<link rel='stylesheet' id='newsup-fonts-css' href='//fonts.googleapis.com/css?family=Montserrat%3A400%2C500%2C700%2C800%7CWork%2BSans%3A300%2C400%2C500%2C600%2C700%2C800%2C900%26display%3Dswap&#038;subset=latin%2Clatin-ext' media='all' />
+<link rel='stylesheet' id='bootstrap-css' href='https://algorithmai.news/wp-content/themes/newsup/css/bootstrap.css?ver=7.1' media='all' />
+<link rel='stylesheet' id='newsup-style-css' href='https://algorithmai.news/wp-content/themes/news-talk/style.css?ver=7.1' media='all' />
+<link rel='stylesheet' id='font-awesome-5-all-css' href='https://algorithmai.news/wp-content/themes/newsup/css/font-awesome/css/all.min.css?ver=7.1' media='all' />
+<link rel='stylesheet' id='font-awesome-4-shim-css' href='https://algorithmai.news/wp-content/themes/newsup/css/font-awesome/css/v4-shims.min.css?ver=7.1' media='all' />
+<link rel='stylesheet' id='owl-carousel-css' href='https://algorithmai.news/wp-content/themes/newsup/css/owl.carousel.css?ver=7.1' media='all' />
+<link rel='stylesheet' id='smartmenus-css' href='https://algorithmai.news/wp-content/themes/newsup/css/jquery.smartmenus.bootstrap.css?ver=7.1' media='all' />
+<link rel='stylesheet' id='newsup-custom-css-css' href='https://algorithmai.news/wp-content/themes/newsup/inc/ansar/customize/css/customizer.css?ver=1.0' media='all' />
+<link rel='stylesheet' id='newsletter-css' href='https://algorithmai.news/wp-content/plugins/newsletter/style.css?ver=8.9.3' media='all' />
+<link rel='stylesheet' id='newsup-style-parent-css' href='https://algorithmai.news/wp-content/themes/newsup/style.css?ver=7.1' media='all' />
+<link rel='stylesheet' id='newstalk-style-css' href='https://algorithmai.news/wp-content/themes/news-talk/style.css?ver=1.0' media='all' />
+<link rel='stylesheet' id='newstalk-default-css-css' href='https://algorithmai.news/wp-content/themes/news-talk/css/colors/default.css?ver=7.1' media='all' />
+<script id="jquery-core-js" src="https://algorithmai.news/wp-includes/js/jquery/jquery.min.js?ver=3.7.1"></script>
+<script id="jquery-migrate-js" src="https://algorithmai.news/wp-includes/js/jquery/jquery-migrate.min.js?ver=3.4.1"></script>
+<script id="ansar-import-js" src="https://algorithmai.news/wp-content/plugins/ansar-import/public/js/ansar-import-public.js?ver=2.0.4"></script>
+<script id="newsup-navigation-js" src="https://algorithmai.news/wp-content/themes/newsup/js/navigation.js?ver=7.1"></script>
+<script id="bootstrap-js" src="https://algorithmai.news/wp-content/themes/newsup/js/bootstrap.js?ver=7.1"></script>
+<script id="owl-carousel-min-js" src="https://algorithmai.news/wp-content/themes/newsup/js/owl.carousel.min.js?ver=7.1"></script>
+<script id="smartmenus-js-js" src="https://algorithmai.news/wp-content/themes/newsup/js/jquery.smartmenus.js?ver=7.1"></script>
+<script id="bootstrap-smartmenus-js-js" src="https://algorithmai.news/wp-content/themes/newsup/js/jquery.smartmenus.bootstrap.js?ver=7.1"></script>
+<script id="newsup-marquee-js-js" src="https://algorithmai.news/wp-content/themes/newsup/js/jquery.marquee.js?ver=7.1"></script>
+<script id="newsup-main-js-js" src="https://algorithmai.news/wp-content/themes/newsup/js/main.js?ver=7.1"></script>
+
+<!-- Google tag (gtag.js) snippet added by Site Kit -->
+<!-- Google Analytics snippet added by Site Kit -->
+<script id="google_gtagjs-js" src="https://www.googletagmanager.com/gtag/js?id=GT-KT4BXK6S" async></script>
+<script id="google_gtagjs-js-after">
+window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}
+gtag("set","linker",{"domains":["algorithmai.news"]});
+gtag("js", new Date());
+gtag("set", "developer_id.dZTNiMT", true);
+gtag("config", "GT-KT4BXK6S", {"googlesitekit_post_type":"post"});
+ window._googlesitekit = window._googlesitekit || {}; window._googlesitekit.throttledEvents = []; window._googlesitekit.gtagEvent = (name, data) => { var key = JSON.stringify( { name, data } ); if ( !! window._googlesitekit.throttledEvents[ key ] ) { return; } window._googlesitekit.throttledEvents[ key ] = true; setTimeout( () => { delete window._googlesitekit.throttledEvents[ key ]; }, 5 ); gtag( "event", name, { ...data, event_source: "site-kit" } ); }; 
+//# sourceURL=google_gtagjs-js-after
+</script>
+<link rel="https://api.w.org/" href="https://algorithmai.news/wp-json/" /><link rel="alternate" title="JSON" type="application/json" href="https://algorithmai.news/wp-json/wp/v2/posts/1244" /><link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://algorithmai.news/xmlrpc.php?rsd" />
+<meta name="generator" content="WordPress 7.1" />
+<link rel="canonical" href="https://algorithmai.news/chipagents-achieves-state-of-the-art-results-on-nvidias-verilogeval-benchmark" />
+<link rel='shortlink' href='https://algorithmai.news/?p=1244' />
+<meta name="generator" content="Site Kit by Google 1.158.0" />
+<!-- Google Tag Manager for WordPress by gtm4wp.com -->
+<!-- GTM Container placement set to footer -->
+<script data-cfasync="false" data-pagespeed-no-defer type="text/javascript">
+</script>
+<!-- End Google Tag Manager for WordPress by gtm4wp.com --><link rel="pingback" href="https://algorithmai.news/xmlrpc.php"> 
+<style type="text/css" id="custom-background-css">
+    .wrapper { background-color: #eee; }
+</style>
+<meta name="google-site-verification" content="66PjKk7j0vAKo1Usb_qldwQj-cQK7zcreKTb_1twEl8">
+<!-- Google AdSense meta tags added by Site Kit -->
+<meta name="google-adsense-platform-account" content="ca-host-pub-2644536267352236">
+<meta name="google-adsense-platform-domain" content="sitekit.withgoogle.com">
+<!-- End Google AdSense meta tags added by Site Kit -->
+<meta name="generator" content="Elementor 3.26.2; features: e_font_icon_svg, additional_custom_breakpoints, e_element_cache; settings: css_print_method-external, google_font-enabled, font_display-swap">
+			<style>
+				.e-con.e-parent:nth-of-type(n+4):not(.e-lazyloaded):not(.e-no-lazyload),
+				.e-con.e-parent:nth-of-type(n+4):not(.e-lazyloaded):not(.e-no-lazyload) * {
+					background-image: none !important;
+				}
+				@media screen and (max-height: 1024px) {
+					.e-con.e-parent:nth-of-type(n+3):not(.e-lazyloaded):not(.e-no-lazyload),
+					.e-con.e-parent:nth-of-type(n+3):not(.e-lazyloaded):not(.e-no-lazyload) * {
+						background-image: none !important;
+					}
+				}
+				@media screen and (max-height: 640px) {
+					.e-con.e-parent:nth-of-type(n+2):not(.e-lazyloaded):not(.e-no-lazyload),
+					.e-con.e-parent:nth-of-type(n+2):not(.e-lazyloaded):not(.e-no-lazyload) * {
+						background-image: none !important;
+					}
+				}
+			</style>
+			    <style type="text/css">
+            body .site-title a,
+        body .site-description {
+            color: #000000;
+        }
+
+        .site-branding-text .site-title a {
+                font-size: 0px;
+            }
+
+            @media only screen and (max-width: 640px) {
+                .site-branding-text .site-title a {
+                    font-size: 40px;
+
+                }
+            }
+
+            @media only screen and (max-width: 375px) {
+                .site-branding-text .site-title a {
+                    font-size: 32px;
+
+                }
+            }
+
+        </style>
+    
+<!-- Google AdSense snippet added by Site Kit -->
+<script async crossorigin="anonymous" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5931317461055266&#038;host=ca-host-pub-2644536267352236"></script>
+
+<!-- End Google AdSense snippet added by Site Kit -->
+<link rel="icon" href="https://algorithmai.news/wp-content/uploads/2024/12/cropped-ai-generated-8531013_1280-32x32.jpg" sizes="32x32" />
+<link rel="icon" href="https://algorithmai.news/wp-content/uploads/2024/12/cropped-ai-generated-8531013_1280-192x192.jpg" sizes="192x192" />
+<link rel="apple-touch-icon" href="https://algorithmai.news/wp-content/uploads/2024/12/cropped-ai-generated-8531013_1280-180x180.jpg" />
+<meta name="msapplication-TileImage" content="https://algorithmai.news/wp-content/uploads/2024/12/cropped-ai-generated-8531013_1280-270x270.jpg" />
+<style id="wp-custom-css">
+
+.mg-head-detail .info-left li span.time {
+	background: #fff;
+	color: #3366ff;
+}
+
+.mg-headwidget .mg-head-detail {
+	background: #3366ff;
+}
+.mg-head-detail .info-left li, .mg-headwidget .mg-head-detail .info-left li a , .mg-headwidget .mg-head-detail li a i, .mg-headwidget .mg-head-detail .info-right li a {
+	color: #fff;
+}
+.mg-headwidget .mg-head-detail .info-right li a:hover, .mg-headwidget .mg-head-detail .info-right li a:focus {
+	color: #3366ff;
+}
+.mg-headwidget .mg-head-detail li a i {
+	color: #fff;
+}
+.mg-headwidget .mg-head-detail .info-right li a i {
+	color: #fff;
+}
+ .mg-headwidget .site-branding-text, .mg-headwidget .site-branding-text a, .site-title a, .site-description, .site-title a:hover {
+	opacity: 0;
+}
+.mg-headwidget .trans {
+	background: rgba(0, 0, 0, 0.0);
+}
+.mg-headwidget.trans .mg-head-detail {
+	background: rgba(0, 0, 0, 0.0);
+	border-color: rgba(255, 255, 255, 0.1);
+}
+.mg-headwidget.trans .mg-head-detail .info-left li a , .mg-headwidget.trans .mg-head-detail li a i, .mg-headwidget.trans .mg-head-detail .info-right li a {
+	color: #fff;
+}
+.mg-headwidget.trans .navbar-wp {
+    background: rgba(0, 0, 0, 0.7);
+}
+span.time {
+	background: #3366ff;
+}
+
+@media screen and (max-width: 480px)
+{
+.mg-nav-widget-area-back
+{
+    background: url(https://algorithmai.news/wp-content/uploads/2024/12/AlgorithmAI-mobile-header.png);
+ }
+ center;
+	 .site-branding-text, .site-branding-text a, .site-title a, .site-description, .site-title a:hover {
+	opacity: 0;
+}
+
+}
+
+/*=== navbar Header colors ===*/
+.mg-headwidget .navbar-wp {
+	background: #3366ff;
+}
+.mg-headwidget .navbar-header .navbar-brand {
+	color: #222;
+}
+.header-widget .mg-header-box .mg-social li span.icon-soci a {
+    color: #999;
+}
+.header-widget .mg-header-box .mg-social span.icon-soci:hover a, .header-widget .mg-header-box .mg-social span.icon-soci:focus a {
+    color: #3366ff;
+}
+.mg-headwidget .navbar-wp .navbar-nav > li> a {
+	color: #fff;
+}
+
+.mg-headwidget .navbar-wp .navbar-nav > li> a:hover {
+    color: rgba(255,255,255,0.71);
+}
+
+.mg-headwidget .navbar-wp .navbar-nav > li > a:focus, .mg-headwidget .navbar-wp .navbar-nav > .active > a, .mg-headwidget .navbar-wp .navbar-nav > .active > a:hover, .mg-headwidget .navbar-wp .navbar-nav > .active > a:focus {
+	color: #fff;
+	background: #3366ff;
+}
+.mg-headwidget .navbar-default .navbar-toggle .icon-bar {
+    background-color: #fff;
+}
+.mg-headwidget.trans .mg-head-detail .mg-social i {
+    color: #fff;
+}
+.mg-headwidget.trans .mg-header-box-info h4, .mg-headwidget.trans .mg-header-box-info p {
+	color: #fff;
+}
+.mg-headwidget.light .mg-head-detail{
+	background: #fff;
+	border-color: #eee;
+}
+.mg-headwidget.light .info-left li {
+	color: #848582;
+}
+.mg-headwidget.light .mg-nav-widget-area-back .inner {
+	background: #fff;
+}
+
+.navbar-wp .dropdown-menu.searchinner .btn:focus, .navbar-wp .dropdown-menu.searchinner .btn:hover {
+	background: #002954;
+	border-color: #002954;
+	color: #fff;
+}
+.small-post a:focus h5 {
+	color: #3366ff;
+	border: 1px solid #3366ff;
+}
+
+/*==================== Theme Menu ====================*/
+/**Category Color **/
+a.newsup-categories.category-color-1{background: #3366ff;}
+a.newsup-categories.category-color-2{background: #feb236;}
+a.newsup-categories.category-color-3{background: #622569;}
+a.newsup-categories.category-color-4{background: #82b74b;}
+/*=== navbar dropdown colors ===*/ 
+.navbar-wp .dropdown-menu {
+	background: #1f2024;
+}
+.navbar-wp .dropdown-menu > li > a {
+	background: #1f2024;
+	color: #fff;
+}
+.navbar-wp .dropdown-menu > .active > a, .navbar-wp .dropdown-menu > .active > a:hover, .navbar-wp .dropdown-menu > .active > a:focus {
+	background: #3366ff;
+	color: #fff;
+}
+.navbar-wp .dropdown-menu > li > a:hover, .navbar-wp .dropdown-menu > li > a:focus {
+	background: #3366ff;
+}
+.navbar-wp .navbar-nav > .disabled > a, .navbar-wp .navbar-nav > .disabled > a:hover, .navbar-wp .navbar-nav > .disabled > a:focus {
+	color: #ccc;
+}
+.mg-search-box .btn, .mg-posts-sec-inner .btn {
+	background: #3366ff;
+	border-color: #3366ff;
+	color: #fff;
+}
+.mg-search-box a {
+	color: #fff;
+}
+.mg-search-box a:hover, .mg-search-box a:focus {
+	color: #fff;
+}
+.mobilehomebtn {
+    background: #3366ff;
+    color: #fff;
+}
+
+.mobilehomebtn:hover{color:#fff;}
+.btn:hover, .btn:focus, .btn.focus{
+	color: #fff;}
+
+
+/*==================== Body & Global ====================*/
+.wrapper {
+	background: #eee;
+}
+body {
+	color: #222;
+}
+.mg-heading h3, .mg-heading h3 a {
+	color: #212121;
+}
+input:not([type]), input[type="email"], input[type="number"], input[type="password"], input[type="tel"], input[type="url"], input[type="text"], textarea {
+	color: #9b9ea8;
+	border-color: #eef3fb;
+}
+.form-control:hover, textarea:hover, textarea:focus,input:not([type]):hover, input[type="email"]:hover, input[type="number"]:hover, input[type="password"]:hover, input[type="tel"]:hover, input[type="url"]:hover, input[type="text"]:hover, input:not([type]):focus, input[type="email"]:focus, input[type="number"]:focus, input[type="password"]:focus, input[type="tel"]:focus, input[type="url"]:focus, input[type="text"]:focus {
+	border-color: #3366ff;
+}
+input[type="submit"], input[type="reset"],  button {
+	background: #3366ff;
+	border-color: #3366ff;
+	color: #fff;
+}
+input[type="submit"]:hover, input[type="reset"]:hover, button:hover,input[type="submit"]:focus, input[type="reset"]:focus, button:focus {
+	background: #002954;
+	border-color: #002954;
+	color: #fff;
+}
+a {
+	color: #3366ff;
+}
+a:hover, a:focus {
+	color: #3366ff;
+}
+blockquote{
+	background: #f5f5f5;
+	border-color: #3366ff;
+}
+blockquote::before {
+	color: #3366ff;
+}
+.mg-search-modal .mg-search .btn {
+	background: #3366ff;
+	color: #fff;
+}
+.mg-search-modal .mg-search .btn:hover {
+	background: #002954;
+}
+.mg-error-404 h1 i {
+	color: #3366ff;
+}
+.grey-bg {
+	background: #f4f7fc;
+}
+.owl-carousel .owl-controls .owl-buttons div:hover {
+	background: #3366ff;
+	border-color: #3366ff;
+	color: #fff;
+}
+.owl-carousel .owl-controls .owl-buttons div:hover i {
+	color: #fff;
+}
+.owl-carousel .owl-controls .owl-page span {
+	border-color: #fff;
+}
+.owl-carousel .owl-controls .owl-page.active span {
+	border-color: #3366ff;
+}
+.mg-social li a, .mg-social li span.icon-soci a {
+	color: #fff !important;
+}
+
+.post-edit-link a:hover{color: #3366ff;}
+
+
+/*==================== Section & Module ====================*/
+.mg-tpt-tag-area {
+    background: #fff;
+}
+.mg-tpt-txnlst strong {
+    color: #000;
+}
+.mg-tpt-txnlst ul li a {
+    color: #3366ff;
+    background: #f3eeee;
+}
+.mg-tpt-txnlst ul li a:hover, .mg-tpt-txnlst ul li a:focus {
+    color: #fff;
+    background: #3366ff;
+}
+.mg-latest-news .bn_title span{
+  border-left-color: #3366ff;
+  border-color: transparent transparent transparent #3366ff; 
+}
+.mg-latest-news .bn_title {
+  background-color: #3366ff;
+}
+.mg-latest-news .mg-latest-news-slider a{
+  color: #222;
+}
+.mg-latest-news .mg-latest-news-slider a::before {
+    color: #3366ff;
+}
+.mg-latest-news .mg-latest-news-slider a span{
+  color: #3366ff;
+}
+.trending-area .title {
+	background: #fff;
+}
+.trending-area .title h4::before {
+    background: #3366ff;
+}
+.trending-area .img-small-post:before {
+    background: rgba(0,0,0,0.3);
+    color: #fff;
+}
+.top-right-area .nav-tabs > li > a {
+    border-color: #eee;
+    color: #212121;
+    background: #fff;
+}
+.top-right-area .nav-tabs .nav-link.active, .top-right-area .nav-tabs .nav-link.active:hover, .top-right-area .nav-tabs .nav-link.active:focus {
+    color: #212121;
+    background-color: #fff;
+    border-color: #eee;
+    border-bottom-color: #3366ff;
+}
+.mg-headwidget.light .site-title a, .mg-headwidget.light .site-description {
+    opacity: 0;
+}
+.mg-headwidget.light .mg-search-box a {
+    color: rgba(255,255,255,0.71);
+}
+.mg-headwidget.light .mg-search-box a:hover, .mg-headwidget.light .mg-search-box a:focus {
+    color: #fff;
+}
+.title_small_post h5 a {
+	color: #212121;
+}	
+.title_small_post h5 a:hover {
+	color: #3366ff;
+}	
+.mg-featured-slider{
+  background-color: #FFF;
+}
+.mg-blog-inner h4, .mg-blog-inner h4 a {
+  color: #fff;
+}
+.mg-blog-inner .mg-blog-date, .mg-blog-inner .mg-blog-meta i, .mg-blog-inner .mg-blog-meta a {
+	color: #fff;
+}
+.mg-sec-title {
+  border-color: #3366ff;
+}
+.mg-sec-title h4{
+    background-color: #3366ff;
+    color: #fff;
+}
+.mg-sec-title  h4::before {
+    border-left-color: #3366ff;
+    border-color: transparent transparent transparent #3366ff;
+}
+.mg-viewmr-btn{
+  color: #3366ff;
+}
+.mg-posts-sec .small-post-content h5 a:hover, .featured_cat_slider a:hover{
+  color: #3366ff;
+}
+.mg-posts-sec-inner .small-list-post li{
+  background: #fff;
+}
+.small-list-post h5.title, .small-list-post h5.title a {
+    color: #212121;
+}
+.mg-posts-sec-post{
+  background: #fff;
+}
+.mg-posts-modul-6 .mg-sec-top-post .title a{
+    color: #000;
+}
+.mg-post-box .title a { 
+    color:#fff;
+}
+.mg-post-box .title a:hover { 
+    color:#3366ff;
+}
+.mg-post-box .latest-meta { 
+    color: #fff;
+}
+.mg-post-box .latest-meta .latest-date { 
+    color:#f3f3f3;
+}
+.mg-post-box .latest-content { 
+    color: #fff; 
+}
+.mg-post-bottom .mg-share-icons .mg-share span a{
+	background-color: #CCD1D9;
+  color: #fff;
+}
+.mg-post-bottom .mg-share-icons .mg-share span a:hover{
+  background-color:#3366ff;
+  color: #fff;
+}
+.mg-post-bottom .mg-share-icons .mg-share-toggle{
+  background-color: #CCD1D9;
+}
+.mg-post-bottom .mg-share-icons .mg-share-toggle i{
+  color: #fff;
+}
+.mg-post-bottom .mg-share-icons .mg-share-toggle:hover{
+  background-color:3366ff;
+  color: #fff;
+}
+.mg-subscriber .overlay {
+	background: #f3f3f3;
+}
+.mg-breadcrumb-section .overlay {
+	background: #fff;
+}
+
+/*==================== post ====================*/
+.mg-blog-post-box .mg-header h1 a {
+	color: #000;
+}
+.mg-blog-post .bottom h4, .mg-blog-post .bottom h4 a {
+	color: #fff;
+}
+.mg-blog-post .bottom h4:hover, .mg-blog-post .bottom h4 a:hover, .mg-posts-modul-6 .mg-sec-top-post .title a:hover, .mg-blog-inner h4 a:hover {
+	color: #3366ff;
+}
+.mg-blog-post-box .small {
+	color: #222;
+}
+.mg-blog-post-box h4.title, .mg-blog-post-box h4.title a {
+	color: #212121;
+}
+.mg-blog-post-box h4.title:hover, .mg-blog-post-box h4.title a:hover, .mg-blog-post-box h4.title:focus, .mg-blog-post-box h4.title a:focus {
+	color: #3366ff;
+}
+.mg-blog-category a{
+    color: #fff;
+    background: #3366ff;
+}
+.mg-blog-category a:hover {
+    color: #fff;
+}
+.mg-blog-meta {
+    color: #333;
+}
+.mg-blog-meta a {
+	color: #333;
+}
+.mg-blog-meta a:hover {
+	color: #3366ff;
+}
+.mg-blog-meta i {
+	color: #333;
+}
+.mg-blog-date {
+	color: #333;
+}
+.mg-blog-post.lg .mg-blog-meta i, .mg-blog-post.lg .mg-blog-meta a , .mg-blog-post.lg .mg-blog-meta span {
+	color: #fff;
+}
+.mg-blog-post.lg .mg-blog-meta a:hover , .mg-blog-post.lg .mg-blog-meta a:focus {
+	color: #3366ff;
+}
+.post-form {
+    color: #fff;
+    background: #3366ff;
+}
+.mg-comments h4 {
+	color: #212121;
+}
+.comments-area .comment-meta .comment-author img {
+	border-color: #3366ff;
+}
+.comment-body .reply a {
+    color: #fff;
+    background: #3366ff;
+}
+.comment-body .reply a:hover, .comment-body .reply a:focus {
+    color: #fff;
+    background: #202f5b;
+}
+.comment-metadata .edit-link:before {
+    color: #3366ff;
+}
+.mg-blog-author {
+	background: #e8e8e8;
+}
+.mg-info-author-block {
+	background: #fff;
+	border-color: #eaeaea;
+	color: #222;
+}
+.mg-info-author-block a {
+	color: #212121;
+}
+.mg-info-author-block a:hover
+{
+	color: #3366ff;	
+}
+.mg-info-author-block h4 {
+	color: #333;
+}
+.mg-info-author-block h4 span {
+	color: #999999;
+}
+.mg-info-author-block .mg-info-author-social li a {
+	color: #fff;
+}
+.comment_section .comment-reply-link {
+	background: #f0f0f0;
+	color: #666;
+	border-color: #f0f0f0;
+}
+.mg-comments a {
+	color: #777;
+}
+.mg-comments h4 span {
+	color: #999999;
+}
+.mg-comments .comment .media-body > p:last-child {
+	border-color: #f0f0f0;
+}
+.mg-comments li .media-body > .small {
+	color: #999;
+}
+.mg-comments li .media-body > p {
+	border-color: #f0f0f0;
+	color: #999;
+}
+.mg-comments .comment-list li {
+	background: #fff;
+	border-color: #eee;
+}
+
+/*==================== Sidebar ====================*/
+.mg-sidebar .mg-widget {
+	background: #fff;
+	border-color: #eee;
+}
+.mg-wid-title {
+	border-color: #3366ff;
+}
+.mg-sidebar .mg-widget h6 {
+	background: #3366ff;
+	color: #fff;
+}
+.mg-sidebar .mg-widget h6::before {
+	border-left-color: #3366ff;
+    border-color: transparent transparent transparent #3366ff;
+}
+.mg-sidebar .mg-widget ul li {
+	border-color: #eee;
+}
+.mg-sidebar .mg-widget ul li a {
+	color: #222;
+}
+.mg-sidebar .mg-widget ul li a:hover, .mg-sidebar .mg-widget ul li a:focus {
+	color: #3366ff;
+}
+.mg-sidebar .mg-widget ul li .mg-blog-category a, .mg-sidebar .mg-widget ul li .mg-blog-category a:hover {
+    color: #fff;
+}
+.mg-sidebar .mg-widget .mg-blog-post h3 a {
+	color: #212121;
+}
+.mg-sidebar .mg-widget .mg-blog-post h3 a:hover {
+	color: #3366ff;
+}
+.mg-sidebar .mg-widget.widget_search .btn {
+	color: #fff;
+	background: #3366ff;
+}
+.mg-sidebar .mg-widget.widget_search .btn:hover, .mg-sidebar .mg-widget.widget_search .btn:focus {
+	background: #002954;
+}
+.mg-sidebar .mg-mailchimp-widget .btn:hover, .mg-sidebar .mg-mailchimp-widget .btn:focus {
+	background: #002954;
+}
+.mg-sidebar .mg-widget .mg-widget-tags a, .mg-sidebar .mg-widget .tagcloud a {
+	background: #f3eeee;
+	color: #3366ff;
+	border-color: #f3eeee;
+}
+.mg-sidebar .mg-widget .mg-widget-tags a:hover, .mg-sidebar .mg-widget .tagcloud a:hover, .mg-sidebar .mg-widget .mg-widget-tags a:focus, .mg-sidebar .mg-widget .tagcloud a:focus {
+	color: #fff;
+	background: #3366ff;
+	border-color: #3366ff;
+}
+.mg-sidebar .mg-widget .mg-social li span.icon-soci {
+	color: #3366ff;
+	border-color: #3366ff;
+}
+.mg-sidebar .mg-widget .mg-social li span.icon-soci:hover {
+	color: #fff;
+	background: #3366ff;
+	border-color: #3366ff;
+}
+.mg-sidebar .mg-widget .mg-social li span.icon-soci:hover i {
+	color: #fff;
+}
+.wp-block-search .wp-block-search__button{
+	background-color: #3366ff;
+	border-color: #3366ff;
+	color: #fff;
+	
+	}
+.wp-block-search .wp-block-search__button{
+	background-color: #3366ff;
+	border-color: #3366ff;
+	color: #fff;
+}
+
+
+.wp-block-search .wp-block-search__label, .mg-widget .wp-block-group h2 {
+    background: #3366ff;
+    color: #fff;
+    border-color: #3366ff;
+	padding: 0px 15px 0 15px;
+}
+wp-block-search .wp-block-search__label::before, .mg-widget .wp-block-group h2:before {
+    border-left-color: #d10014;
+    border-color: transparent transparent transparent transparent;
+		
+}
+
+
+/*==================== general ====================*/
+h1, .h1, h2, .h2, h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
+	color: #212121;
+}
+.btn-theme, .more_btn, .more-link {
+	background: #3366ff;
+	color: #fff;
+	border-color: #3366ff;
+}
+.btn-theme:hover, .btn-theme:focus, .more_btn:hover, .more_btn:focus, .more-link:hover, .more-link:focus {
+	color: #fff;
+	opacity: 0.8;
+}
+/*==================== pagination color ====================*/
+.navigation.pagination .nav-links .page-numbers, .navigation.pagination .nav-links a {
+	background: #fff;
+	color: #999;
+}
+.navigation.pagination .nav-links .page-numbers:hover, .navigation.pagination .nav-links .page-numbers:focus, .navigation.pagination .nav-links .page-numbers.current, .navigation.pagination .nav-links .page-numbers.current:hover,  .navigation.pagination .nav-links .page-numbers.current:focus {
+	border-color: #3366ff;
+	background: #3366ff;
+	color: #fff;
+}
+.pagination > .active > a, .pagination > .active > span, .pagination > .active > a:hover, .pagination > .active > span:hover, .pagination > .active > a:focus, .pagination > .active > span:focus {
+    border-color: #3366ff;
+	background: #3366ff;
+	color: #fff;
+}
+/*==================== typo ====================*/
+.mg-breadcrumb-title h1 {
+	color: #222;
+}
+.mg-page-breadcrumb > li a {
+	color: #222;
+}
+.mg-page-breadcrumb > li a:hover, .mg-page-breadcrumb > li a:focus {
+	color: #3366ff;
+}
+.mg-page-breadcrumb > li + li:before {
+	color: #222;
+}
+/*==================== blog ====================*/
+.mg-comments .mg-reply:hover, .mg-comments .mg-reply:focus {
+	color: #fff;
+	background: #3366ff;
+	border-color: #3366ff;
+}
+.mg-heading-bor-bt h5 {
+	color: #212121;
+}
+
+
+</style>
+<style id="core-block-supports-inline-css">
+.wp-container-core-group-is-layout-4fc3f8e1{flex-direction:column;align-items:flex-start;}
+/*# sourceURL=core-block-supports-inline-css */
+</style>
+
+</head>
+<body class="wp-singular post-template-default single single-post postid-1244 single-format-standard wp-embed-responsive wp-theme-newsup wp-child-theme-news-talk ta-hide-date-author-in-list elementor-default elementor-kit-27" >
+<div id="page" class="site">
+<a class="skip-link screen-reader-text" href="#content">
+Skip to content</a>
+    <div class="wrapper" id="custom-background-css">
+        <header class="mg-headwidget">
+            <!--==================== TOP BAR ====================-->
+
+            <div class="mg-head-detail hidden-xs">
+    <div class="container-fluid">
+        <div class="row align-items-center">
+            <div class="col-md-6 col-xs-12">
+                <ul class="info-left">
+                                    </ul>
+            </div>
+            <div class="col-md-6 col-xs-12">
+                <ul class="mg-social info-right">
+                                    </ul>
+            </div>
+        </div>
+    </div>
+</div>
+            <div class="clearfix"></div>
+                        <div class="mg-nav-widget-area-back" style='background-image: url("https://algorithmai.news/wp-content/uploads/2024/12/AlgorithmAI-new-header-1.png" );'>
+                        <div class="overlay">
+              <div class="inner" > 
+                <div class="container-fluid">
+                    <div class="mg-nav-widget-area">
+                        <div class="row align-items-center">
+                                                          <div class="col-12 text-center mx-auto ">
+                                                              <div class="navbar-header">
+                                                                <div class="site-branding-text">
+                                <h1 class="site-title"> <a href="https://algorithmai.news/" rel="home">Algorithm</a></h1>
+                                <p class="site-description">The AI newswire</p>
+                                </div>
+                                                              </div>
+                            </div>
+                                                   <div class="col text-center mx-auto">                 <div class="header-ads">
+                    <a class="pull-right" http://algorithmai.news/newsletter href="http://algorithmai.news/newsletter"
+                        target="_blank"  >
+                        <img fetchpriority="high" width="930" height="100" src="https://algorithmai.news/wp-content/uploads/2024/12/cropped-cropped-banneradplaceholder.png" class="attachment-full size-full" alt="" decoding="async" srcset="https://algorithmai.news/wp-content/uploads/2024/12/cropped-cropped-banneradplaceholder.png 930w, https://algorithmai.news/wp-content/uploads/2024/12/cropped-cropped-banneradplaceholder-300x32.png 300w, https://algorithmai.news/wp-content/uploads/2024/12/cropped-cropped-banneradplaceholder-768x83.png 768w" sizes="(max-width: 930px) 100vw, 930px" />                    </a>
+                </div>
+            </div>
+            <!-- Trending line END -->
+            
+                        </div>
+                    </div>
+                </div>
+              </div>
+              </div>
+          </div>
+    <div class="mg-menu-full">
+      <nav class="navbar navbar-expand-lg navbar-wp">
+        <div class="container-fluid flex-row"> 
+          <!-- Right nav -->
+                <div class="m-header align-items-center">
+                            <a class="mobilehomebtn" href="https://algorithmai.news"><span class="fa-solid fa-house-chimney"></span></a>
+              <!-- navbar-toggle -->
+              <button class="navbar-toggler mx-auto" type="button" data-toggle="collapse" data-target="#navbar-wp" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="burger">
+                  <span class="burger-line"></span>
+                  <span class="burger-line"></span>
+                  <span class="burger-line"></span>
+                </span>
+              </button>
+              <!-- /navbar-toggle -->
+                          <div class="dropdown show mg-search-box pr-2">
+                <a class="dropdown-toggle msearch ml-auto" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fas fa-search"></i>
+                </a> 
+                <div class="dropdown-menu searchinner" aria-labelledby="dropdownMenuLink">
+                    <form role="search" method="get" id="searchform" action="https://algorithmai.news/">
+  <div class="input-group">
+    <input type="search" class="form-control" placeholder="Search" value="" name="s" />
+    <span class="input-group-btn btn-default">
+    <button type="submit" class="btn"> <i class="fas fa-search"></i> </button>
+    </span> </div>
+</form>                </div>
+            </div>
+                  <a href="http://algorithmai.news/newsletter"  class="btn-bell btn-theme mx-2"><i class="fa fa-bell"></i></a>
+                      
+          </div>
+          <!-- /Right nav --> 
+          
+                  <div class="collapse navbar-collapse" id="navbar-wp">
+                    <div class="d-md-block">
+                  <ul class="nav navbar-nav mr-auto"><li class="nav-item menu-item "><a class="nav-link " href="https://algorithmai.news/" title="Home">Home</a></li><li class="nav-item menu-item page_item dropdown page-item-2"><a class="nav-link" href="https://algorithmai.news/about-algorithm">About Algorithm</a></li><li class="nav-item menu-item page_item dropdown page-item-122"><a class="nav-link" href="https://algorithmai.news/newsletter">Newsletter</a></li><li class="nav-item menu-item page_item dropdown page-item-3"><a class="nav-link" href="https://algorithmai.news/privacy-policy">Privacy Policy</a></li></ul>
+                </div>    
+                  </div>
+
+                <!-- Right nav -->
+                   
+          <div class="desk-header d-lg-flex pl-3 ml-auto my-2 my-lg-0 position-relative align-items-center">
+                        <div class="dropdown show mg-search-box pr-2">
+                <a class="dropdown-toggle msearch ml-auto" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fas fa-search"></i>
+                </a> 
+                <div class="dropdown-menu searchinner" aria-labelledby="dropdownMenuLink">
+                    <form role="search" method="get" id="searchform" action="https://algorithmai.news/">
+  <div class="input-group">
+    <input type="search" class="form-control" placeholder="Search" value="" name="s" />
+    <span class="input-group-btn btn-default">
+    <button type="submit" class="btn"> <i class="fas fa-search"></i> </button>
+    </span> </div>
+</form>                </div>
+            </div>
+                  <a href="http://algorithmai.news/newsletter"  class="btn-bell btn-theme mx-2"><i class="fa fa-bell"></i></a>
+                  </div>
+                    <!-- /Right nav -->  
+          </div>
+      </nav> <!-- /Navigation -->
+    </div>
+</header>
+<div class="clearfix"></div>
+ <!-- =========================
+     Page Content Section      
+============================== -->
+<main id="content" class="single-class content">
+  <!--container-->
+    <div class="container-fluid">
+      <!--row-->
+        <div class="row">
+                  <div class="col-lg-9 col-md-8">
+                                <div class="mg-blog-post-box"> 
+                    <div class="mg-header">
+                        <div class="mg-blog-category"><a class="newsup-categories category-color-1" href="https://algorithmai.news/category/newswire" alt="View all posts in Newswire"> 
+                                 Newswire
+                             </a></div>                        <h1 class="title single"> <a title="Permalink to: ChipAgents Achieves State-of-the-Art Results on NVIDIA&#8217;s VerilogEval Benchmark">
+                            ChipAgents Achieves State-of-the-Art Results on NVIDIA&#8217;s VerilogEval Benchmark</a>
+                        </h1>
+                                                <div class="media mg-info-author-block"> 
+                                                        <a class="mg-author-pic" href="https://algorithmai.news/author/algori_editor"> <img alt='' src='https://secure.gravatar.com/avatar/a7328115039cf9de7c4602e742c5547d81b63ddef9fa89fe30a39c9dfd3edd79?s=150&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/a7328115039cf9de7c4602e742c5547d81b63ddef9fa89fe30a39c9dfd3edd79?s=300&#038;d=mm&#038;r=g 2x' class='avatar avatar-150 photo' height='150' width='150' decoding='async'/> </a>
+                                                        <div class="media-body">
+                                                            <h4 class="media-heading"><span>By</span><a href="https://algorithmai.news/author/algori_editor">News Editor</a></h4>
+                                                            <span class="mg-blog-date"><i class="fas fa-clock"></i> 
+                                    Jan 8, 2025                                </span>
+                                                                <span class="newsup-tags"><i class="fas fa-tag"></i>
+                                    <a href="https://algorithmai.news/tag/infrastructure">#infrastructure</a>                                    </span>
+                                                            </div>
+                        </div>
+                                            </div>
+                    <img width="2560" height="1600" src="https://algorithmai.news/wp-content/uploads/2024/12/boliviainteligente-XJuogr6jhv8-unsplash-scaled.jpg" class="img-fluid wp-post-image" alt="" decoding="async" srcset="https://algorithmai.news/wp-content/uploads/2024/12/boliviainteligente-XJuogr6jhv8-unsplash-scaled.jpg 2560w, https://algorithmai.news/wp-content/uploads/2024/12/boliviainteligente-XJuogr6jhv8-unsplash-300x188.jpg 300w, https://algorithmai.news/wp-content/uploads/2024/12/boliviainteligente-XJuogr6jhv8-unsplash-1024x640.jpg 1024w, https://algorithmai.news/wp-content/uploads/2024/12/boliviainteligente-XJuogr6jhv8-unsplash-768x480.jpg 768w, https://algorithmai.news/wp-content/uploads/2024/12/boliviainteligente-XJuogr6jhv8-unsplash-1536x960.jpg 1536w, https://algorithmai.news/wp-content/uploads/2024/12/boliviainteligente-XJuogr6jhv8-unsplash-2048x1280.jpg 2048w" sizes="(max-width: 2560px) 100vw, 2560px" />                    <article class="page-content-single small single">
+                        
+<p class="wp-block-paragraph">SANTA BARBARA, Calif. — January 8, 2025 — <u><a href="https://c212.net/c/link/?t=0&amp;l=en&amp;o=4334973-1&amp;h=1924687473&amp;u=http%3A%2F%2Fchipagents.ai%2F&amp;a=ChipAgents" target="_blank" rel="noreferrer noopener">ChipAgents</a></u>, the AI-powered development tool for chip design and verification, has achieved state-of-the-art performance on the VerilogEval-v2 benchmark from NVIDIA. This milestone highlights ChipAgents&#8217; groundbreaking capabilities in accelerating the specification-to-RTL process with unparalleled accuracy.</p>
+
+
+
+<p class="wp-block-paragraph">Setting a New Industry Standard</p>
+
+
+
+<p class="wp-block-paragraph">The VerilogEval-v2 benchmark, a gold standard in the field of hardware design, evaluates AI systems on their ability to generate syntactically and functionally correct Verilog code from complex specifications. ChipAgents achieved a Pass rate of 97.4%, solving 152 out of 156 tasks, outperforming all other state-of-the-art tools, including:</p>
+
+
+
+<ul class="wp-block-list">
+<li>MAGE (UCSD): 95.7% Pass rate</li>
+
+
+
+<li>VerilogCoder (NVIDIA): 94.2% Pass rate</li>
+</ul>
+
+
+
+<p class="wp-block-paragraph">Furthermore, ChipAgents demonstrated near-perfect performance on the VerilogEval-Human benchmark, achieving a Pass rate of 99.4% (155/156 tasks), underscoring its reliability and precision.</p>
+
+
+
+<p class="wp-block-paragraph">Breakthrough Technology</p>
+
+
+
+<p class="wp-block-paragraph">ChipAgents leverages a unique combination of tool-augmented workflows and advanced search algorithms, enabling hardware engineers to achieve unprecedented efficiency and accuracy. Its key innovations include:</p>
+
+
+
+<ul class="wp-block-list">
+<li>Seamless Integration with Tools: ChipAgents incorporates simulation and debugging tools to actively participate in the coding process, ensuring both syntactical and functional correctness.</li>
+
+
+
+<li>Advanced Search and Iterative Refinement: We combine language models with advanced search algorithms to navigate the complicated search space and locate the best solution.</li>
+
+
+
+<li>Scalability and Usability: Designed with real-world engineering workflows in mind, ChipAgents adapts to diverse design and verification scenarios, making it an invaluable asset for semiconductor companies.</li>
+</ul>
+
+
+
+<p class="wp-block-paragraph">Revolutionizing Hardware Design</p>
+
+
+
+<p class="wp-block-paragraph">&#8220;ChipAgents is a game-changer for hardware design and verification,&#8221; said William Wang, CEO of Alpha Design AI. &#8220;These results validate our mission to empower engineers with AI tools that drive productivity and reduce time-to-market. The success of ChipAgents on VerilogEval is just the beginning, as we continue to push the boundaries of innovation in the semiconductor industry.&#8221;</p>
+
+
+
+<p class="wp-block-paragraph">About ChipAgents</p>
+
+
+
+<p class="wp-block-paragraph">ChipAgents is an advanced agentic AI coding assistant tailored for RTL design and debugging, offering unparalleled precision and scalability. Founded by a team of AI and hardware experts, ChipAgents is committed to delivering transformative solutions to semiconductor companies worldwide.</p>
+
+
+
+<p class="wp-block-paragraph">Contact</p>
+
+
+
+<p class="wp-block-paragraph">For media inquiries, please contact:<br>ChipAgents Media Team<br>Email: <a href="mailto:support@alphadesign.ai" target="_blank" rel="noreferrer noopener">support@alphadesign.ai</a></p>
+
+
+
+<p class="wp-block-paragraph">To request a demo with ChipAgents, visit<a href="https://c212.net/c/link/?t=0&amp;l=en&amp;o=4334973-1&amp;h=3849711074&amp;u=http%3A%2F%2Fwww.alphadesign.ai%2F&amp;a=%C2%A0" rel="noreferrer noopener" target="_blank">&nbsp;</a><a href="https://c212.net/c/link/?t=0&amp;l=en&amp;o=4334973-1&amp;h=3761416793&amp;u=http%3A%2F%2Fwww.chipagents.ai%2F&amp;a=www.chipagents.ai" rel="noreferrer noopener" target="_blank">www.chipagents.ai</a></p>
+
+
+
+<p class="wp-block-paragraph">Disclaimer: Performance results are based on the VerilogEval-v2 benchmark as of January 7, 2025. For additional details, please refer to the official benchmark documentation.</p>
+
+
+
+<div style="height:10px" aria-hidden="true" class="wp-block-spacer"></div>
+
+
+
+<p class="wp-block-paragraph">Source: <a href="https://www.prnewswire.com/news-releases/chipagents-achieves-state-of-the-art-results-on-nvidias-verilogeval-benchmark-302344902.html" target="_blank" rel="noreferrer noopener">ChipAgents</a></p>
+        <script>
+        function pinIt() {
+        var e = document.createElement('script');
+        e.setAttribute('type','text/javascript');
+        e.setAttribute('charset','UTF-8');
+        e.setAttribute('src','https://assets.pinterest.com/js/pinmarklet.js?r='+Math.random()*99999999);
+        document.body.appendChild(e);
+        }
+        </script>
+        <div class="post-share">
+            <div class="post-share-icons cf">
+                <a href="https://www.facebook.com/sharer.php?u=https%3A%2F%2Falgorithmai.news%2Fchipagents-achieves-state-of-the-art-results-on-nvidias-verilogeval-benchmark" class="link facebook" target="_blank" >
+                    <i class="fab fa-facebook"></i>
+                </a>
+                <a href="http://twitter.com/share?url=https%3A%2F%2Falgorithmai.news%2Fchipagents-achieves-state-of-the-art-results-on-nvidias-verilogeval-benchmark&#038;text=ChipAgents%20Achieves%20State-of-the-Art%20Results%20on%20NVIDIA%E2%80%99s%20VerilogEval%20Benchmark" class="link x-twitter" target="_blank">
+                    <i class="fa-brands fa-x-twitter"></i>
+                </a>
+                <a href="mailto:?subject=ChipAgents%20Achieves%20State-of-the-Art%20Results%20on%20NVIDIA%26#8217;s%20VerilogEval%20Benchmark&#038;body=https%3A%2F%2Falgorithmai.news%2Fchipagents-achieves-state-of-the-art-results-on-nvidias-verilogeval-benchmark" class="link email" target="_blank" >
+                    <i class="fas fa-envelope"></i>
+                </a>
+                <a href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Falgorithmai.news%2Fchipagents-achieves-state-of-the-art-results-on-nvidias-verilogeval-benchmark&#038;title=ChipAgents%20Achieves%20State-of-the-Art%20Results%20on%20NVIDIA%E2%80%99s%20VerilogEval%20Benchmark" class="link linkedin" target="_blank" >
+                    <i class="fab fa-linkedin"></i>
+                </a>
+                <a href="https://telegram.me/share/url?url=https%3A%2F%2Falgorithmai.news%2Fchipagents-achieves-state-of-the-art-results-on-nvidias-verilogeval-benchmark&#038;text&#038;title=ChipAgents%20Achieves%20State-of-the-Art%20Results%20on%20NVIDIA%E2%80%99s%20VerilogEval%20Benchmark" class="link telegram" target="_blank" >
+                    <i class="fab fa-telegram"></i>
+                </a>
+                <a href="javascript:pinIt();" class="link pinterest">
+                    <i class="fab fa-pinterest"></i>
+                </a>
+                <a class="print-r" href="javascript:window.print()">
+                    <i class="fas fa-print"></i>
+                </a>  
+            </div>
+        </div>
+                            <div class="clearfix mb-3"></div>
+                        
+	<nav class="navigation post-navigation" aria-label="Posts">
+		<h2 class="screen-reader-text">Post navigation</h2>
+		<div class="nav-links"><div class="nav-previous"><a href="https://algorithmai.news/night-driving-challenges-in-autonomous-driving-addressed-by-imagry-with-adasky-collaboration" rel="prev">Night Driving Challenges in Autonomous Driving Addressed by Imagry with ADASKY Collaboration <div class="fa fa-angle-double-right"></div><span></span></a></div><div class="nav-next"><a href="https://algorithmai.news/lotlinx-survey-highlights-significant-challenges-in-ai-and-predictive-data-adoption-among-auto-dealers" rel="next"><div class="fa fa-angle-double-left"></div><span></span> Lotlinx Survey Highlights Significant Challenges in AI and Predictive Data Adoption Among Auto Dealers</a></div></div>
+	</nav>                                          </article>
+                </div>
+                        <div class="media mg-info-author-block">
+            <a class="mg-author-pic" href="https://algorithmai.news/author/algori_editor"><img alt='' src='https://secure.gravatar.com/avatar/a7328115039cf9de7c4602e742c5547d81b63ddef9fa89fe30a39c9dfd3edd79?s=150&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/a7328115039cf9de7c4602e742c5547d81b63ddef9fa89fe30a39c9dfd3edd79?s=300&#038;d=mm&#038;r=g 2x' class='avatar avatar-150 photo' height='150' width='150' decoding='async'/></a>
+                <div class="media-body">
+                  <h4 class="media-heading">By <a href ="https://algorithmai.news/author/algori_editor">News Editor</a></h4>
+                  <p></p>
+                </div>
+            </div>
+                <div class="mg-featured-slider p-3 mb-4">
+            <!--Start mg-realated-slider -->
+            <!-- mg-sec-title -->
+            <div class="mg-sec-title">
+                <h4>Related Post</h4>
+            </div>
+            <!-- // mg-sec-title -->
+            <div class="row">
+                <!-- featured_post -->
+                                    <!-- blog -->
+                    <div class="col-md-4">
+                        <div class="mg-blog-post-3 minh back-img mb-md-0 mb-2" 
+                                                style="background-image: url('https://algorithmai.news/wp-content/uploads/2025/02/vecteezy_ai-generated-digital-informational-technology-web-futuristic_37056530-scaled.jpg');" >
+                            <div class="mg-blog-inner">
+                                <div class="mg-blog-category"><a class="newsup-categories category-color-1" href="https://algorithmai.news/category/newswire" alt="View all posts in Newswire"> 
+                                 Newswire
+                             </a></div>                                <h4 class="title"> <a href="https://algorithmai.news/space-raises-2-4m-led-by-a16z-speedrun-to-build-the-ai-native-filesystem-for-humans-and-agents" title="Permalink to: Space raises $2.4M led by a16z Speedrun to build the AI-native filesystem for humans and agents">
+                                  Space raises $2.4M led by a16z Speedrun to build the AI-native filesystem for humans and agents</a>
+                                 </h4>
+                                <div class="mg-blog-meta"> 
+                                                                        <span class="mg-blog-date">
+                                        <i class="fas fa-clock"></i>
+                                        Aug 18, 2026                                    </span>
+                                            <a class="auth" href="https://algorithmai.news/author/algori_editor">
+            <i class="fas fa-user-circle"></i>News Editor        </a>
+     
+                                </div>   
+                            </div>
+                        </div>
+                    </div>
+                    <!-- blog -->
+                                        <!-- blog -->
+                    <div class="col-md-4">
+                        <div class="mg-blog-post-3 minh back-img mb-md-0 mb-2" 
+                                                style="background-image: url('https://algorithmai.news/wp-content/uploads/2025/06/vecteezy_ai-concept-on-touchscreen-display-with-finger_65781582-scaled.jpeg');" >
+                            <div class="mg-blog-inner">
+                                <div class="mg-blog-category"><a class="newsup-categories category-color-1" href="https://algorithmai.news/category/newswire" alt="View all posts in Newswire"> 
+                                 Newswire
+                             </a></div>                                <h4 class="title"> <a href="https://algorithmai.news/scitix-introduces-production-ready-inference-platform-bringing-enterprise-grade-control-to-multi-model-ai-deployments" title="Permalink to: ScitiX Introduces Production-Ready Inference Platform, Bringing Enterprise-Grade Control to Multi-Model AI Deployments">
+                                  ScitiX Introduces Production-Ready Inference Platform, Bringing Enterprise-Grade Control to Multi-Model AI Deployments</a>
+                                 </h4>
+                                <div class="mg-blog-meta"> 
+                                                                        <span class="mg-blog-date">
+                                        <i class="fas fa-clock"></i>
+                                        Aug 17, 2026                                    </span>
+                                            <a class="auth" href="https://algorithmai.news/author/algori_editor">
+            <i class="fas fa-user-circle"></i>News Editor        </a>
+     
+                                </div>   
+                            </div>
+                        </div>
+                    </div>
+                    <!-- blog -->
+                                        <!-- blog -->
+                    <div class="col-md-4">
+                        <div class="mg-blog-post-3 minh back-img mb-md-0 mb-2" 
+                                                style="background-image: url('https://algorithmai.news/wp-content/uploads/2025/03/data-center-2.jpg');" >
+                            <div class="mg-blog-inner">
+                                <div class="mg-blog-category"><a class="newsup-categories category-color-1" href="https://algorithmai.news/category/newswire" alt="View all posts in Newswire"> 
+                                 Newswire
+                             </a></div>                                <h4 class="title"> <a href="https://algorithmai.news/tencent-details-progress-toward-carbon-neutrality-goals-and-outlines-ai-era-priorities" title="Permalink to: Tencent Details Progress Toward Carbon Neutrality Goals and Outlines AI-Era Priorities">
+                                  Tencent Details Progress Toward Carbon Neutrality Goals and Outlines AI-Era Priorities</a>
+                                 </h4>
+                                <div class="mg-blog-meta"> 
+                                                                        <span class="mg-blog-date">
+                                        <i class="fas fa-clock"></i>
+                                        Aug 17, 2026                                    </span>
+                                            <a class="auth" href="https://algorithmai.news/author/algori_editor">
+            <i class="fas fa-user-circle"></i>News Editor        </a>
+     
+                                </div>   
+                            </div>
+                        </div>
+                    </div>
+                    <!-- blog -->
+                                </div> 
+        </div>
+        <!--End mg-realated-slider -->
+        <div id="comments" class="comments-area mg-card-box padding-20 mb-md-0 mb-4">
+
+		<div id="respond" class="comment-respond">
+		<h3 id="reply-title" class="comment-reply-title">Leave a Reply <small><a rel="nofollow" id="cancel-comment-reply-link" href="/chipagents-achieves-state-of-the-art-results-on-nvidias-verilogeval-benchmark#respond" style="display:none;">Cancel reply</a></small></h3><form action="https://algorithmai.news/wp-comments-post.php" method="post" id="commentform" class="comment-form"><p class="comment-notes"><span id="email-notes">Your email address will not be published.</span> <span class="required-field-message">Required fields are marked <span class="required">*</span></span></p><p class="comment-form-comment"><label for="comment">Comment <span class="required">*</span></label> <textarea id="comment" name="comment" cols="45" rows="8" maxlength="65525" required></textarea></p><p class="comment-form-author"><label for="author">Name <span class="required">*</span></label> <input id="author" name="author" type="text" value="" size="30" maxlength="245" autocomplete="name" required /></p>
+<p class="comment-form-email"><label for="email">Email <span class="required">*</span></label> <input id="email" name="email" type="email" value="" size="30" maxlength="100" aria-describedby="email-notes" autocomplete="email" required /></p>
+<p class="comment-form-url"><label for="url">Website</label> <input id="url" name="url" type="url" value="" size="30" maxlength="200" autocomplete="url" /></p>
+<p class="comment-form-cookies-consent"><input id="wp-comment-cookies-consent" name="wp-comment-cookies-consent" type="checkbox" value="yes" /> <label for="wp-comment-cookies-consent">Save my name, email, and website in this browser for the next time I comment.</label></p>
+<p class="form-submit"><input name="submit" type="submit" id="submit" class="submit" value="Post Comment" /> <input type='hidden' name='comment_post_ID' value='1244' id='comment_post_ID' />
+<input type='hidden' name='comment_parent' id='comment_parent' value='0' />
+</p></form>	</div><!-- #respond -->
+	</div><!-- #comments -->        </div>
+        <aside class="col-lg-3 col-md-4">
+                
+<aside id="secondary" class="widget-area" role="complementary">
+	<div id="sidebar-right" class="mg-sidebar">
+		<div id="block-2" class="mg-widget widget_block widget_search"><form role="search" method="get" action="https://algorithmai.news/" class="wp-block-search__button-inside wp-block-search__icon-button wp-block-search" ><label class="wp-block-search__label screen-reader-text" for="wp-block-search__input-1" >Search</label><div class="wp-block-search__inside-wrapper" ><input class="wp-block-search__input" id="wp-block-search__input-1" placeholder="" value="" type="search" name="s" required /><button aria-label="Search" class="wp-block-search__button has-icon wp-element-button" type="submit" ><svg class="search-icon" viewBox="0 0 24 24" width="24" height="24">
+					<path d="M13 5c-3.3 0-6 2.7-6 6 0 1.4.5 2.7 1.3 3.7l-3.8 3.8 1.1 1.1 3.8-3.8c1 .8 2.3 1.3 3.7 1.3 3.3 0 6-2.7 6-6S16.3 5 13 5zm0 10.5c-2.5 0-4.5-2-4.5-4.5s2-4.5 4.5-4.5 4.5 2 4.5 4.5-2 4.5-4.5 4.5z"></path>
+				</svg></button></div></form></div><div id="block-6" class="mg-widget widget_block"><div class="wp-block-group"><div class="wp-block-group__inner-container is-layout-flow wp-block-group-is-layout-flow"><h2 class="wp-block-heading">Categories</h2><ul class="wp-block-categories-list wp-block-categories-taxonomy-category wp-block-categories">	<li class="cat-item cat-item-3"><a href="https://algorithmai.news/category/commentary">Commentary</a>
+</li>
+	<li class="cat-item cat-item-2"><a href="https://algorithmai.news/category/newswire">Newswire</a>
+</li>
+	<li class="cat-item cat-item-1"><a href="https://algorithmai.news/category/uncategorized">Uncategorized</a>
+</li>
+</ul></div></div></div><div id="block-8" class="mg-widget widget_block">
+<div class="wp-block-group"><div class="wp-block-group__inner-container is-layout-constrained wp-block-group-is-layout-constrained">
+<div class="wp-block-group is-vertical is-layout-flex wp-container-core-group-is-layout-4fc3f8e1 wp-block-group-is-layout-flex">
+<h2 class="wp-block-heading">Tags</h2>
+
+
+
+<div class="wp-block-group"><div class="wp-block-group__inner-container is-layout-constrained wp-block-group-is-layout-constrained"><p class="wp-block-tag-cloud"><a href="https://algorithmai.news/tag/advertising" class="tag-cloud-link tag-link-56 tag-link-position-1" style="font-size: 8pt;" aria-label="advertising (55 items)">advertising</a>
+<a href="https://algorithmai.news/tag/ai-agents" class="tag-cloud-link tag-link-67 tag-link-position-2" style="font-size: 14.178770949721pt;" aria-label="AI agents (346 items)">AI agents</a>
+<a href="https://algorithmai.news/tag/ai-assistants" class="tag-cloud-link tag-link-26 tag-link-position-3" style="font-size: 9.4860335195531pt;" aria-label="AI assistants (86 items)">AI assistants</a>
+<a href="https://algorithmai.news/tag/applications" class="tag-cloud-link tag-link-11 tag-link-position-4" style="font-size: 22pt;" aria-label="applications (3,455 items)">applications</a>
+<a href="https://algorithmai.news/tag/automotive" class="tag-cloud-link tag-link-73 tag-link-position-5" style="font-size: 11.441340782123pt;" aria-label="automotive (153 items)">automotive</a>
+<a href="https://algorithmai.news/tag/autonomous-driving" class="tag-cloud-link tag-link-49 tag-link-position-6" style="font-size: 8pt;" aria-label="autonomous driving (55 items)">autonomous driving</a>
+<a href="https://algorithmai.news/tag/blockchain" class="tag-cloud-link tag-link-7 tag-link-position-7" style="font-size: 8.4692737430168pt;" aria-label="blockchain (63 items)">blockchain</a>
+<a href="https://algorithmai.news/tag/business-transformation" class="tag-cloud-link tag-link-85 tag-link-position-8" style="font-size: 10.268156424581pt;" aria-label="business transformation (108 items)">business transformation</a>
+<a href="https://algorithmai.news/tag/ces" class="tag-cloud-link tag-link-24 tag-link-position-9" style="font-size: 12.849162011173pt;" aria-label="CES (233 items)">CES</a>
+<a href="https://algorithmai.news/tag/cloud" class="tag-cloud-link tag-link-12 tag-link-position-10" style="font-size: 12.849162011173pt;" aria-label="cloud (234 items)">cloud</a>
+<a href="https://algorithmai.news/tag/compliance" class="tag-cloud-link tag-link-109 tag-link-position-11" style="font-size: 8.2346368715084pt;" aria-label="compliance (59 items)">compliance</a>
+<a href="https://algorithmai.news/tag/computing" class="tag-cloud-link tag-link-64 tag-link-position-12" style="font-size: 10.424581005587pt;" aria-label="computing (115 items)">computing</a>
+<a href="https://algorithmai.news/tag/customer-service" class="tag-cloud-link tag-link-88 tag-link-position-13" style="font-size: 8.3128491620112pt;" aria-label="customer service (60 items)">customer service</a>
+<a href="https://algorithmai.news/tag/cybersecurity" class="tag-cloud-link tag-link-23 tag-link-position-14" style="font-size: 12.458100558659pt;" aria-label="cybersecurity (206 items)">cybersecurity</a>
+<a href="https://algorithmai.news/tag/edge-ai" class="tag-cloud-link tag-link-54 tag-link-position-15" style="font-size: 8.8603351955307pt;" aria-label="edge AI (71 items)">edge AI</a>
+<a href="https://algorithmai.news/tag/education" class="tag-cloud-link tag-link-81 tag-link-position-16" style="font-size: 11.206703910615pt;" aria-label="education (142 items)">education</a>
+<a href="https://algorithmai.news/tag/energy" class="tag-cloud-link tag-link-37 tag-link-position-17" style="font-size: 9.9553072625698pt;" aria-label="energy (98 items)">energy</a>
+<a href="https://algorithmai.news/tag/events" class="tag-cloud-link tag-link-111 tag-link-position-18" style="font-size: 14.178770949721pt;" aria-label="events (345 items)">events</a>
+<a href="https://algorithmai.news/tag/finance" class="tag-cloud-link tag-link-29 tag-link-position-19" style="font-size: 13.31843575419pt;" aria-label="finance (266 items)">finance</a>
+<a href="https://algorithmai.news/tag/funding" class="tag-cloud-link tag-link-44 tag-link-position-20" style="font-size: 13.709497206704pt;" aria-label="funding (301 items)">funding</a>
+<a href="https://algorithmai.news/tag/government" class="tag-cloud-link tag-link-30 tag-link-position-21" style="font-size: 9.9553072625698pt;" aria-label="government (99 items)">government</a>
+<a href="https://algorithmai.news/tag/gtc" class="tag-cloud-link tag-link-137 tag-link-position-22" style="font-size: 8.8603351955307pt;" aria-label="GTC (72 items)">GTC</a>
+<a href="https://algorithmai.news/tag/healthcare" class="tag-cloud-link tag-link-40 tag-link-position-23" style="font-size: 15.977653631285pt;" aria-label="healthcare (593 items)">healthcare</a>
+<a href="https://algorithmai.news/tag/human-resources" class="tag-cloud-link tag-link-80 tag-link-position-24" style="font-size: 9.0949720670391pt;" aria-label="human resources (76 items)">human resources</a>
+<a href="https://algorithmai.news/tag/infrastructure" class="tag-cloud-link tag-link-9 tag-link-position-25" style="font-size: 16.525139664804pt;" aria-label="infrastructure (698 items)">infrastructure</a>
+<a href="https://algorithmai.news/tag/large-language-models-llms" class="tag-cloud-link tag-link-39 tag-link-position-26" style="font-size: 11.206703910615pt;" aria-label="large language models (LLMs) (145 items)">large language models (LLMs)</a>
+<a href="https://algorithmai.news/tag/legal" class="tag-cloud-link tag-link-105 tag-link-position-27" style="font-size: 8.0782122905028pt;" aria-label="legal (57 items)">legal</a>
+<a href="https://algorithmai.news/tag/ma" class="tag-cloud-link tag-link-18 tag-link-position-28" style="font-size: 10.972067039106pt;" aria-label="M&amp;A (134 items)">M&amp;A</a>
+<a href="https://algorithmai.news/tag/machine-learning" class="tag-cloud-link tag-link-16 tag-link-position-29" style="font-size: 10.268156424581pt;" aria-label="machine learning (108 items)">machine learning</a>
+<a href="https://algorithmai.news/tag/manufacturing" class="tag-cloud-link tag-link-59 tag-link-position-30" style="font-size: 10.972067039106pt;" aria-label="manufacturing (134 items)">manufacturing</a>
+<a href="https://algorithmai.news/tag/microsoft" class="tag-cloud-link tag-link-60 tag-link-position-31" style="font-size: 8.2346368715084pt;" aria-label="Microsoft (59 items)">Microsoft</a>
+<a href="https://algorithmai.news/tag/mwc" class="tag-cloud-link tag-link-125 tag-link-position-32" style="font-size: 9.5642458100559pt;" aria-label="MWC (88 items)">MWC</a>
+<a href="https://algorithmai.news/tag/nvidia" class="tag-cloud-link tag-link-120 tag-link-position-33" style="font-size: 12.536312849162pt;" aria-label="NVIDIA (215 items)">NVIDIA</a>
+<a href="https://algorithmai.news/tag/partnerships" class="tag-cloud-link tag-link-14 tag-link-position-34" style="font-size: 16.603351955307pt;" aria-label="partnerships (706 items)">partnerships</a>
+<a href="https://algorithmai.news/tag/reports" class="tag-cloud-link tag-link-118 tag-link-position-35" style="font-size: 12.849162011173pt;" aria-label="reports (235 items)">reports</a>
+<a href="https://algorithmai.news/tag/retail" class="tag-cloud-link tag-link-96 tag-link-position-36" style="font-size: 8.7821229050279pt;" aria-label="retail (69 items)">retail</a>
+<a href="https://algorithmai.news/tag/robotics" class="tag-cloud-link tag-link-42 tag-link-position-37" style="font-size: 11.519553072626pt;" aria-label="robotics (156 items)">robotics</a>
+<a href="https://algorithmai.news/tag/sales-and-marketing" class="tag-cloud-link tag-link-74 tag-link-position-38" style="font-size: 12.067039106145pt;" aria-label="sales &amp; marketing (186 items)">sales &amp; marketing</a>
+<a href="https://algorithmai.news/tag/smart-home" class="tag-cloud-link tag-link-46 tag-link-position-39" style="font-size: 9.7988826815642pt;" aria-label="smart home (95 items)">smart home</a>
+<a href="https://algorithmai.news/tag/software" class="tag-cloud-link tag-link-10 tag-link-position-40" style="font-size: 16.290502793296pt;" aria-label="software (646 items)">software</a>
+<a href="https://algorithmai.news/tag/supply-chain" class="tag-cloud-link tag-link-106 tag-link-position-41" style="font-size: 8.6256983240223pt;" aria-label="supply chain (66 items)">supply chain</a>
+<a href="https://algorithmai.news/tag/surveys" class="tag-cloud-link tag-link-53 tag-link-position-42" style="font-size: 11.050279329609pt;" aria-label="surveys (137 items)">surveys</a>
+<a href="https://algorithmai.news/tag/telecom" class="tag-cloud-link tag-link-35 tag-link-position-43" style="font-size: 10.424581005587pt;" aria-label="telecom (114 items)">telecom</a>
+<a href="https://algorithmai.news/tag/wearables" class="tag-cloud-link tag-link-71 tag-link-position-44" style="font-size: 9.0949720670391pt;" aria-label="wearables (76 items)">wearables</a>
+<a href="https://algorithmai.news/tag/workforce" class="tag-cloud-link tag-link-82 tag-link-position-45" style="font-size: 10.737430167598pt;" aria-label="workforce (126 items)">workforce</a></p></div></div>
+</div>
+</div></div>
+</div><div id="block-3" class="mg-widget widget_block">
+<div class="wp-block-group"><div class="wp-block-group__inner-container is-layout-flow wp-block-group-is-layout-flow">
+<h2 class="wp-block-heading">Trending</h2>
+
+
+<ul class="wp-block-latest-posts__list wp-block-latest-posts is-layout-flow wp-block-latest-posts-is-layout-flow"><li><a class="wp-block-latest-posts__post-title" href="https://algorithmai.news/space-raises-2-4m-led-by-a16z-speedrun-to-build-the-ai-native-filesystem-for-humans-and-agents">Space raises $2.4M led by a16z Speedrun to build the AI-native filesystem for humans and agents</a></li>
+<li><a class="wp-block-latest-posts__post-title" href="https://algorithmai.news/scitix-introduces-production-ready-inference-platform-bringing-enterprise-grade-control-to-multi-model-ai-deployments">ScitiX Introduces Production-Ready Inference Platform, Bringing Enterprise-Grade Control to Multi-Model AI Deployments</a></li>
+<li><a class="wp-block-latest-posts__post-title" href="https://algorithmai.news/tencent-details-progress-toward-carbon-neutrality-goals-and-outlines-ai-era-priorities">Tencent Details Progress Toward Carbon Neutrality Goals and Outlines AI-Era Priorities</a></li>
+<li><a class="wp-block-latest-posts__post-title" href="https://algorithmai.news/nvidia-guarantees-sb-energys-ports-pike-technology-campus-in-ohio-to-exclusively-host-nvidia-ai-compute">NVIDIA Guarantees SB Energy&#8217;s PORTS-Pike Technology Campus in Ohio to Exclusively Host NVIDIA AI Compute</a></li>
+<li><a class="wp-block-latest-posts__post-title" href="https://algorithmai.news/axe-compute-and-duos-technologies-enter-into-agreements-for-55-mw-of-new-ai-data-center-capacity-across-multiple-u-s-locations">Axe Compute and Duos Technologies Enter into Agreements For 55 MW of New AI Data Center Capacity Across Multiple U.S. Locations</a></li>
+</ul></div></div>
+</div><div id="block-5" class="mg-widget widget_block"><div class="wp-block-group"><div class="wp-block-group__inner-container is-layout-flow wp-block-group-is-layout-flow"><h2 class="wp-block-heading">Archives</h2><ul class="wp-block-archives-list wp-block-archives">	<li><a href='https://algorithmai.news/2026/08'>August 2026</a></li>
+	<li><a href='https://algorithmai.news/2026/06'>June 2026</a></li>
+	<li><a href='https://algorithmai.news/2026/05'>May 2026</a></li>
+	<li><a href='https://algorithmai.news/2026/04'>April 2026</a></li>
+	<li><a href='https://algorithmai.news/2026/03'>March 2026</a></li>
+	<li><a href='https://algorithmai.news/2026/02'>February 2026</a></li>
+	<li><a href='https://algorithmai.news/2026/01'>January 2026</a></li>
+	<li><a href='https://algorithmai.news/2025/12'>December 2025</a></li>
+	<li><a href='https://algorithmai.news/2025/11'>November 2025</a></li>
+	<li><a href='https://algorithmai.news/2025/10'>October 2025</a></li>
+	<li><a href='https://algorithmai.news/2025/09'>September 2025</a></li>
+	<li><a href='https://algorithmai.news/2025/08'>August 2025</a></li>
+	<li><a href='https://algorithmai.news/2025/07'>July 2025</a></li>
+	<li><a href='https://algorithmai.news/2025/06'>June 2025</a></li>
+	<li><a href='https://algorithmai.news/2025/05'>May 2025</a></li>
+	<li><a href='https://algorithmai.news/2025/04'>April 2025</a></li>
+	<li><a href='https://algorithmai.news/2025/03'>March 2025</a></li>
+	<li><a href='https://algorithmai.news/2025/02'>February 2025</a></li>
+	<li><a href='https://algorithmai.news/2025/01'>January 2025</a></li>
+	<li><a href='https://algorithmai.news/2024/12'>December 2024</a></li>
+</ul></div></div></div><div id="block-4" class="mg-widget widget_block">
+<div class="wp-block-group"><div class="wp-block-group__inner-container is-layout-flow wp-block-group-is-layout-flow">
+<h2 class="wp-block-heading">Sponsored</h2>
+
+
+
+<div class="wp-block-group"><div class="wp-block-group__inner-container is-layout-constrained wp-block-group-is-layout-constrained">
+<p class="wp-block-paragraph"></p>
+</div></div>
+</div></div>
+</div>	</div>
+</aside><!-- #secondary -->
+        </aside>
+        </div>
+      <!--row-->
+    </div>
+  <!--container-->
+</main>
+  <div class="container-fluid mr-bot40 mg-posts-sec-inner">
+        <div class="missed-inner">
+        <div class="row">
+                        <div class="col-md-12">
+                <div class="mg-sec-title">
+                    <!-- mg-sec-title -->
+                    <h4>You missed</h4>
+                </div>
+            </div>
+                            <!--col-md-3-->
+                <div class="col-md-3 col-sm-6 pulse animated">
+               <div class="mg-blog-post-3 minh back-img" 
+                                                        style="background-image: url('https://algorithmai.news/wp-content/uploads/2025/02/vecteezy_ai-generated-digital-informational-technology-web-futuristic_37056530-scaled.jpg');" >
+                            <a class="link-div" href="https://algorithmai.news/space-raises-2-4m-led-by-a16z-speedrun-to-build-the-ai-native-filesystem-for-humans-and-agents"></a>
+                    <div class="mg-blog-inner">
+                      <div class="mg-blog-category">
+                      <div class="mg-blog-category"><a class="newsup-categories category-color-1" href="https://algorithmai.news/category/newswire" alt="View all posts in Newswire"> 
+                                 Newswire
+                             </a></div>                      </div>
+                      <h4 class="title"> <a href="https://algorithmai.news/space-raises-2-4m-led-by-a16z-speedrun-to-build-the-ai-native-filesystem-for-humans-and-agents" title="Permalink to: Space raises $2.4M led by a16z Speedrun to build the AI-native filesystem for humans and agents"> Space raises $2.4M led by a16z Speedrun to build the AI-native filesystem for humans and agents</a> </h4>
+                              <div class="mg-blog-meta"> 
+                    <span class="mg-blog-date"><i class="fas fa-clock"></i>
+            <a href="https://algorithmai.news/2026/08">
+                August 18, 2026            </a>
+        </span>
+            <a class="auth" href="https://algorithmai.news/author/algori_editor">
+            <i class="fas fa-user-circle"></i>News Editor        </a>
+            </div> 
+                        </div>
+                </div>
+            </div>
+            <!--/col-md-3-->
+                         <!--col-md-3-->
+                <div class="col-md-3 col-sm-6 pulse animated">
+               <div class="mg-blog-post-3 minh back-img" 
+                                                        style="background-image: url('https://algorithmai.news/wp-content/uploads/2025/06/vecteezy_ai-concept-on-touchscreen-display-with-finger_65781582-scaled.jpeg');" >
+                            <a class="link-div" href="https://algorithmai.news/scitix-introduces-production-ready-inference-platform-bringing-enterprise-grade-control-to-multi-model-ai-deployments"></a>
+                    <div class="mg-blog-inner">
+                      <div class="mg-blog-category">
+                      <div class="mg-blog-category"><a class="newsup-categories category-color-1" href="https://algorithmai.news/category/newswire" alt="View all posts in Newswire"> 
+                                 Newswire
+                             </a></div>                      </div>
+                      <h4 class="title"> <a href="https://algorithmai.news/scitix-introduces-production-ready-inference-platform-bringing-enterprise-grade-control-to-multi-model-ai-deployments" title="Permalink to: ScitiX Introduces Production-Ready Inference Platform, Bringing Enterprise-Grade Control to Multi-Model AI Deployments"> ScitiX Introduces Production-Ready Inference Platform, Bringing Enterprise-Grade Control to Multi-Model AI Deployments</a> </h4>
+                              <div class="mg-blog-meta"> 
+                    <span class="mg-blog-date"><i class="fas fa-clock"></i>
+            <a href="https://algorithmai.news/2026/08">
+                August 17, 2026            </a>
+        </span>
+            <a class="auth" href="https://algorithmai.news/author/algori_editor">
+            <i class="fas fa-user-circle"></i>News Editor        </a>
+            </div> 
+                        </div>
+                </div>
+            </div>
+            <!--/col-md-3-->
+                         <!--col-md-3-->
+                <div class="col-md-3 col-sm-6 pulse animated">
+               <div class="mg-blog-post-3 minh back-img" 
+                                                        style="background-image: url('https://algorithmai.news/wp-content/uploads/2025/03/data-center-2.jpg');" >
+                            <a class="link-div" href="https://algorithmai.news/tencent-details-progress-toward-carbon-neutrality-goals-and-outlines-ai-era-priorities"></a>
+                    <div class="mg-blog-inner">
+                      <div class="mg-blog-category">
+                      <div class="mg-blog-category"><a class="newsup-categories category-color-1" href="https://algorithmai.news/category/newswire" alt="View all posts in Newswire"> 
+                                 Newswire
+                             </a></div>                      </div>
+                      <h4 class="title"> <a href="https://algorithmai.news/tencent-details-progress-toward-carbon-neutrality-goals-and-outlines-ai-era-priorities" title="Permalink to: Tencent Details Progress Toward Carbon Neutrality Goals and Outlines AI-Era Priorities"> Tencent Details Progress Toward Carbon Neutrality Goals and Outlines AI-Era Priorities</a> </h4>
+                              <div class="mg-blog-meta"> 
+                    <span class="mg-blog-date"><i class="fas fa-clock"></i>
+            <a href="https://algorithmai.news/2026/08">
+                August 17, 2026            </a>
+        </span>
+            <a class="auth" href="https://algorithmai.news/author/algori_editor">
+            <i class="fas fa-user-circle"></i>News Editor        </a>
+            </div> 
+                        </div>
+                </div>
+            </div>
+            <!--/col-md-3-->
+                         <!--col-md-3-->
+                <div class="col-md-3 col-sm-6 pulse animated">
+               <div class="mg-blog-post-3 minh back-img" 
+                                                        style="background-image: url('https://algorithmai.news/wp-content/uploads/2024/12/vecteezy_ai-generated-rows-of-servers-in-data-center-with-blue-lights_41913410-scaled.jpeg');" >
+                            <a class="link-div" href="https://algorithmai.news/nvidia-guarantees-sb-energys-ports-pike-technology-campus-in-ohio-to-exclusively-host-nvidia-ai-compute"></a>
+                    <div class="mg-blog-inner">
+                      <div class="mg-blog-category">
+                      <div class="mg-blog-category"><a class="newsup-categories category-color-1" href="https://algorithmai.news/category/newswire" alt="View all posts in Newswire"> 
+                                 Newswire
+                             </a></div>                      </div>
+                      <h4 class="title"> <a href="https://algorithmai.news/nvidia-guarantees-sb-energys-ports-pike-technology-campus-in-ohio-to-exclusively-host-nvidia-ai-compute" title="Permalink to: NVIDIA Guarantees SB Energy&#8217;s PORTS-Pike Technology Campus in Ohio to Exclusively Host NVIDIA AI Compute"> NVIDIA Guarantees SB Energy&#8217;s PORTS-Pike Technology Campus in Ohio to Exclusively Host NVIDIA AI Compute</a> </h4>
+                              <div class="mg-blog-meta"> 
+                    <span class="mg-blog-date"><i class="fas fa-clock"></i>
+            <a href="https://algorithmai.news/2026/08">
+                August 17, 2026            </a>
+        </span>
+            <a class="auth" href="https://algorithmai.news/author/algori_editor">
+            <i class="fas fa-user-circle"></i>News Editor        </a>
+            </div> 
+                        </div>
+                </div>
+            </div>
+            <!--/col-md-3-->
+                     
+
+                </div>
+            </div>
+        </div>
+<!--==================== FOOTER AREA ====================-->
+        <footer> 
+            <div class="overlay" style="background-color: ;">
+                <!--Start mg-footer-widget-area-->
+                                 <!--End mg-footer-widget-area-->
+                <!--Start mg-footer-widget-area-->
+                <div class="mg-footer-bottom-area">
+                    <div class="container-fluid">
+                        <div class="divide-line"></div>
+                        <div class="row align-items-center">
+                            <!--col-md-4-->
+                            <div class="col-md-6">
+                                                             <div class="site-branding-text">
+                              <h1 class="site-title"> <a href="https://algorithmai.news/" rel="home">Algorithm</a></h1>
+                              <p class="site-description">The AI newswire</p>
+                              </div>
+                                                          </div>
+
+                             
+                            <div class="col-md-6 text-right text-xs">
+                                
+                            <ul class="mg-social">
+                                                                        <a target="_blank" href="">
+                                                                        <a target="_blank"  href="">
+                                                                         
+                                                                 </ul>
+
+
+                            </div>
+                            <!--/col-md-4-->  
+                             
+                        </div>
+                        <!--/row-->
+                    </div>
+                    <!--/container-->
+                </div>
+                <!--End mg-footer-widget-area-->
+
+                <div class="mg-footer-copyright">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-6 text-xs">
+                                <p>
+                                <a href="https://en-gb.wordpress.org/">
+								Proudly powered by WordPress								</a>
+								<span class="sep"> | </span>
+								Theme: News Talk by <a href="https://themeansar.com/" rel="designer">Themeansar</a>.								</p>
+                            </div>
+
+
+
+                            <div class="col-md-6 text-right text-xs">
+                                <ul class="info-right"><li class="nav-item menu-item "><a class="nav-link " href="https://algorithmai.news/" title="Home">Home</a></li><li class="nav-item menu-item page_item dropdown page-item-2"><a class="nav-link" href="https://algorithmai.news/about-algorithm">About Algorithm</a></li><li class="nav-item menu-item page_item dropdown page-item-122"><a class="nav-link" href="https://algorithmai.news/newsletter">Newsletter</a></li><li class="nav-item menu-item page_item dropdown page-item-3"><a class="nav-link" href="https://algorithmai.news/privacy-policy">Privacy Policy</a></li></ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--/overlay-->
+        </footer>
+        <!--/footer-->
+    </div>
+    <!--/wrapper-->
+    <!--Scroll To Top-->
+    <a href="#" class="ta_upscr bounceInup animated"><i class="fa fa-angle-up"></i></a>
+    <!--/Scroll To Top-->
+<!-- /Scroll To Top -->
+<script type="speculationrules">
+{"prefetch":[{"source":"document","where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":["/wp-*.php","/wp-admin/*","/wp-content/uploads/*","/wp-content/*","/wp-content/plugins/*","/wp-content/themes/news-talk/*","/wp-content/themes/newsup/*","/*\\?(.+)"]}},{"not":{"selector_matches":"a[rel~=\"nofollow\"]"}},{"not":{"selector_matches":".no-prefetch, .no-prefetch a"}}]},"eagerness":"conservative"}]}
+</script>
+
+<!-- GTM Container placement set to footer -->
+<!-- Google Tag Manager (noscript) --><script>
+jQuery('a,input').bind('focus', function() {
+    if(!jQuery(this).closest(".menu-item").length && ( jQuery(window).width() <= 992) ) {
+    jQuery('.navbar-collapse').removeClass('show');
+}})
+</script>
+			<script type='text/javascript'>
+				const lazyloadRunObserver = () => {
+					const lazyloadBackgrounds = document.querySelectorAll( `.e-con.e-parent:not(.e-lazyloaded)` );
+					const lazyloadBackgroundObserver = new IntersectionObserver( ( entries ) => {
+						entries.forEach( ( entry ) => {
+							if ( entry.isIntersecting ) {
+								let lazyloadBackground = entry.target;
+								if( lazyloadBackground ) {
+									lazyloadBackground.classList.add( 'e-lazyloaded' );
+								}
+								lazyloadBackgroundObserver.unobserve( entry.target );
+							}
+						});
+					}, { rootMargin: '200px 0px 200px 0px' } );
+					lazyloadBackgrounds.forEach( ( lazyloadBackground ) => {
+						lazyloadBackgroundObserver.observe( lazyloadBackground );
+					} );
+				};
+				const events = [
+					'DOMContentLoaded',
+					'elementor/lazyload/observe',
+				];
+				events.forEach( ( event ) => {
+					document.addEventListener( event, lazyloadRunObserver );
+				} );
+			</script>
+				<script>
+	/(trident|msie)/i.test(navigator.userAgent)&&document.getElementById&&window.addEventListener&&window.addEventListener("hashchange",function(){var t,e=location.hash.substring(1);/^[A-z0-9_-]+$/.test(e)&&(t=document.getElementById(e))&&(/^(?:a|select|input|button|textarea)$/i.test(t.tagName)||(t.tabIndex=-1),t.focus())},!1);
+	</script>
+	<script async data-wp-strategy="async" fetchpriority="low" id="comment-reply-js" src="https://algorithmai.news/wp-includes/js/comment-reply.min.js?ver=7.1"></script>
+<script id="newsletter-js-extra">
+var newsletter_data = {"action_url":"https://algorithmai.news/wp-admin/admin-ajax.php"};
+//# sourceURL=newsletter-js-extra
+</script>
+<script id="newsletter-js" src="https://algorithmai.news/wp-content/plugins/newsletter/main.js?ver=8.9.3"></script>
+<script id="newsup-custom-js" src="https://algorithmai.news/wp-content/themes/newsup/js/custom.js?ver=7.1"></script>
+<script id="wp-emoji-settings" type="application/json">
+{"baseUrl":"https://s.w.org/images/core/emoji/17.0.2/72x72/","ext":".png","svgUrl":"https://s.w.org/images/core/emoji/17.0.2/svg/","svgExt":".svg","source":{"concatemoji":"https://algorithmai.news/wp-includes/js/wp-emoji-release.min.js?ver=7.1"}}
+</script>
+<script type="module">
+/*! This file is auto-generated */
+var e="script#wp-emoji-settings",t=document.querySelector(e);if(!(t instanceof HTMLScriptElement))throw new Error("Element missing: "+e);const r=JSON.parse(t.text),s=(window._wpemojiSettings=r,"wpEmojiSettingsSupports"),o=["flag","emoji"];function i(e){try{var t={supportTests:e,timestamp:(new Date).valueOf()};sessionStorage.setItem(s,JSON.stringify(t))}catch(e){}}function c(e,t,n){e.clearRect(0,0,e.canvas.width,e.canvas.height),e.fillText(t,0,0);t=new Uint32Array(e.getImageData(0,0,e.canvas.width,e.canvas.height).data);e.clearRect(0,0,e.canvas.width,e.canvas.height),e.fillText(n,0,0);const r=new Uint32Array(e.getImageData(0,0,e.canvas.width,e.canvas.height).data);return t.every((e,t)=>e===r[t])}function p(e,t){e.clearRect(0,0,e.canvas.width,e.canvas.height),e.fillText(t,0,0);var n=e.getImageData(16,16,1,1);for(let e=0;e<n.data.length;e++)if(0!==n.data[e])return!1;return!0}function u(e,t,n,r){switch(t){case"flag":return n(e,"\ud83c\udff3\ufe0f\u200d\u26a7\ufe0f","\ud83c\udff3\ufe0f\u200b\u26a7\ufe0f")?!1:!n(e,"\ud83c\udde8\ud83c\uddf6","\ud83c\udde8\u200b\ud83c\uddf6")&&!n(e,"\ud83c\udff4\udb40\udc67\udb40\udc62\udb40\udc65\udb40\udc6e\udb40\udc67\udb40\udc7f","\ud83c\udff4\u200b\udb40\udc67\u200b\udb40\udc62\u200b\udb40\udc65\u200b\udb40\udc6e\u200b\udb40\udc67\u200b\udb40\udc7f");case"emoji":return!r(e,"\ud83e\u1fac8")}return!1}function f(e,t,n,r){let a;const s=(a="undefined"!=typeof WorkerGlobalScope&&self instanceof WorkerGlobalScope?new OffscreenCanvas(300,150):document.createElement("canvas")).getContext("2d",{willReadFrequently:!0}),o=(s.textBaseline="top",s.font="600 32px Arial",{});return e.forEach(e=>{o[e]=t(s,e,n,r)}),o}function a(e){var t=document.createElement("script");t.src=e,t.defer=!0,document.head.appendChild(t)}r.supports={everything:!0,everythingExceptFlag:!0},new Promise(t=>{let n=function(){try{var e=JSON.parse(sessionStorage.getItem(s));if("object"==typeof e&&"number"==typeof e.timestamp&&(new Date).valueOf()<e.timestamp+604800&&"object"==typeof e.supportTests)return e.supportTests}catch(e){}return null}();if(!n){if("undefined"!=typeof Worker&&"undefined"!=typeof OffscreenCanvas&&"undefined"!=typeof URL&&URL.createObjectURL&&"undefined"!=typeof Blob)try{var e="postMessage("+f.toString()+"("+[JSON.stringify(o),u.toString(),c.toString(),p.toString()].join(",")+"));",r=new Blob([e],{type:"text/javascript"});const a=new Worker(URL.createObjectURL(r),{name:"wpTestEmojiSupports"});return void(a.onmessage=e=>{i(n=e.data),a.terminate(),t(n)})}catch(e){}i(n=f(o,u,c,p))}t(n)}).then(e=>{for(const n in e)r.supports[n]=e[n],r.supports.everything=r.supports.everything&&r.supports[n],"flag"!==n&&(r.supports.everythingExceptFlag=r.supports.everythingExceptFlag&&r.supports[n]);var t;r.supports.everythingExceptFlag=r.supports.everythingExceptFlag&&!r.supports.flag,r.supports.everything||((t=r.source||{}).concatemoji?a(t.concatemoji):t.wpemoji&&t.twemoji&&(a(t.twemoji),a(t.wpemoji)))});
+//# sourceURL=https://algorithmai.news/wp-includes/js/wp-emoji-loader.min.js
+</script>
+</body>
+</html>

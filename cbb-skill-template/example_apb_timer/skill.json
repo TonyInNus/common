@@ -1,0 +1,47 @@
+{
+  "name": "apb_timer",
+  "version": "1.2.0",
+  "vendor": "internal-cbb-library",
+  "category": "peripheral",
+  "summary": "32 位 APB 定时器：软件可配置初值，使能后每个 PCLK 递减计数，计数到 0 时产生单周期中断（可屏蔽），并自动重装初值。已量产验证，勿修改实现。",
+  "use_when": [
+    "SoC 需要 APB 外设定时器或周期中断源",
+    "需要简单的看门狗/心跳计数器（配合软件重写 LOAD）",
+    "外设域集成，作为 APB 从机挂在总线矩阵上"
+  ],
+  "do_not_use_when": [
+    "需要 PWM 输出或波形产生（本模块无输出引脚）",
+    "需要多通道/捕获比较功能",
+    "需要微秒级高精度（时钟源为 PCLK，精度受限于 PCLK 频率）"
+  ],
+  "parameters": {
+    "WIDTH": {
+      "type": "int",
+      "default": 32,
+      "range": [8, 32],
+      "description": "计数器位宽；改变位宽会改变 COUNT/LOAD 寄存器的有效位"
+    }
+  },
+  "interfaces": {
+    "required": ["apb4_slave"],
+    "optional": ["irq_output"]
+  },
+  "dependencies": [],
+  "clocks": {
+    "pclk": "所有状态在 PCLK 上升沿更新",
+    "presetn": "低电平异步复位，复位后 COUNT=0、timer_irq=0、CONTROL=0"
+  },
+  "verification": {
+    "harness": "testbench/tb_apb_timer.sv",
+    "tool": "iverilog",
+    "expected_result": "PASS",
+    "last_run": "2026-04-01",
+    "regression_scope": ["apb 写读回", "递减计数", "到期中断", "重装初值", "irq 屏蔽"]
+  },
+  "reviewer": {
+    "name": "（填写审核人）",
+    "role": "资深 RTL 设计/验证工程师",
+    "sign_off": false,
+    "comment": "接口契约与功能描述必须经审核签名后方可开放给 Agent"
+  }
+}

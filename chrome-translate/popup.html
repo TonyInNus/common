@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>划词翻译</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="app">
+    <header class="app-head">
+      <span class="logo" aria-hidden="true">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/>
+        </svg>
+      </span>
+      <h1>划词翻译</h1>
+      <span class="version">v1.0</span>
+    </header>
+
+    <main class="app-main">
+      <div class="input-wrap">
+        <textarea id="input" rows="4" placeholder="输入或粘贴要翻译的文本…" spellcheck="false"></textarea>
+        <button id="clear" class="icon-btn" type="button" title="清空" aria-label="清空" hidden>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="toolbar">
+        <label class="lang-field">
+          <span class="lang-label">翻译为</span>
+          <select id="target"></select>
+        </label>
+        <button id="translate" class="primary-btn" type="button">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/>
+          </svg>
+          翻译
+        </button>
+      </div>
+
+      <section class="result-card" id="result-card" hidden>
+        <div class="result-meta" id="result-meta"></div>
+        <p class="result-text" id="result-text"></p>
+        <p class="result-error" id="result-error" hidden></p>
+        <div class="result-actions">
+          <button id="copy" class="ghost-btn" type="button">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+            </svg>
+            复制
+          </button>
+          <button id="speak" class="ghost-btn" type="button">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+            </svg>
+            朗读
+          </button>
+          <span class="loading" id="loading" hidden>翻译中…</span>
+        </div>
+      </section>
+    </main>
+
+    <footer class="app-foot">
+      <span>网页中选中文字 → 点「译」按钮</span>
+      <span>或按 <kbd>Alt</kbd>+<kbd>T</kbd> / 右键翻译</span>
+    </footer>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

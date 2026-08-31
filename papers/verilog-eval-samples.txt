@@ -1,0 +1,27 @@
+﻿=== mux2to1v ===
+ This module assigns the output to either input a or b depending on the value of the select signal.
+
+=== fsm3 ===
+ This module is a state machine that outputs a signal when it reaches state D based on the input signal.
+
+=== lemmings1 ===
+ This module implements a state machine that alternates between two states based on the bump_left and bump_right inputs, and assigns walk_left and walk_right outputs accordingly.
+
+=== bugs_mux2 ===
+
+
+=== rule90 ===
+
+
+=== countslow ===
+ This module increments the output register q from 0 to 9 when slowena is high, and resets q to 0 when reset is high.
+
+=== popcount255 ===
+ This module takes in a 255-bit input and sums the bits to produce an 8-bit output.
+
+=== lfsr32 ===
+
+
+=== edgecapture ===
+
+

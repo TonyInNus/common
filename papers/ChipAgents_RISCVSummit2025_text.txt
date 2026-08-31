@@ -1,0 +1,66 @@
+Revolutionizing RISC-V Chip 
+Design with AI Agents
+David Wang
+Founding ML Engineer, ChipAgents
+Book a demo at chipagents.ai/#book-a-demo
+● Input natural language 
+specifications, 
+documents, and 
+instructions.
+● Automatically generate 
+RTL and test benches 
+● 97 % pass on 
+VerilogEval-v2 
+benchmark
+Intent Specs Docs Existing RTL
+LLM Agents
+Tool Selection 
+& Sequencing
+RTL/Testbench
+/Docs/Debug
+Logic Verification/RTL Design & 
+Synthesis/Timing Analysis/Formal 
+Verification/Power Analysis/Lint & 
+CDC 
+Feedback + 
+Optional 
+Engineer 
+Input
+ChipAgents™: Agentic AI Powered Design & Verification Flow
+Book a demo at chipagents.ai/#book-a-demo
+ChipAgents™: Agentic AI Powered Design & Verification Flow
+Design Phase Specification 
+Analysis
+Automatic Understanding 
+Long PDFs & Sanity Checks
+RTL Generation 
+From Specifications to Verilog 
+Generation
+RTL 
+Documentation
+Auto-documentation and 
+understanding
+Verification 
+Phase Test Plan 
+Generation
+Creation of test plans
+Functional 
+Verification
+UVM/Python 
+Testbench Creation
+Formal 
+Verification
+Generation of SVAs
+Debugging
+AI-guided debugging 
+and optimization
+Results
+80% Less Time
+Benchmarked on Google’s 
+OpenTitan Project
+Top Accuracy
+97-99% on NVIDIA’s 
+VerilogEval 
+Reduction in 
+ASIC Project 
+Delays

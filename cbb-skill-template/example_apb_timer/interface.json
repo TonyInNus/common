@@ -1,0 +1,39 @@
+{
+  "module": "apb_timer",
+  "top_module": "apb_timer",
+  "language": "systemverilog",
+  "ports": [
+    { "name": "PCLK",     "direction": "input",  "width": 1,   "protocol": "clock",        "desc": "APB 时钟，所有状态在上升沿更新" },
+    { "name": "PRESETn",  "direction": "input",  "width": 1,   "protocol": "async_reset_l", "desc": "低有效异步复位" },
+    { "name": "PSEL",     "direction": "input",  "width": 1,   "protocol": "apb4",         "desc": "从机选中（必须与 PENABLE 配合）" },
+    { "name": "PENABLE",  "direction": "input",  "width": 1,   "protocol": "apb4",         "desc": "传输使能：低=SETUP 周期，高=ACCESS 周期" },
+    { "name": "PWRITE",   "direction": "input",  "width": 1,   "protocol": "apb4",         "desc": "1=写 0=读" },
+    { "name": "PADDR",    "direction": "input",  "width": 4,   "protocol": "apb4",         "desc": "字节地址（仅低 4 位有效）" },
+    { "name": "PWDATA",   "direction": "input",  "width": 32,  "protocol": "apb4",         "desc": "写数据" },
+    { "name": "PRDATA",   "direction": "output", "width": 32,  "protocol": "apb4",         "desc": "读数据（无传输时保持 0）" },
+    { "name": "PREADY",   "direction": "output", "width": 1,   "protocol": "apb4",         "desc": "本模块恒为 1（单周期完成）" },
+    { "name": "timer_irq", "direction": "output", "width": 1,  "protocol": "irq",          "desc": "计数到 0 且 CONTROL.irq_en=1 时拉高一个 PCLK 周期" }
+  ],
+  "registers": [
+    { "offset": "0x0", "name": "CONTROL", "access": "RW", "width": 32,
+      "fields": [
+        { "bits": [0], "name": "enable",  "desc": "1=启动递减计数；写 0 暂停（COUNT 保持）" },
+        { "bits": [1], "name": "irq_en",  "desc": "1=允许 timer_irq 输出" }
+      ], "reset": 0 },
+    { "offset": "0x4", "name": "LOAD",    "access": "RW", "width": 32,
+      "fields": [], "desc": "计数值初值；计数到 0 时自动重装", "reset": 0 },
+    { "offset": "0x8", "name": "COUNT",   "access": "RO", "width": 32,
+      "fields": [], "desc": "当前计数值（只读）；读 0x8 返回实时计数", "reset": 0 }
+  ],
+  "timing": {
+    "apb_transfer": "SETUP+ACCESS 两周期完成，PREADY 恒 1",
+    "count_update": "enable=1 时每个 PCLK 上升沿 COUNT=COUNT-1",
+    "expire": "COUNT 从 1 减到 0 的同一周期：COUNT 重装为 LOAD，若 irq_en=1 则 timer_irq 拉高一个周期",
+    "reset": "PRESETn 低电平时：CONTROL=0, LOAD=0, COUNT=0, timer_irq=0"
+  },
+  "usage_notes": [
+    "写 CONTROL.enable=1 前必须先写 LOAD，否则从 0 开始计数立即触发到期",
+    "PADDR 仅 4 位，0xC 以上地址返回 0，不产生错误响应",
+    "WIDTH 参数改变时 LOAD/COUNT 高位自动清零"
+  ]
+}

@@ -1,0 +1,630 @@
+Design Conductor: An agent autonomously
+builds a 1.5 GHz Linux-capable RISC-V CPU
+The Verkor Team: Ravi Krishna, Suresh Krishna, David Chin
+Design Conductor (DC) is an autonomous agent which applies the capabilities of frontier models to
+build semiconductors end-to-end – that is, from concept to verified, tape-out ready GDSII (layout
+CAD file). In 12 hours and fully autonomously, DC was able tobuild several micro-architecture
+variations of a complete RISC-V CPU (which we dub “VerCore”) that meet timing at 1.48 GHza,
+starting from a 219-word requirements document. The VerCore achieves a CoreMark score of 3261.
+For historical context, this is roughly equivalent to an Intel Celeron SU2300 from mid-2011 (which
+ran at 1.2 GHz). To our knowledge, this is the first time an autonomous agent has built a complete,
+working CPU from spec to GDSII. This report is organized as follows. We first review DC’s design
+and its key components. We then describe the methodology that DC followed to build VerCore
+– including RTL implementation, testbench implementation, frontend debugging, optimization to
+achieve timing closure, and interacting with backend tools. We review the key characteristics of
+the resulting VerCoreb. Finally, we highlight how frontier models could improve to better enable
+this application, and our lessons learned as to how chips will be built in the future enabled by the
+capabilities of systems like DC.
+Date:March 11, 2026
+Correspondence:team@verkor.io
+arv32i_zmmul; using the ASAP 7nm PDK.
+bThe VerCore RTL source and scripts necessary to rebuild the GDSII will be publicly available.
+(a) VerCore design A (higher performance)
+ (b) VerCore design B
+Figure 1 GDSII plots of VerCore designs (70µm×70µm)
+1
+arXiv:2603.08716v1  [cs.AR]  6 Feb 2026
+1 Introduction
+Building a chip, whether from scratch or starting from an existing, older design, is a highly time-consuming
+and expensive undertaking. It is widely understood that bringing a new leading-edge design to market costs
+well over $400M and takes 18-36 months even with an engineering team numbering in the hundreds. A leading-
+edgechipdesignprocessencompassesmanydistinctsteps, eachofwhichcanconsumeasmuchlaborasamajor
+software project. These include architecture definition, RTL implementation, testbench implementation
+and functional verification, frontend synthesis, place & route, power estimation, and packaging. Further,
+commercially viable chips face several interlocking constraints that, in practice, require design iterations to
+meet. This consumes many additional months of time.
+Chief among them is the requirement for extremely high functional test coverage – that is, testing to ensure,
+withvery highconfidence, that there are no “bugs” in the device’s behavior. Because a single tape-out can
+cost tens of millions of dollars, “fixing” a bug in production is not an option. This contributes to the high cost
+of “verification”, often estimated at over 50% of total spend. Further, chips face multiple strict performance
+requirements, typically including at least on clock rate, power consumption, and silicon area (which affects
+production cost). The different types of simulation required for verification are also both slow in wall-clock
+runtime and expensive in terms of server-hours. Electronic Design Automation (EDA) tools are also highly
+configurable and require considerable expertise to operate in such a way as to achieve good end results for
+the design.
+Due to these costs and challenges, many silicon markets are served by few vendors, with startup entry rarer
+than in software industries. Yet more potential designs are considered too low-volume to be worth a dedicated
+chip at all. And it typically takes many years and great engineering cost for the latest technologies to reach
+ultimate consumers.
+Long-running autonomous AI agents present a promising opportunity to change this paradigm. To be fully
+effective in accelerating the design process, and avoid falling prey to Amdahl’s law, such agents must address
+the entire problem – all the way to tape-out ready GDSII [1]. The remainder of this report describes how
+Design Conductor (DC) works to do this.
+2 Design Conductor Architecture
+This section reviews the key capabilities of DC and the architecture and infrastructure that supports them.
+2.1 Key Capabilities
+We list some of the key capabilities that DC was built to realize.
+2.1.1 Stable Long-horizon Execution
+As described in section 1, chip design is a complex task with many sub-components. DC has to be able
+to make progress towards a goal – a functionally correct, high-performance design – across many tens of
+billions of tokens consumed. This goal is not unitary but is rather a combination of several different design
+objectives (power, performance, and area a.k.a PPA, functional constraints, and architecture input). DC
+must remember and meet all of these.
+2.1.2 Context Management
+DC must provide the underlying LLMs that it uses the information required for them to make good decisions.
+It must also carefully manage use of the limited context window, not only to avoid overflows but also to
+maximize quality.
+2.1.3 Technical Mastery
+LLMs are remarkable in their deep knowledge across many fields, and this is one way in which they arguably
+exceed human capabilities already. However, chip design requires extremely deep knowledge in certain spe-
+2
+cific areas. For example, master CPU designers understand certain “tricks” and “recipes” to achieve good
+performance. To be useful, DC must achieve a level of knowledge high enough that it can work smoothly with
+field experts. It must understand what it takes to achieve high performance across many types of designs.
+2.1.4 Correctness & Verification
+“Vibe chip design” is not an option when shipping millions of units. DC has to deliver a verifiably correct
+design.
+2.1.5 Balancing Exploration & Speed
+The design space for chips is vast. DC has to be able to explore that space, while adhering to the user’s
+instructions, in order to achieve the optimal performance. At the same time, DC must avoid going down
+a “rabbit hole” and failing to accomplish the overall objective in a timely manner. This requires managing
+search and exploration in a disciplined manner.
+2.1.6 End-to-end operation
+The most expensive and painful part of the human chip design process is a last-minute RTL change required
+to make timing (clock rate) targets or to fix a “corner case” functional bug right before tape-out. That is
+for obvious reasons: it requires ripping up at least some of the prior design effort, and introduces a risk of
+adding even more bugs. DC has to perform the same operations as it works to build a design, and it must
+do this while maintaining the necessary context and memory of its previous work.
+2.1.7 Infra
+Large-scale chip design is highly hardware resource intensive. VCD trace files used for debugging can be easily
+hundreds of gigabytes, and EDA tools use large amounts of DRAM to optimize designs during synthesis,
+placement, and routing. And DC may requires many subagent instances working together to accomplish its
+task in a timely manner. This means that DC’s supporting infra has to be world-class in scalability and,
+importantly, reliability.
+2.2 Architecture
+DC CoreMemory
+Execution Environments
+Context Mgr
+DBs
+LLM Sessions
+Figure 2 High-level overview of Design Conductor’s Architecture
+We present a high-level architecture overview in figure 2.
+DC is a scalable, cloud-based application which runs on a distributed file system. LLM sessions are managed
+by worker servers, all of which sync to a central DB. These sessions connect to tool servers which exist in one
+3
+or more execution environments, which can be VMs or containers. A context management module monitors
+and controls overall usage of the context window for the various sessions that are in-flight at any given time.
+In general, only theBash,Edit, andSubagenttools are needed, although customized versions of these and
+additional tools can be used to improve quality. Subagents and higher-level algorithms (such as evolutionary)
+are managed by a top-levelDC Coremodule, which interacts with lower-level LLM sessions.
+Specific knowledge is provided to DC via a dedicated knowledge base. This knowledge base is contained
+within the main memory system. Memories exist indefinitely and are managed fully autonomously. DC
+makes use of this memory when it onboards itself onto a new codebase, or when it ingests requirements
+provided to it by users. This memory is also critical to ensuring that DC meets all requirements on the
+design requested by users, and that the design it is building meets all correctness requirements. A single DC
+“instance” is dedicated to one customer’s design, such that no code, memories, or any information crosses
+between customers.
+The actual design of these modules is proprietary and not discussed further in this report.
+3 Method
+3.1 Inputs to DC
+The only actual user input to DC was the following document:
+VerCore RISC-V Design
+Requirements Overview
+Your task is to build VerCore, a RISC-V CPU core that supports RV32I and ZMMUL, with the following
+hardware interfaces, all synchronous to a master clock:
+* Instruction cache interface (32-bit datapath)
+* Data cache interface (32-bit datapath)
+* Other interface signals: clock input to core, reset_n input to core, asserted low.
+VerCore should implement a simple 5-stage pipelined design, in-order, single-issue of course.
+DO NOT support compressed instructions.
+Implement the register file as flip flops. This allows register reads to happen any time during the
+cycle, but writes happen at the next rising clock edge.
+You need to achieve a CPI <= 1.5. Your overall goal is to maximize your design’s score on CoreMark.
+Aim for a clock rate of 1.6 GHz.
+You are responsible for both the RTL and the physical design. You should use the OpenROAD flow scripts
+to generate final GDSII output, along with area and timing information for this design. You should use
+the ASAP7 platform/PDK.
+Assume that input signals will be valid 70% into the clock cycle. Make sure output signals are valid
+20% into the clock cycle.
+Testing
+You have access to Spike, the RISC-V ISA simulator. Use this to build a cycle-by-cycle integration test
+and verify that the behavior of your module matches that of Spike.
+DC was also given access to Spike [3], the RISC-V ISA simulator, the RISC-V ISA [4] and ASM manuals, as
+well as the RISC-V GNU toolchain.
+3.2 Steps followed by DC
+Figure 3 illustrates the steps that DC went through to build the VerCore.This process is ultimately under
+DC’s control, and DC can customize or modify it and its execution to each design project. We simply
+provided the capabilities shown in the diagram as part of DC; their composition is determined by theDC
+Coremodule described in section 2.
+DC starts with the input provided to it by the user. According to this input, its memory, and its knowledge,
+it generates an initial design proposal. An excerpt of this proposal is shown below. The design proposal is a
+4
+•Analyze Requirements.•Analyze Legacy Code Base & Docs.•Develop Micro-Architecture•Write Implementation Plan.•Identify key challenges.
+Design Planning Agent
+Product FeaturesTechnologyPPA goalsDocsISA SpecsLegacy Designs
+Rapid Exploration e.g. HLS
+Code AnalysisDocs Analysis
+Detailed Design Proposal.Implementation Notes.
+•Identify Root Cause of functional bugs found in complex System Tests.•Generate RTL and/or testbench fixes.
+Root Cause Analysis Subagent
+Rapid Estimation
+Design Review Document.Final Design Proposal.
+•Implement and Verify Each Module.•Generate Testbench per Module.•Estimate PPA metrics, facilitate closure.
+Module Implementation Subagent
+•Implement and Verify Each Module.•Generate Testbench per Module.•Estimate PPA metrics, facilitate closure.
+Module Implementation Subagent
+•Implement and Verify Each Module.•Generate Testbench per Module.•Estimate PPA metrics, facilitate closure.
+Module Implementation Subagents
+Testbench Simulator.VCD Parser.
+Rapid Backend for PPA.Backend Reports Parsers.
+Validated Verilog RTL for every Module.
+•Integrate all module-level Verilog RTL.•Run end-to-end complex system test cases.•Manage functional debug and PPA closure.
+System Integration Agent
+End-to-End System Level Test Cases
+Architecture Simulator.Machine State Checker.
+•Painstaking, Manual Analysis of proposed design.•Identify corner case scenarios.•Identify Implementation Issues.•Reason through System scenarios.
+Design Review Agent
+•Analyze Timing, Area, Power issues.•Update backend scripts, constraints.•Change RTL if needed.
+PPA Closure Subagent
+Synthesis.P&R.Parasitics Extraction.Power Analysis.DRC, LVS.
+VCD Parser.
+TCL Scripts.Constraints.
+System Testbench.
+GDSII
+RTL Edits
+RTL EditsMajor Design ChangesIf needed for functional, PPA
+Module-level testbenches
+Figure 3 Typical design process of Design Conductor. Note that for VerCore, there is no “legacy design”.
+“living” document, which DC updates as it fixes any functional or timing issues in its architecture. In fact
+we observed DC update its design based on feedback from final timing after place & route.
+VerCore RV32I+ZMMUL Design
+Overview
+- 5-stage in-order single-issue pipeline: IF, ID, EX, MEM, WB.
+- PC reset to 0x2000. No compressed ISA. Register file uses flip-flops (sync write on posedge, async
+read).
+- Cache interfaces per cache_model.v: ic_va/ic_valid fetch (async read), dc_va/dc_valid/dc_d_out/dc_-
+byte_en for loads/stores.
+Pipeline Stages (combinational stage modules, pipeline regs in vercore)
+1) IF Stage (if_stage)
+- Holds PC in vercore. ic_va = pc_f. ic_valid asserted when not in reset (held during stalls).
+- pc_plus4_f = pc_f + 4.
+- PC update priority: reset -> branch/jump target -> stall hold -> pc+4.
+- Branch/jump decision in ID drives pc_next (1-cycle taken penalty via IF/ID flush).
+2) ID Stage (id_stage)
+- Decode opcode/funct3/funct7; generate control signals.
+- Immediate generation for I/S/B/U/J types.
+- Register file read (async). x0 always 0.
+- Branch/jump resolved in ID using forwarded operands (from EX, MEM, WB). Branch compares for
+BEQ/BNE/BLT/BGE/BLTU/BGEU.
+- JAL/JALR targets computed in ID (jal: pc+imm_j; jalr: (rs1+imm_i)&~1). Jumps cause PC redirect and
+IF/ID flush. JAL/JALR writeback uses pc_plus4.
+- Branch instructions create no side effects (bubble into ID/EX).
+3) EX Stage (ex_stage)
+- ALU ops: ADD/SUB/SLL/SRL/SRA/SLT/SLTU/AND/OR/XOR.
+- Address calc for load/store: rs1 + imm.
+- AUIPC: pc_ex + imm; LUI: imm.
+- ZMMUL: mul/mulh/mulhsu/mulhu via riscv_zmmul_mul handshake. Mul result treated as ALU result; pipeline
+stalls while mul result pending.
+5
+4) MEM Stage (mem_stage)
+- For loads/stores, drive dc_ * signals (gated by valid and global stall).
+- Store byte enables/data:
+* SB: dc_byte_en = 4’b0001 « addr[1:0]; dc_d_out = rs2 « (8 *addr[1:0])
+* SH: dc_byte_en = addr[1]?4’b1100:4’b0011; dc_d_out = rs2 « (8 *addr[1:0])
+* SW: dc_byte_en = 4’b1111; dc_d_out = rs2
+- Loads: dc_byte_en=0. Select byte/half by addr[1:0] and sign/zero-extend per funct3 (LB/LBU/LH/LHU/LW).
+Load data computed combinationally in MEM for forwarding/WB.
+5) WB Stage (wb_stage)
+- Writeback selection: from MEM load data, ALU/mul result, or pc_plus4 for JAL/JALR.
+- regfile write occurs when wb_reg_write && rd!=0; wb_reg_write itself is gated by rd!=0 to avoid x0
+writes in spike_checker. Signals exposed as u_vercore.wb_rd, u_vercore.wb_reg_write, u_vercore.wb_data.
+Pipeline Registers
+- IF/ID: pc_id, instr_id, pc_plus4_id, valid_id.
+- ID/EX: pc_ex, pc_plus4_ex, rs1_val/rs2_val captured from forwarded ID-stage values (WB bypass), rs1,
+rs2, rd, imm, funct3/7, control (reg_write, mem_read, mem_write, mem_to_reg, alu_op, alu_src, use_-
+pc/use_imm, wb_sel, mul_en), valid_ex.
+- EX/MEM: alu_result, store_data, rd, funct3, control (reg_write, mem_read, mem_write, mem_to_reg, wb_-
+sel), pc_plus4_ex, valid_mem.
+- MEM/WB: wb_data, rd, reg_write, valid_wb.
+Forwarding
+- EX stage forwarding (priority EX/MEM -> MEM/WB) for rs1/rs2.
+- Store-data forwarding uses same sources for rs2 before latching into EX/MEM.
+- ID stage branch/jalr forwarding from:
+* EX stage ALU result (for immediately preceding ALU op)
+* MEM stage forward value (load data if mem_read else alu_result)
+* WB stage wb_data
+Hazards / Stall / Flush
+- Load-use hazard: if ID instruction uses rs1/rs2 and ID/EX is a load writing same rd, stall IF/ID + PC
+(hold), insert bubble into ID/EX.
+- Branch/jalr hazard uses same load-use detection (stall when source depends on load in EX). Additional
+EX->ID forwarding resolves ALU dependencies without stall.
+- Mul stall: when EX stage is mul and mul_out_valid=0, global stall holds all pipeline regs + PC. During
+global stall, dc_valid and wb_reg_write are gated low to avoid repeat mem/reg events. When mul_out_-
+valid=1, allow pipeline to advance and assert mul_out_ready to clear busy.
+- Branch/jump taken in ID: update PC to target, flush IF/ID on update (insert bubble). Branch
+instruction itself is bubbled (no side effects). JAL/JALR continue for link writeback.
+...remainder omitted...
+It will then review every aspect of this proposal. This review is “manual” and “painstaking”, in DC’s own
+words, to ensure the design is proper before implementation starts. An excerpt of one such review for the
+multiplier unit design is shown below.
+==================================================
+ZMMUL MULTIPLIER INTEGRATION DESIGN REVIEW
+VerCore RISC-V Processor
+==================================================
+DOCUMENT VERSION: 1.0
+DATE: 2026
+REVIEWER: Design Conductor (Subagent)
+==================================================
+EXECUTIVE SUMMARY
+==================================================
+REVIEW METHODOLOGY:
+This review was conducted by manually and painstakingly walking through multiple
+test scenarios, tracing cycle-by-cycle pipeline behavior, handshake protocol
+operation, stalling mechanisms, and forwarding logic.
+SCENARIOS TESTED:
+1. Simple multiply instruction
+2. Back-to-back multiply instructions
+3. Multiply followed by dependent ADD instruction (RAW hazard)
+4. Multiply with load-use hazard
+5. Multiply near a branch instruction
+6. Edge case: Multiply with x0 destination
+7. Edge case: Branch during multiply execution
+OVERALL ASSESSMENT: APPROVE WITH MINOR CONCERNS
+6
+The design is fundamentally sound and should work correctly. However, there are
+several areas that need attention:
+CRITICAL ISSUES FOUND: 0
+MAJOR CONCERNS: 2
+MINOR CONCERNS: 3
+RECOMMENDATIONS: 5
+See detailed analysis below.
+==================================================
+SCENARIO 1: SIMPLE MULTIPLY INSTRUCTION
+==================================================
+TEST CASE:
+Instruction sequence:
+li t0, 0x12345678 # Load immediate (expands to lui + addi)
+li t1, 0x9ABCDEF0 # Load immediate (expands to lui + addi)
+mul t2, t0, t1 # MULTIPLY: t2 = (t0 * t1)[31:0]
+li t3, 0x242D2080 # Expected result
+DETAILED CYCLE-BY-CYCLE TRACE:
+Assumptions:
+- Pipeline starts empty
+- No branch prediction, no cache misses
+- Focus on the multiply instruction and surrounding context
+Let’s trace starting from when the multiply enters the pipeline:
+Cycle 0: mul enters IF stage
+IF: mul t2, t0, t1
+ID: (previous instruction, e.g., li t1)
+EX: (earlier instruction)
+MEM: -
+WB: -
+Pipeline state:
+- mul instruction fetched
+- No stalls yet
+Cycle 1: mul enters ID stage
+IF: (next instruction, li t3)
+ID: mul t2, t0, t1
+EX: (previous instruction)
+MEM: -
+WB: -
+...remainder omitted...
+After this design phase, DC moves on to the actual module implementation. DC always builds per-module
+testbenches and fixes module functionality to ensure that these testbenches pass before proceeding.
+At this point, DC focuses on integration testing. DC uses Spike to construct an overallvercore_tb.v
+testbench which, given a RISC-V ELF, would run the test program on the DUT and confirm the design’s
+architectural state and memory transactions match those reported by Spike. DC did this for many test
+programs, including MD5 and, ultimately, CoreMark itself.
+7
+During this process, when any discrepancy with Spike is found, DC observes the conditions and examines the
+VCD file to debug the issue. It typically converts VCDs to CSV files and uses its inherent Python abilities
+to make processing easy:
+Listing 1DC wrote this script to help it search through a VCD to debug an issue.
+import pandas as pd
+df = pd . r ea d_ cs v ( ’ v e r c o r e _ t b . csv ’)
+# Read ex pe ct ed re gi st er trace
+with open ( ’ r e g _ t r a c e . hex ’ , ’r ’) as f :
+r e g _ t r a c e = [ line . strip () for line in f . r e a d l i n e s ()]
+print ( " = " * 80)
+print ( " RE GI ST ER WRITE C O M P A R I S O N " )
+print ( " = " * 80)
+# Get actual writes
+cols = [
+’ time ’ ,
+’ v e r c o r e _ t b . u _ v e r c o r e . wb_rd [4:0] ’ ,
+’ v e r c o r e _ t b . u _ v e r c o r e . wb_data [31:0] ’ ,
+’ v e r c o r e _ t b . u _ v e r c o r e . w b _ r e g _ w r i t e ’ ,
+’ v e r c o r e _ t b . u _ v e r c o r e . u _ s t a g e _ i f . pc [31:0] ’
+]
+a c t u a l _ w r i t e s = []
+for idx , row in df . i te rr ow s ():
+if row [ ’ v e r c o r e _ t b . u _ v e r c o r e . w b _ r e g _ w r i t e ’] == 1:
+rd = int ( row [ ’ v e r c o r e _ t b . u _ v e r c o r e . wb_rd [4:0] ’] , 16)
+data = int ( row [ ’ v e r c o r e _ t b . u _ v e r c o r e . wb_data [31:0] ’] , 16)
+pc = int ( row [ ’ v e r c o r e _ t b . u _ v e r c o r e . u _ s t a g e _ i f . pc [31:0] ’] , 16)
+time = row [ ’ time ’]
+if rd != 0: # Skip x0
+a c t u a l _ w r i t e s . append (( time , rd , data , pc ))
+print ( f " \ n E x p e c t e d writes ( from r e g _ t r a c e . hex ): " )
+for i in range ( min (10 , len ( r e g _ t r a c e ))):
+line = r e g _ t r a c e [ i ]
+if len ( line ) >= 10:
+rd = int ( line [0:2] , 16)
+value = int ( line [2:10] , 16)
+print ( f " Write { i }: x { rd } = 0 x { value :08 x } " )
+print ( f " \ nActual writes ( from VCD ): " )
+for i , ( time , rd , data , pc ) in e n u m e r a t e ( a c t u a l _ w r i t e s [:10]):
+print ( f " Write { i }: x { rd } = 0 x { data :08 x } ( time ={ time } , PC =0 x { pc :04 x }) " )
+print ( f " \ n " + " = " * 80)
+print ( " M ISM AT CH AN AL YS IS " )
+print ( " = " * 80)
+# Compare
+for i in range ( min ( len ( a c t u a l _ w r i t e s ) , len ( r e g _ t r a c e ))):
+line = r e g _ t r a c e [ i ]
+if len ( line ) >= 10:
+exp_rd = int ( line [0:2] , 16)
+e x p _ v a l u e = int ( line [2:10] , 16)
+if i < len ( a c t u a l _ w r i t e s ):
+time , act_rd , act_value , pc = a c t u a l _ w r i t e s [ i ]
+if exp_rd != act_rd or e x p _ v a l u e != a c t _ v a l u e :
+print ( f " \ n M I S M A T C H at write { i }: " )
+print ( f " E xp ec te d : x { exp_rd } = 0 x { e x p _ v a l u e :08 x } " )
+print ( f " Got : x { act_rd } = 0 x { a c t _ v a l u e :08 x } ( time ={ time } , PC =0 x { pc :04 x }) " )
+if exp_rd != act_rd :
+print ( f " ERROR : Re gi st er address m is ma tc h ! E xp ec te d x { exp_rd } , got x { act_rd } " )
+if e x p _ v a l u e != a c t _ v a l u e :
+print ( f " ERROR : Value mi sm at ch ! Ex pe ct ed 0 x { e x p _ v a l u e :08 x } , got 0 x { a c t _ v a l u e :08 x } " )
+break
+else :
+print ( f " \ nM is si ng write { i }: E xp ec te d x { exp_rd } = 0 x { e x p _ v a l u e :08 x } " )
+break
+8
+Using VCD analysis, DC then tracks down the root cause of the issue, proposes a fix, implements it, and
+tests again.
+==================================================
+TASK COMPLETION SUMMARY
+==================================================
+TASK: Debug the register write mismatch error in the VerCore RISC-V CPU
+STATUS: COMPLETED
+==================================================
+WHAT WAS DONE
+==================================================
+1. Converted VCD to CSV for analysis
+- Used vcd2csv.py to convert vercore_tb.vcd to vercore_tb.csv
+- Extracted 26 rows and 403 signals
+2. Analyzed register trace expectations
+- Parsed reg_trace.hex to understand expected register writes
+- Identified that write no. 3 should be x2 = 0x00003224
+3. Analyzed actual register writes from VCD
+- Extracted all register writes from the simulation
+- Found that write no. 3 was actually x5 = 0x0000300c
+4. Decoded instructions to understand the program flow
+- Identified that PC=0x2008 has a JAL instruction jumping to 0x2020
+- Instructions at 0x200c and 0x2010 should NOT execute
+5. Traced pipeline state during JAL execution
+- Analyzed IF, ID, and EX stage contents over time
+- Identified that branch_taken is asserted correctly
+- Found that pipeline flush is NOT working
+6. Identified root cause
+- Pipeline flush logic is broken
+- Instructions fetched after JAL are not being invalidated
+- These instructions execute and cause wrong register writes
+7. Created detailed analysis document
+- Includes timeline, evidence, and fix recommendations
+- Visual representation of the bug
+==================================================
+KEY FINDINGS
+==================================================
+ROOT CAUSE:
+Pipeline flush logic does not properly invalidate instructions when
+branch/jump is taken. Specifically, when JAL at 0x2008 executes and
+branch_taken is asserted, the instruction at 0x200c (AUIPC x5) that
+was speculatively fetched is NOT flushed and continues to execute.
+EVIDENCE:
+- Time 85000: JAL in EX, branch_taken=1, target=0x2020
+- Time 95000: AUIPC x5 (from 0x200c) in EX - should have been flushed!
+- Time 115000: x5 = 0x300c written - wrong! Should be x2=0x3224
+FIX REQUIRED:
+...remainder omitted...
+It is thisverification-drivenapproach that allows DC to arrive at a working design.
+After all test programs pass the Spike-based testbench, DC moves on to PPA closure. DC reviews timing
+reports and uses this information to make RTL changes to the design. In this process, it figured out how
+to implement early forwarding in the ID stage, and it implemented a fast Booth-Wallace multiplier with 4
+stages that are balanced and embody the most common forms of parallelism known to skilled designers.
+DC can run indefinitely, but in this case we terminated its execution after a certain number of tokens
+consumed. The results as of that time are what we report in section 4.
+9
+4 Results
+4.1 Quantitative
+Metric Value
+CoreMark [2] score 3261
+Area (ex-cache)2809µm 2
+Clock rate1.48 GHz
+Technology ASAP7
+Table 1VerCore key metrics
+Table 1 shows the key quantitative metrics of the VerCore.
+4.2 VerCore Pipeline
+P
+C
+PC+4
+BRANCH 
+TARGET
+VECTOR
+I$
+I
+F
+/
+I
+D
+INSTR
+PC
+PC+4
+VALID
+DECODE
+I
+D
+/
+E
+X
+VALID
+PC
+PC+4
+REG#
+IMMED
+REG WR
+EXEC OPS
+REDIRECT TARGET
+BRANCH CNTRLS
+EXECUTE
+MAIN ALU
+32x32 MULTIPLIER
+            BOOTH-WALLACE
+E
+X
+/
+M
+E
+M
+MEM
+LD/ST ALIGN
+M
+E
+M
+/
+W
+B
+D$
+VALID
+PC+4
+STORE DATA
+REG#
+ALU RESULT
+MEM CONTROLS
+VALID
+DATA
+DATA NEXT
+  (LOAD_DATA,
+   PC+4,
+   ALU_RESULT)
+REG#
+WRITE-
+BACKFORWARDING 
+LOGIC
+HAZARD/STALL
+LOGIC
+LOAD USE
+STALL IF
+STALL ID
+STALL ALL
+STALL MUL
+IF/ID, ID/EX, EX/MEM, MEM/WB,
+DECODE
+ID FWD EX FWD
+REGFILE
+ALU - EARLY
+BRANCH
+RESOLUTION
+Figure 4 VerCore pipeline diagram.
+Figure 4 shows the pipeline of the final VerCore. In this work, DC generated multiple versions of the pipeline;
+the one we show in the figure achieves the highest performance of these. It features early branch resolution
+whenever possible, early forwarding, and a high-efficiency Booth-Wallace multiplier (which, on its own, clocks
+at 2.57 GHz). These attributes were discovered by DC and were not included in any input instructions (see
+3).
+DC did not rely on “guesswork”. Instead, DC did a full Verilog implementation of each variant (some with
+2-cycle branch penalty, some with 1-cycle). DC fully implemented each variant down to GDSII. DC concluded
+that it could meet the clock rate target with a 1-cycle branch penalty design, even though that variant has a
+longer timing critical path that involves additional comparator logic. DC essentially re-discovered the critical
+path of the original MIPS 5-stage RISC CPU design, which also featured a 1-cycle branch penalty!
+5 Lessons for Frontier Models
+We enumerate some of the “LLM hang-ups” we encountered in this work below. For these reasons, we believe
+it will remain critical to have experienced human architects guide systems such as DC.
+10
+5.1 Architectural Reasoning
+One of the areas where base models require additional help is reasoning like an architect. We observed
+instancesinwhichmodelsmadesub-optimaldesignchoicesthatrequiredalotoftokenstoultimatelyoptimize.
+For example, the forwarding implementations were often initially done in a manner that resulted in overly
+long critical paths. Only after the model observed timing results did it grasp the issue and fix this. This
+kind of knowledge often comes through experience for human designers.
+DC also in some cases underestimates the complexity of work that is required to address certain issues. For
+example, in one case, when failing to meet timing, it initially tried making major modifications to deepen
+the pipeline, instead of looking for simpler explanations. This was a wasted exploration effort that consumed
+tokens unnecessarily, and could have been avoided with better architectural and engineering understanding.
+5.2 Understanding of RTL and Timing
+We observed instances in which models reason about Verilog, which is an event-driven language, as if it were
+sequential code. While we found that this did not impact DC’s ability to achieve functional correctness,
+it made it more challenging for DC to debug timing issues. In one memorable instance, DC erroneously
+reasoned that reducing the number of dependent lines of code would result in a shorter critical path in the
+chip. These errors are ultimately corrected, because DC has access to actual timing reports from the tools,
+but they slow down DC’s progress and consume additional tokens.
+We posit that this is due to the heavy presence of software code in both LLM pre-training and post-training,
+and we expect that, as frontier labs recognize chip design as a more important application, this issue will be
+resolved.
+5.3 Specification Requirements
+We found that the input specification provided to DC has to be written in an extremely deliberate, tight,
+and verifiable/measurable manner. Without the CPI requirement in that document, for example, DC would
+sometimes generate a processor with significantly worse performance on branches and forwarding. With that
+line in the spec, DC would use a cycle counter in its testbench to compute its cycles per PC reported in the
+Spike trace to estimate CPI. In this way it was able to ensure it met the target.
+6 The Way Forward
+This section explains the authors’ views as to how systems like DC can be scaled up to tackle commercial-
+complexity designs, and how human design teams can be structured to take full advantage of these new
+capabilities.
+6.1 Scaling
+We have found scaling to very large codebases – e.g., with millions of lines of Verilog – to not present any
+particular issue for DC. In testing on a codebase for a 13-stage OoO processor, DC was able to resolve
+functional and timing issues just as it was when dealing with the VerCore. This is due to the way that it
+structures codebase information in its memory.
+The key challenge in addressing designs of this complexity is not in the mechanics of dealing with the codebase
+but rather in that DC needs to be operated by architects experienced in a given design area to achieve good
+results.
+6.2 The New Design Process
+Empowered with systems such as DC, teams that now comprise 100 or more people working on a single design
+will be able to simultaneously explore many different designs, architecture, and product ideas, each one from
+concept to GDSII. These teams will be able to tape out the most complex designs that exist in 3-6 months,
+instead of the current 18-36 months. The role of these experts will become to guide DC at an architecture
+11
+ARCHITECTURE
+RTL IMPLEMENTATION
+VERIFICATION
+COMPILERS, DRIVERS, APPLICATIONS
+TOOLS & INFRA
+BACKEND
+PACKAGING, THERMAL
+EDAVENDORS
+GDSIIEDA VENDOR LOCK-IN GDSII
+MANY VERSIONS DOWN TO GDSIIRAPID, ACCURATE PRODUCT EXPLORATION
+EDA VENDOREDA VENDOREDA VENDOREDA VENDORFREEDOM TO CHOOSEBEST IN CLASSEDA VENDORS
+Figure 5 An illustration of how teams might restructure to make the most effective use of DC. Many more
+designs and product ideas would be explored by a number of sub-teams, each capable of producing a single design
+from start to finish.
+and objective level to achieve the design result that they believe will succeed in the market – with the ability
+to experiment without guesswork, and push for more aggressive cost and performance targets. Companies
+will also find many more addressable sockets in applications which were previously too low-volume to be
+served profitably.
+One likely process change will be to front-load verification work, such that DC can be provided with some
+kind of integration test to guide its RTL implementation.
+Senior engineers and master designers on such a team of the future will have many fewer “tool-jockey”
+responsibilities and will instead be relied on for their judgment and experience, with DC able to handle
+almost all other engineering work. DC’s ability to manage tool interaction will also reduce tool switching
+costs and lock-in. Tool vendors will be able to focus on the quality of their algorithms, instead of expending
+effort on interface design and trying to ensure a simple environment for users.
+12
+References
+[1] Gds ii graphic design system user’s operating manual.CALMA, Nov, 1978.
+[2] EEMBC. Coremark eembc benchmark.https://www.eembc.org/coremark/. Accessed: 2026-02-03.
+[3] RISC-V International. Spike, a risc-v isa simulator.https://github.com/riscv-software-src/
+riscv-isa-sim. Accessed: 2026-02-03.
+[4] Andrew Waterman, Yunsup Lee, David A Patterson, and Krste Asanovic. The risc-v instruction set
+manual, volume i: Base user-level isa.EECS Department, UC Berkeley, Tech. Rep. UCB/EECS-2011-62,
+116(2011):1–32, 2011.
+13
