@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Redwood 论文精讲：Architect Labs 的 AI 系统两周内端到端设计·验证·部署前沿 AI 加速器（arXiv:2608.26418），逐节拆解架构、验证方法论、数据与争议。">
+<meta name="color-scheme" content="light">
+<title>Redwood 精讲 · AI 两周造出 AI 加速器（arXiv:2608.26418）</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Exo:wght@300;400;500;600;700&family=Roboto+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme:light;
+  --bg:#F8FAFC; --fg:#0F172A; --card:#FFFFFF; --card-2:#F1F5F9;
+  --muted:#E2E8F0; --muted-fg:#475569; --border:#CBD5E1;
+  --accent:#DB2777; --accent-strong:#BE185D; --ring:#DB2777;
+  --ok:#047857; --warn:#B45309; --danger:#B91C1C; --code:#155E75;
+  --radius:14px;
+  --font-head:'Exo',system-ui,'PingFang SC','Microsoft YaHei',sans-serif;
+  --font-body:system-ui,-apple-system,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;
+  --font-mono:'Roboto Mono',ui-monospace,'Cascadia Code',Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:16px;line-height:1.75;-webkit-font-smoothing:antialiased}
+::selection{background:rgba(219,39,119,.16)}
+a{color:var(--accent-strong);text-decoration:none;border-radius:4px}
+a:hover{text-decoration:underline}
+a:focus-visible{outline:2px solid var(--ring);outline-offset:3px}
+section{padding:clamp(3rem,7vw,5.5rem) 0}
+.container{max-width:1120px;margin:0 auto;padding:0 24px}
+.mono{font-family:var(--font-mono)}
+
+/* top bar */
+.topbar{
+  position:sticky;top:0;z-index:50;background:rgba(248,250,252,.85);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+}
+.tb-inner{display:flex;align-items:center;gap:16px;max-width:1120px;margin:0 auto;padding:12px 24px}
+.tb-brand{font-family:var(--font-head);font-weight:700;font-size:14.5px;color:var(--fg);white-space:nowrap}
+.tb-brand:hover{text-decoration:none}
+.tb-links{display:flex;gap:16px;margin-left:auto}
+.tb-links a{font-size:13px;color:var(--muted-fg)}
+.tb-links a:hover{color:var(--accent-strong);text-decoration:none}
+.tb-badge{font-family:var(--font-mono);font-size:11px;color:#fff;background:#DB2777;padding:3px 9px;border-radius:99px;white-space:nowrap}
+
+/* hero */
+.hero{position:relative;padding:clamp(56px,8vw,96px) 0 clamp(40px,6vw,64px);overflow:hidden}
+.hero::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(720px 340px at 80% -10%,rgba(219,39,119,.10),transparent 65%),
+    radial-gradient(560px 300px at 5% 15%,rgba(21,94,117,.08),transparent 60%),
+    linear-gradient(rgba(148,163,184,.28) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(148,163,184,.28) 1px,transparent 1px);
+  background-size:auto,auto,44px 44px,44px 44px;
+  mask-image:linear-gradient(to bottom,black 30%,transparent 95%);
+  -webkit-mask-image:linear-gradient(to bottom,black 30%,transparent 95%);
+}
+.hero .container{position:relative}
+.kicker{
+  display:inline-flex;align-items:center;gap:10px;font-family:var(--font-mono);font-size:12px;
+  letter-spacing:.14em;color:var(--accent-strong);text-transform:uppercase;
+  border:1px solid var(--border);border-radius:99px;padding:6px 14px;margin-bottom:20px;
+  background:rgba(255,255,255,.65);
+}
+.hero h1{font-family:var(--font-head);font-size:clamp(28px,4.8vw,50px);font-weight:700;line-height:1.2;max-width:16em}
+.hero h1 em{font-style:normal;color:var(--accent-strong)}
+.hero .sub{margin-top:18px;max-width:44em;font-size:clamp(15px,1.9vw,17.5px);color:var(--muted-fg)}
+.hero .meta{margin-top:22px;display:flex;flex-wrap:wrap;gap:10px;font-family:var(--font-mono);font-size:12px;color:var(--muted-fg)}
+.hero .meta span{border:1px solid var(--border);border-radius:8px;padding:5px 11px;background:rgba(255,255,255,.9)}
+
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:clamp(28px,4vw,44px)}
+.stat{background:linear-gradient(180deg,var(--card),var(--card-2));border:1px solid var(--border);border-radius:var(--radius);padding:18px 16px;box-shadow:0 1px 2px rgba(15,23,42,.05),0 12px 30px -18px rgba(15,23,42,.18)}
+.stat b{display:block;font-family:var(--font-head);font-size:clamp(22px,3vw,32px);font-weight:700;line-height:1.15}
+.stat b .u{font-size:.5em;color:var(--accent-strong)}
+.stat span{display:block;margin-top:7px;font-size:12.5px;color:var(--muted-fg);line-height:1.55}
+
+/* section scaffolding */
+.sec-tag{font-family:var(--font-mono);font-size:11.5px;letter-spacing:.16em;color:var(--accent-strong);text-transform:uppercase;display:block;margin-bottom:8px}
+h2.sec-h{font-family:var(--font-head);font-size:clamp(22px,3.2vw,30px);font-weight:600;margin-bottom:14px}
+.lead{max-width:46em;color:var(--muted-fg);font-size:15px;margin-bottom:22px}
+
+/* cards / rows */
+.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;box-shadow:0 1px 2px rgba(15,23,42,.05),0 12px 30px -18px rgba(15,23,42,.18)}
+.card h3{font-family:var(--font-head);font-size:15.5px;font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.card h3 .n{font-family:var(--font-mono);font-size:11px;color:var(--bg);background:var(--accent);border-radius:6px;padding:1px 7px;flex:none}
+.card p,.card li{font-size:13.5px;color:var(--muted-fg)}
+.card ul{list-style:none;margin-top:6px}
+.card li{padding-left:16px;position:relative;margin-top:4px}
+.card li::before{content:"";position:absolute;left:2px;top:9px;width:6px;height:6px;border-radius:2px;background:var(--accent);opacity:.85}
+.card code{font-family:var(--font-mono);font-size:12px;color:var(--code);background:var(--muted);padding:1px 5px;border-radius:5px}
+.badge{display:inline-block;font-family:var(--font-mono);font-size:11px;border-radius:6px;padding:2px 8px;font-weight:600;white-space:nowrap}
+.b-ok{color:var(--ok);background:rgba(52,211,153,.12);border:1px solid rgba(52,211,153,.4)}
+.b-warn{color:var(--warn);background:rgba(251,191,36,.12);border:1px solid rgba(251,191,36,.4)}
+.b-bad{color:var(--danger);background:rgba(248,113,113,.12);border:1px solid rgba(248,113,113,.4)}
+.b-info{color:var(--code);background:rgba(34,211,238,.1);border:1px solid rgba(34,211,238,.35)}
+
+/* tables */
+.tbl{overflow-x:auto;border:1px solid var(--border);border-radius:var(--radius);background:var(--card);box-shadow:0 1px 2px rgba(15,23,42,.05),0 12px 30px -18px rgba(15,23,42,.18)}
+table{width:100%;border-collapse:collapse;min-width:640px;font-size:13.5px}
+caption{text-align:left;padding:13px 16px;font-family:var(--font-mono);font-size:11.5px;color:var(--muted-fg);border-bottom:1px solid var(--border);letter-spacing:.04em}
+th{font-family:var(--font-head);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted-fg);text-align:left;padding:11px 16px;border-bottom:1px solid var(--border);background:var(--card-2);white-space:nowrap}
+td{padding:11px 16px;border-bottom:1px solid rgba(203,213,225,.7);vertical-align:top}
+tr:last-child td{border-bottom:none}
+td b{color:var(--fg)}
+
+/* callout */
+.rule{background:linear-gradient(180deg,var(--card),var(--card-2));border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:var(--radius);padding:18px 20px;font-size:14.5px;color:var(--muted-fg);margin-top:22px;box-shadow:0 1px 2px rgba(15,23,42,.05),0 12px 30px -18px rgba(15,23,42,.18)}
+.rule b{color:var(--fg)}
+.rule em{font-style:normal;color:var(--accent-strong);font-weight:600}
+
+/* note boxes */
+.note{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;margin-top:12px;font-size:13.5px;color:var(--muted-fg)}
+.note b{color:var(--fg)}
+
+/* diagram */
+.diagram{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-top:14px}
+.diagram svg{display:block;width:100%;height:auto}
+.diagram figcaption{font-family:var(--font-mono);font-size:11.5px;color:var(--muted-fg);margin-top:10px;text-align:center}
+
+/* refs */
+.refs{list-style:none;counter-reset:r}
+.refs li{counter-increment:r;display:flex;gap:10px;padding:8px 0;font-size:13.5px;color:var(--muted-fg);border-bottom:1px dashed rgba(203,213,225,.8)}
+.refs li:last-child{border-bottom:none}
+.refs li::before{content:counter(r,decimal-leading-zero);font-family:var(--font-mono);font-size:11px;color:var(--accent-strong);padding-top:3px;flex:none}
+.refs a{word-break:break-all}
+
+/* footer */
+footer{border-top:1px solid var(--border);padding:30px 0 44px;margin-top:2rem}
+.foot-inner{max-width:1120px;margin:0 auto;padding:0 24px;display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between}
+footer p{font-size:12px;color:var(--muted-fg);font-family:var(--font-mono)}
+
+@media (max-width:900px){
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .cards{grid-template-columns:1fr}
+}
+@media (max-width:640px){
+  .stats{grid-template-columns:1fr 1fr;gap:10px}
+  .hero h1{font-size:clamp(26px,7vw,34px)}
+  .cards{grid-template-columns:1fr}
+  .tb-links .hide-sm{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- top bar -->
+<div class="topbar">
+  <div class="tb-inner">
+    <a class="tb-brand" href="index.html">← AI × RTL 调研</a>
+    <div class="tb-links">
+      <a href="index.html#appendix" class="hide-sm">附录</a>
+      <a href="papers/Redwood_2608.26418.pdf" class="hide-sm">本地 PDF</a>
+    </div>
+    <span class="tb-badge">Paper Deep-Dive</span>
+  </div>
+</div>
+
+<!-- hero -->
+<div class="hero">
+  <div class="container">
+    <p class="kicker">Paper Deep-Dive · 论文精讲</p>
+    <h1>Redwood：一款由 AI <em>从零设计、验证并部署</em>的前沿 AI 加速器</h1>
+    <p class="sub">
+      两周、无人干预、从高层规格到可跑 Qwen3 的真硬件——Architect Labs 把
+      「软件到硅片」的整条链路压进一个 AI 优化循环。本文按论文原文逐节拆解：
+      它在论证什么、AI 系统做了什么、芯片架构长什么样、数据怎么读、哪些地方要打个问号。
+    </p>
+    <div class="meta">
+      <span>arXiv:2608.26418</span>
+      <span>Architect Labs · Palo Alto · 2026.08</span>
+      <span>7 页技术报告</span>
+      <span><a href="https://arxiv.org/abs/2608.26418">原文</a></span>
+      <span><a href="papers/Redwood_text.txt">本地全文</a></span>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><b>&lt;2 <span class="u">周</span></b><span>从零完成设计·验证·固件·内核·部署，无人类干预（规格以下）</span></div>
+      <div class="stat"><b>95<span class="u">%</span></b><span>每个模块代码 + 功能覆盖率；首个 RTL 上 FPGA 零 bug、至今无 bug 逃逸到硬件</span></div>
+      <div class="stat"><b>&lt;48 <span class="u">小时</span></b><span>架构变更 → 重新验证 → 重新部署到硬件的一次完整迭代</span></div>
+      <div class="stat"><b>3.4<span class="u">×</span></b><span>8nm 投影性能功耗比 vs Jetson Orin Nano（同模型 Qwen3-0.6B）</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- hint points（卷首速记区） -->
+<section id="hints">
+  <div class="container">
+    <span class="sec-tag">00 · Hint Point</span>
+    <h2 class="sec-h">观点速记（持续追加）</h2>
+    <p class="lead">讨论中沉淀的观点按编号追加于此（H-01、H-02…），后续新观点继续补在列表末尾。</p>
+
+    <div class="tbl" style="margin-bottom:14px">
+      <table style="min-width:0">
+        <thead><tr><th style="width:90px">编号</th><th>观点</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><b>H-01</b></td>
+            <td><b>性能模型是 AI agent 最便宜的试错环境。</b>一次完整 RTL 迭代（生成+验证+综合）的算力成本远高于性能模型层迭代——AI 造芯的试错成本结构决定了：能在模型层筛掉的错误，绝不让它进 RTL 层。</td>
+          </tr>
+          <tr>
+            <td><b>H-02</b></td>
+            <td><b>搜索漏斗：先模型后 RTL。</b>AI 探索微架构（如 Redwood SIMD 引擎数天的 PPA×覆盖率联合搜索）时，先在性能模型上筛掉明显差的候选，只为幸存者生成 RTL——把昂贵的 RTL 生成预算留给高潜力方案。</td>
+          </tr>
+          <tr>
+            <td><b>H-03</b></td>
+            <td><b>48 小时闭环的基石是分层验证。</b>Redwood「规格变更 → 重验证 → 重部署 &lt;48h」能成立，前提是每次变更的验证可先从性能模型层快速通过，而不是每次都从 RTL 全量重来——分层验证让迭代周期与变更规模解耦。</td>
+          </tr>
+          <tr>
+            <td><b>H-04</b></td>
+            <td><b>软件工程类比：</b>性能模型 ≈ CI 冒烟测试（秒级反馈）；周期精确 RTL 仿真 ≈ 完整测试套件（分钟级）；FPGA ≈ 生产环境（实机，最慢但最真）。Redwood 的软件栈按此三级环境依次测试，越早的层迭代越快。</td>
+          </tr>
+          <tr>
+            <td><b>H-05</b></td>
+            <td><b>性能模型是"单一优化循环"的可执行起点。</b>在 Redwood/ALP 流程里，规格之后第一份被 AI 生成、且之后每个环节（固件、内核、RTL、验证）都依赖的工件就是性能模型——它把人类规格变成可运行、可度量的东西，让"硬件-软件协同设计"从跨团队协调变成流程固有属性。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="note" style="text-align:center;color:var(--muted-fg)">— 追加位：后续观点以 H-06、H-07… 续写于此 —</div>
+  </div>
+</section>
+
+<!-- 一、论点 -->
+<section id="thesis">
+  <div class="container">
+    <span class="sec-tag">01 · The Thesis</span>
+    <h2 class="sec-h">它在论证什么：任务级提效 ≠ 程序级成果</h2>
+    <p class="lead">Redwood 论文的出发点不是"AI 能写 RTL"，而是一个行业级矛盾——</p>
+    <div class="cards">
+      <div class="card"><h3><span class="n">A</span>行业现状</h3>
+        <ul>
+          <li>EDA 行业宣称 AI 带来数量级提效：多月的 RTL/验证工作缩到数天、宣称 10× 生产力</li>
+          <li>但 <b>仅 14% 的 IC/ASIC 项目一次流片成功</b>（20 年来最低），<b>75% 延期</b>（引用 2024 Wilson Research + SemiEngineering）</li>
+          <li>结论：<code>AI 加速了单个环节，却没有证明能改善复杂 SoC 的端到端结果</code></li>
+        </ul>
+      </div>
+      <div class="card"><h3><span class="n">B</span>核心主张</h3>
+        <ul>
+          <li>机会不在"现有流程内做任务加速"，而在<code>重写整个流程</code></li>
+          <li>当架构、RTL、验证、固件、内核<b>从同一份规格生成、在同一个目标下优化</b>，顺序交接的延迟消失</li>
+          <li>软硬件协同设计从"跨团队协调流程"变成<code>系统的固有属性</code></li>
+          <li>已有端到端 demo（小 RISC-V 核等）几乎都<b>没在真实硬件上验证过</b>——硬件才是设计的最终裁判</li>
+        </ul>
+      </div>
+    </div>
+    <aside class="rule"><b>一句话立场：</b>现代 AI 负载与硬件按不同时间尺度演化——架构定义领先量产硅片数年，而负载几个月就变。摩尔定律停滞下，专用化是每瓦性能的主要来源，<em>设计周期必须跟得上负载的节奏</em>。传统 9–12 个月的 ASIC 流水线做不到，所以要消灭 "freeze"。</aside>
+  </div>
+</section>
+
+<!-- 二、AI 系统 -->
+<section id="system">
+  <div class="container">
+    <span class="sec-tag">02 · The AI System</span>
+    <h2 class="sec-h">AI 系统做了什么（Architect Labs Platform, ALP）</h2>
+    <p class="lead">两位人类架构师写高层规格；规格以下是全自动的。验证方法学是全篇信息量最大的部分——没有任何人类 DV 工程师参与。</p>
+    <div class="cards">
+      <div class="card"><h3><span class="n">1</span>自主产出物（两周）</h3>
+        <ul>
+          <li>性能模型（先于 RTL 存在，支撑早期架构决策）</li>
+          <li><b>RTL 设计</b>（零既有加速器 IP，从白纸开始）</li>
+          <li><b>UVM 验证环境 + SVA 断言 + 形式证明</b></li>
+          <li>固件、驱动、自定义算子内核（FlashAttention / GEMM / GEMV）</li>
+          <li>综合与物理设计就绪（timing closure）</li>
+        </ul>
+      </div>
+      <div class="card"><h3><span class="n">2</span>验证方法论（重点）</h3>
+        <ul>
+          <li>对标行业实践：UVM + 形式化方法；开发了<b>专有形式引擎</b>，从人写规格生成验证环境的各个部分</li>
+          <li>测试计划、testbench、用例、覆盖率闭合<b>全自动</b>——不是"人用 chat 指挥 agent"的形态</li>
+          <li>论文口径：<code>首个 RTL 上 FPGA 零 bug；验证环境至今没有一例"漏掉但被硬件抓出"的 bug</code></li>
+        </ul>
+      </div>
+      <div class="card"><h3><span class="n">3</span>48 小时迭代循环</h3>
+        <ul>
+          <li>规格即 source of truth；架构变体可<b>并行</b>探索（人和 agent 同时跑多方案）</li>
+          <li>每次架构迭代：重新生成 → 重新验证 → 重新部署 FPGA，<b>&lt;48 小时</b></li>
+          <li>仓库峰值一天 <b>115 个 merge commit</b>（负载上线与固件/内核持续优化期）</li>
+          <li>全流程（规格 → RTL 定稿 + 验证 + 固件 + 内核 + 时序收敛）共两周；第三周跑通 Qwen3</li>
+        </ul>
+      </div>
+      <div class="card"><h3><span class="n">4</span>FPGA 复用环境</h3>
+        <ul>
+          <li>自研仿真环境把 FPGA 访问<b>复用给数百个并发 agent</b>，连续数天无人干预地跑实验、分享性能结果、迭代</li>
+          <li>RTL/性能模型仿真 → FPGA 环境：<b>单次优化从 15 小时缩到 15–30 分钟</b></li>
+          <li>AI 发现了人类专家没想到的优化与架构改进（含 SIMD 引擎数天级的 PPA×覆盖率联合搜索，候选可含全新控制通路/状态机，而非仅调位宽）</li>
+        </ul>
+      </div>
+    </div>
+    <div class="note"><b>对"AI 写 RTL"叙事的颠覆：</b>论文明确批评现有的"AI agent 验证"形态——"人用 chat 指挥 agent 做用例"仍然依赖大量人力、不随复杂度扩展、没有实质缩短端到端周期。他们的回答是让验证<b>从规格自动生成</b>，并且验证强度随算力扩展而非随人头/license 扩展。</div>
+  </div>
+</section>
+
+<!-- 三、芯片架构 -->
+<section id="arch">
+  <div class="container">
+    <span class="sec-tag">03 · The Silicon</span>
+    <h2 class="sec-h">Redwood 芯片架构：为 transformer 推理协同设计的 tiled accelerator</h2>
+    <p class="lead">用途：单批量、低功耗、超低延迟的 <b>physical AI</b> 推理（论文定义）。纯 AXI4 生态、可 chiplet 化、DMA 后端可重定向到 ACE/CHI。</p>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 860 300" role="img" aria-labelledby="rwTitle rwDesc">
+        <title id="rwTitle">Redwood 架构示意</title>
+        <desc id="rwDesc">全局控制区 + 环形互连 + N×M tile 网格 + 边缘 DMA + LLC SRAM 与片外 DDR。</desc>
+        <defs>
+          <marker id="arrRw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="#155E75"/>
+          </marker>
+        </defs>
+        <g font-family="Roboto Mono, monospace">
+          <!-- 全局控制区 -->
+          <rect x="20" y="20" width="190" height="52" rx="10" fill="#FFFFFF" stroke="#CBD5E1"/>
+          <text x="115" y="40" text-anchor="middle" fill="#BE185D" font-size="11">Global Control</text>
+          <text x="115" y="54" text-anchor="middle" fill="#475569" font-size="8.5">MCU 控制核 · 任务管理器</text>
+          <text x="115" y="66" text-anchor="middle" fill="#475569" font-size="8.5">48-bit HAC 全局定时器</text>
+
+          <!-- 2×2 tile 网格 -->
+          <rect x="250" y="20" width="86" height="56" rx="8" fill="#FFFFFF" stroke="#CBD5E1"/>
+          <rect x="346" y="20" width="86" height="56" rx="8" fill="#FFFFFF" stroke="#CBD5E1"/>
+          <rect x="250" y="86" width="86" height="56" rx="8" fill="#FFFFFF" stroke="#CBD5E1"/>
+          <rect x="346" y="86" width="86" height="56" rx="8" fill="#FFFFFF" stroke="#CBD5E1"/>
+          <text x="293" y="43" text-anchor="middle" fill="#BE185D" font-size="10">Tile (0,0)</text>
+          <text x="389" y="43" text-anchor="middle" fill="#BE185D" font-size="10">Tile (1,0)</text>
+          <text x="293" y="109" text-anchor="middle" fill="#BE185D" font-size="10">Tile (0,1)</text>
+          <text x="389" y="109" text-anchor="middle" fill="#BE185D" font-size="10">Tile (1,1)</text>
+          <text x="293" y="60" text-anchor="middle" fill="#475569" font-size="8">CRV + CTM</text>
+          <text x="293" y="72" text-anchor="middle" fill="#475569" font-size="8">CMEM 512KB</text>
+          <text x="293" y="126" text-anchor="middle" fill="#475569" font-size="8">CMXM · CVXM</text>
+          <text x="389" y="126" text-anchor="middle" fill="#475569" font-size="8">CMXM · CVXM</text>
+
+          <!-- tile 细节放大框 -->
+          <rect x="600" y="20" width="240" height="126" rx="10" fill="#F1F5F9" stroke="#CBD5E1"/>
+          <text x="720" y="36" text-anchor="middle" fill="#155E75" font-size="9.5">Tile 内部（FE / BE 解耦）</text>
+          <rect x="612" y="44" width="104" height="24" rx="6" fill="#FFFFFF" stroke="#CBD5E1"/>
+          <text x="664" y="59" text-anchor="middle" fill="#475569" font-size="8.5">FE: CRV 核（RISC-V）</text>
+          <rect x="724" y="44" width="104" height="24" rx="6" fill="#FFFFFF" stroke="#CBD5E1"/>
+          <text x="776" y="59" text-anchor="middle" fill="#475569" font-size="8.5">BE: CMXM 脉动 GEMM</text>
+          <rect x="612" y="74" width="104" height="24" rx="6" fill="#FFFFFF" stroke="#CBD5E1"/>
+          <text x="664" y="89" text-anchor="middle" fill="#475569" font-size="8.5">FE: ITCM / DTCM</text>
+          <rect x="724" y="74" width="104" height="24" rx="6" fill="#FFFFFF" stroke="#CBD5E1"/>
+          <text x="776" y="89" text-anchor="middle" fill="#475569" font-size="8.5">BE: CVXM SIMD / FPU</text>
+          <rect x="612" y="104" width="104" height="24" rx="6" fill="#FFFFFF" stroke="#CBD5E1"/>
+          <text x="664" y="119" text-anchor="middle" fill="#475569" font-size="8.5">FE: CTM 任务管理</text>
+          <rect x="724" y="104" width="104" height="24" rx="6" fill="#FFFFFF" stroke="#CBD5E1"/>
+          <text x="776" y="119" text-anchor="middle" fill="#475569" font-size="8.5">BE: 512KB CMEM</text>
+          <text x="720" y="140" text-anchor="middle" fill="#475569" font-size="8">FE 慢时钟域，kernel 执行期可关断省电</text>
+
+          <!-- NoC 区域带（虚线框，非连线） -->
+          <rect x="20" y="158" width="820" height="26" rx="6" fill="none" stroke="#DB2777" stroke-width="1" stroke-dasharray="7 5"/>
+          <text x="430" y="174" text-anchor="middle" fill="#DB2777" font-size="9.5">credit-based 内部 NoC：tile↔tile / DMA↔tile / 组播·广播 / 表驱动流重定向</text>
+
+          <!-- DMA 行 -->
+          <rect x="20" y="200" width="130" height="40" rx="8" fill="#FFFFFF" stroke="#CBD5E1"/>
+          <text x="85" y="216" text-anchor="middle" fill="#475569" font-size="9">Edge DMA ×N</text>
+          <text x="85" y="230" text-anchor="middle" fill="#475569" font-size="8.5">进出 tile 阵列</text>
+          <rect x="710" y="200" width="130" height="40" rx="8" fill="#FFFFFF" stroke="#CBD5E1"/>
+          <text x="775" y="216" text-anchor="middle" fill="#475569" font-size="9">GDMA</text>
+          <text x="775" y="230" text-anchor="middle" fill="#475569" font-size="8.5">片内 ↔ 片外 bulk 搬运</text>
+
+          <!-- 存储行 -->
+          <rect x="20" y="256" width="390" height="34" rx="8" fill="#FFFFFF" stroke="#CBD5E1"/>
+          <text x="215" y="277" text-anchor="middle" fill="#475569" font-size="9">片上 LLC SRAM（West / North / East 存储体）</text>
+          <rect x="460" y="256" width="380" height="34" rx="8" fill="#FFFFFF" stroke="#CBD5E1"/>
+          <text x="650" y="277" text-anchor="middle" fill="#475569" font-size="9">片外 DRAM（DDR / HBM）· 4 × 128-bit AXI4</text>
+          <text x="434" y="250" text-anchor="middle" fill="#155E75" font-size="8.5">AXI4</text>
+          <line x1="412" y1="273" x2="456" y2="273" stroke="#155E75" stroke-width="1.5" marker-end="url(#arrRw)"/>
+        </g>
+      </svg>
+      <figcaption>Redwood 架构示意（据论文 Fig.1–8 重构）：左为 2×2 Nano 配置；右为 tile 内部 FE/BE 结构</figcaption>
+    </figure>
+
+    <div class="cards" style="margin-top:14px">
+      <div class="card"><h3><span class="n">A</span>SoC 级设计选择</h3>
+        <ul>
+          <li>接口纯 AXI4：<code>AXI-Lite</code> 控制 / 配置，宽 <code>AXI4</code>（满突发）传数据；DMA 后端可重定向 <code>ACE/CHI</code> 而不动计算面</li>
+          <li>专用 DMA 引擎包办全部片外流量；GDMA 做片外↔LLC 的 bulk 搬运，edge DMA 做 tile 进出</li>
+          <li>全局区：MCU 控制核 + 全局任务管理器 + <b>48-bit HAC 全局定时器</b>（广播到每 tile，时间分片调度）</li>
+          <li>内存接口集中在模块化 DMA → 可嵌大 SoC，也可独立 chiplet</li>
+          <li>自研 credit-based NoC：低开销广播/组播、表驱动流重定向、逐链路流控</li>
+        </ul>
+      </div>
+      <div class="card"><h3><span class="n">B</span>Tile 级：FE/BE 解耦</h3>
+        <ul>
+          <li><b>FE</b>（控制/编程，慢时钟域）：RISC-V 微核 <code>CRV</code>（最小化实现、面积功耗低）+ <code>CTM</code> 任务管理器；kernel 执行期 FE 可关断</li>
+          <li><b>BE</b>（数据/计算，快时钟域）：<code>CMXM</code>（脉动 GEMM/GEMV，INT MAC 阵列）+ <code>CVXM</code>（多 lane SIMD/FPU：reduction、LUT 等）</li>
+          <li>CRV 解码器与 BE 单元解耦——加/换 BE 单元<b>不改 CRV</b>；CRV 可把任务表交给 CTM 后休眠直到中断</li>
+          <li>本 tile 512KB <code>CMEM</code> + 本地 ingress/egress DMA；FlashAttention-4 的 emulated-softmax 复用 SIMD 资源（省面积）</li>
+          <li>CTM 消息网络：跨核/跨 CTM 排序控制流，<b>fire-and-forget 或 ack 模式</b>；编译器用消息协调预取、双缓冲、乱序计算——把仲裁压力移进软件栈</li>
+        </ul>
+      </div>
+    </div>
+    <div class="note"><b>编程模型</b>（主机视角 5 步）：装载 DP set 与 kernel set → 主机写 dispatch ID + 操作数到 MCU DTCM → MCU 执行 DP（可编程路由表、配置预取/scatter-gather、launch tile kernel）→ DP 完成 → MCU 中断主机。模型太大装不下 ITCM 时按分区运行时装载并最小化换入换出。</div>
+  </div>
+</section>
+
+<!-- 四、数据 -->
+<section id="data">
+  <div class="container">
+    <span class="sec-tag">04 · The Numbers</span>
+    <h2 class="sec-h">实测与投影：怎么读数</h2>
+    <p class="lead">Redwood Nano = 2×2 tile 的 FPGA 配置（AMD Versal VPK180，250MHz），跑 Qwen3-0.6B。注意区分<b>FPGA 实测</b>与<b>8nm 投影</b>两条数据线。</p>
+
+    <div class="tbl">
+      <table>
+        <caption>表 A · FPGA 实测：Qwen3-0.6B decode（论文 TABLE I，128 token 平均）</caption>
+        <thead><tr><th>指标</th><th>Redwood Nano（FPGA 实测）</th><th>NVIDIA Jetson Orin Nano（实测）</th></tr></thead>
+        <tbody>
+          <tr><td>平均 Tokens/s</td><td><b>12.1</b></td><td>28</td></tr>
+          <tr><td>频率</td><td>250 MHz</td><td>1020 MHz（GPU）</td></tr>
+          <tr><td>内存带宽</td><td>16 GB/s（4×128-bit AXI4）</td><td>68 GB/s</td></tr>
+          <tr><td>内存类型</td><td>LPDDR4</td><td>LPDDR5</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tbl" style="margin-top:14px">
+      <table>
+        <caption>表 B · Samsung 8nm 级工艺投影（论文 TABLE III；面积/功耗为估算，非硅片实测）</caption>
+        <thead><tr><th>指标</th><th>Redwood Nano（8nm 投影）</th><th>Jetson Orin Nano</th></tr></thead>
+        <tbody>
+          <tr><td>平均 Tokens/s</td><td><b>49（1.75×）</b></td><td>28</td></tr>
+          <tr><td>功耗</td><td><b>1.335 W（1.9× 更低）</b></td><td>2.59 W（CPU+GPU，fusion on）</td></tr>
+          <tr><td>NPU 面积</td><td>≈2.88 mm²</td><td>—</td></tr>
+          <tr><td>每瓦 tokens/s</td><td><b>36.7（3.4×）</b></td><td>10.8</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="cards" style="margin-top:14px">
+      <div class="card"><h3><span class="n">1</span>roofline 分析说了什么</h3>
+        <ul>
+          <li>Qwen3-0.6B：28 层、hidden 1024、16 Q-heads / 8 KV-heads、词表 151,936；INT8 线性层</li>
+          <li>计算峰值：<code>128 Gop/s</code>（4 tile × 64 INT8 MAC lanes × 2）；SIMD BF16 8 Gop/s</li>
+          <li>单层架构延迟 1.241 ms；整 token 理论上限 <b>21.73 tokens/s（46 ms/token）</b></li>
+          <li>DRAM 服务时间 = 算术服务时间的 <b>3.6×</b> → decode 强内存受限（预期内）</li>
+          <li>瓶颈在权重投喂链（DRAM→NoC→edge DMA→mesh→计算）的窄段：tile ingress</li>
+        </ul>
+      </div>
+      <div class="card"><h3><span class="n">2</span>1 GHz 逻辑时钟的推演</h3>
+        <ul>
+          <li>FPGA 时序支撑 1 GHz 合理假设；DRAM 引脚速率固定不随 fabric 时钟缩放</li>
+          <li>同带宽假设下 tile ingress 仍是最窄段（≈64 GB/s）→ 架构上限 ≈95 tokens/s</li>
+          <li>最保守投影（执行与搬运无法完全重叠）：<b>49 tokens/s，不改软件栈</b></li>
+          <li>功耗估算：P_αCV²f 动态 ≈0.958W + 漏电 0.07W + 其余 SoC → 1.335W 上限（未计架构原生支持的时钟/电源门控收益）</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 五、递归自我改进 -->
+<section id="recursive">
+  <div class="container">
+    <span class="sec-tag">05 · Recursive Self-Improvement</span>
+    <h2 class="sec-h">递归自我改进：论文最有野心的部分</h2>
+    <p class="lead">把 Qwen3 部署到 Redwood 上并作为推理端点接入自家 AI 系统——然后让模型设计下一代跑它的硬件。</p>
+    <div class="cards">
+      <div class="card"><h3><span class="n">1</span>已演示的</h3>
+        <ul>
+          <li>反复采样后，模型发现了<b>多个自身算子的时序改进与 kernel 优化，且零推理成本</b></li>
+          <li>论文自称这是递归自我改进最早的演示之一：AI 设计了加速器 → 在它上面部署了 AI 模型 → 用该模型改进下一代加速器</li>
+        </ul>
+      </div>
+      <div class="card"><h3><span class="n">2</span>还差什么</h3>
+        <ul>
+          <li>论文承认存在能力差：能自主设计硬件的 AI 系统，与能部署在该硬件上的 AI 模型，两者之间存在 gap</li>
+          <li>愿景：弥合后，"AI 驱动的硬件持续改进"将成为 AI 进步的最大驱动力之一——他们声称这是递归自我改进最清晰的度量</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 六、诚实审视 -->
+<section id="critical">
+  <div class="container">
+    <span class="sec-tag">06 · Critical Reading</span>
+    <h2 class="sec-h">诚实的审视：哪些地方要打问号</h2>
+    <p class="lead">精讲不等于背书。以下是按论文原文口径整理的边界条件与未答问题——读任何"AI 造芯片"新闻前先看这一节。</p>
+    <div class="cards">
+      <div class="card"><h3><span class="n">1</span>数据口径要分清</h3>
+        <ul>
+          <li>12.1 vs 28 tokens/s 是 <b>FPGA@250MHz vs GPU@1020MHz</b> 的实测对比：频率差 4×、带宽差 4.25×——不是同工艺同频对比</li>
+          <li>49 tokens/s / 3.4× PPA 是 <b>Samsung 8nm 级工艺的投影</b>（GE 估算 + 15% DFT + 70% 利用率 + 20% CTS 开销），不是硅片实测</li>
+          <li>功耗 1.335W 是估算上限（作者明说未计门控收益）</li>
+          <li>"deployed" = AMD Versal FPGA 部署；论文展望未来工作才到 <b>物理设计、tapeout、post-silicon</b>——即尚未流片</li>
+        </ul>
+      </div>
+      <div class="card"><h3><span class="n">2</span>验证声明暂无第三方审计</h3>
+        <ul>
+          <li>"零 bug 逃逸"基于 <b>自研验证流程 + 专有形式引擎</b>的自证，无外部复现/审计</li>
+          <li>95% 覆盖率是行业常规目标线（不是异常高）；覆盖对象与断言质量未公开细节</li>
+          <li>测试负载单一：只有 Qwen3-0.6B 一个公开基准，尚未覆盖多样化负载</li>
+        </ul>
+      </div>
+      <div class="card"><h3><span class="n">3</span>可复现性</h3>
+        <ul>
+          <li>系统组件（自训模型、agent 框架、AI-native EDA 工具、专有形式引擎）<b>均未开源</b></li>
+          <li>对比 DC/VerilogEval 系有公开 RTL/数据集，Redwood 目前只有论文 + 图</li>
+          <li>"115 merge commits/day" 可查证性有限（仓库未公开）</li>
+        </ul>
+      </div>
+      <div class="card"><h3><span class="n">4</span>但有一个硬事实无法忽视</h3>
+        <ul>
+          <li>它在真实 FPGA 上跑通了真实 LLM（Qwen3-0.6B），包含完整链路：RTL+UVM+形式证明+固件+驱动+kernel</li>
+          <li>这是继 Design Conductor（spec→GDSII 的 RISC-V，未上模型）之后，<b>"AI 造芯"从 CPU demo 推进到 AI 加速器 + 真负载</b>的一步</li>
+          <li>48h 规格变更循环若为真，意味着硬件开发开始逼近软件迭代节奏——这才是论文真正想论证的事</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 七、对比 -->
+<section id="compare">
+  <div class="container">
+    <span class="sec-tag">07 · Benchmark vs DC</span>
+    <h2 class="sec-h">与 Design Conductor 对照：端到端的两代演示</h2>
+    <div class="tbl">
+      <table>
+        <caption>2026 年两个"AI 端到端造芯片"里程碑对比</caption>
+        <thead><tr><th>维度</th><th>Design Conductor（2603.08716，2026.3）</th><th>Redwood（2608.26418，2026.8）</th></tr></thead>
+        <tbody>
+          <tr><td>产出</td><td>RISC-V CPU（VerCore，RV32I+ZMMUL）</td><td><b>AI 加速器 SoC</b>（tiled、AXI4、DMA、NoC）</td></tr>
+          <tr><td>起点</td><td>219 词需求文档</td><td>两位架构师的高层规格</td></tr>
+          <tr><td>时间</td><td>12 小时（数百亿 token 后被终止时点）</td><td>&lt;2 周（至部署）+ 1 周跑模型</td></tr>
+          <tr><td>验证</td><td>仿真 + Spike 机器状态比对</td><td><b>UVM + SVA + 专有形式引擎，95% 覆盖率，声明零 bug 逃逸</b></td></tr>
+          <tr><td>落地形式</td><td>spec→GDSII（ASAP7，未上模型）</td><td>FPGA 部署（VPK180）并<b>跑通 Qwen3-0.6B 推理</b></td></tr>
+          <tr><td>软栈</td><td>RTL + testbench</td><td>RTL + UVM + 固件 + 驱动 + kernels + 性能模型</td></tr>
+          <tr><td>迭代能力</td><td>12h 单次运行（被终止）</td><td><b>规格变更 48h 重验证重部署</b></td></tr>
+          <tr><td>自我改进</td><td>无</td><td><b>部署模型参与设计下一代</b></td></tr>
+          <tr><td>公开性</td><td>RTL 与重建脚本将公开</td><td>组件均未开源（声明 future announcements）</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <aside class="rule"><b>读法：</b>Redwood 不是 DC 的"更贵版本"，而是换了目标函数——DC 证明 <em>spec→布局可达</em>；Redwood 证明 <em>从规格到可跑负载的整条软硬栈可由 AI 生成并闭环维护</em>。两者共同的隐含前提：<b>验证是端到端可信的根基</b>（DC 靠仿真比对，Redwood 靠 UVM+形式引擎），这也再次印证主报告「验证先行」的判断。</aside>
+  </div>
+</section>
+
+<!-- 八、启示 -->
+<section id="takeaways">
+  <div class="container">
+    <span class="sec-tag">08 · Takeaways</span>
+    <h2 class="sec-h">对芯片团队的三条启示</h2>
+    <div class="cards">
+      <div class="card"><h3><span class="n">1</span>端到端 AI 设计的边界条件已清晰</h3>
+        <ul>
+          <li>可行前提：<b>规格是唯一 source of truth</b> + 全栈可自动再生成 + 验证强度随算力扩展</li>
+          <li>代价结构：数百亿 token 级算力 + 专有 EDA/形式工具 + 大量并发 agent 基础设施——不是团队规模能补的</li>
+        </ul>
+      </div>
+      <div class="card"><h3><span class="n">2</span>对 CBB × AgentTeam 路线的启示</h3>
+        <ul>
+          <li>Redwood 证明"全自主从零"可行但昂贵；你的 <b>CBB Skill 复用路线</b>正是把该代价压回可控范围的策略（已验证 IP 免去全栈再验证）</li>
+          <li>可借鉴其三点：验证产出全自动生成（而非人指挥 agent）、FPGA 复用环境给数百 agent 并行迭代、规格写法的"可度量性"决定产出质量</li>
+        </ul>
+      </div>
+      <div class="card"><h3><span class="n">3</span>关注其后续的可证伪点</h3>
+        <ul>
+          <li>论文声明未来推进物理设计/tapeout/post-silicon——若兑现，8nm 投影可被硅片验证</li>
+          <li>若验证方法与工具开源或接受第三方审计，"零 bug 逃逸"才可检验</li>
+          <li>递归自我改进是"最早的演示"级别的声明——需要更多代际证据</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- refs -->
+<section id="refs">
+  <div class="container">
+    <span class="sec-tag">References</span>
+    <h2 class="sec-h">来源</h2>
+    <ol class="refs">
+      <li><a href="https://arxiv.org/abs/2608.26418">Redwood: A Frontier AI Accelerator Designed, Verified, and Deployed from Scratch in 2 Weeks by AI（arXiv:2608.26418）</a></li>
+      <li><a href="papers/Redwood_2608.26418.pdf">本地 PDF（papers/Redwood_2608.26418.pdf）</a> · <a href="papers/Redwood_text.txt">本地全文文本</a></li>
+      <li><a href="https://www.x-techcon.com/article/182075.html">中文报道：AI 自主设计芯片 Redwood 问世（x-techcon）</a></li>
+      <li><a href="https://eu.36kr.com/en/p/3964303330155777">36Kr EN：Redwood 两周设计报道</a></li>
+      <li><a href="https://eu.36kr.com/en/p/3965621812894985">36Kr EN：World's First 100% AI-Designed Chip</a></li>
+      <li>论文内引背景：[4] 2024 Wilson Research Group IC/ASIC Functional Verification Trend Report（Siemens EDA）；[5] E. Sperling, "First-Time Silicon Success Plummets," SemiEngineering, Mar. 2025</li>
+      <li>关联主报告：<a href="index.html">AI × RTL 调研报告（index.html）</a>——含 Design Conductor/Agentic EDA 等全景与 CBB×AgentTeam 实战方案</li>
+    </ol>
+  </div>
+</section>
+
+<footer>
+  <div class="foot-inner">
+    <p>Redwood 精讲页 · 内容据论文原文（arXiv:2608.26418）整理 · 2026-09 · 事实以原文为准</p>
+    <a href="#top" style="font-size:12.5px">返回顶部</a>
+  </div>
+</footer>
+
+</body>
+</html>

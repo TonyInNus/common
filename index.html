@@ -422,7 +422,7 @@ footer p{font-size:12.5px;color:var(--muted-fg);font-family:var(--font-mono)}
       <a href="#playbook">方案</a>
       <a href="#appendix">附录</a>
     </nav>
-    <span class="date-badge">2026.04</span>
+    <span class="date-badge">2026.09</span>
   </div>
 </header>
 
@@ -434,13 +434,13 @@ footer p{font-size:12.5px;color:var(--muted-fg);font-family:var(--font-mono)}
     <p class="kicker"><span class="dot" aria-hidden="true"></span>Research Brief · 联网调研报告</p>
     <h1>用 AI 开发 RTL：<em>可达成路径</em>与<em>现状</em></h1>
     <p class="sub">
-      从「LLM 写 Verilog」到「Agent 化芯片设计」，梳理 2024–2026 年间大模型在 RTL
+      从「LLM 写 Verilog」到「Agent 化芯片设计」，梳理 2025–2026 年间大模型在 RTL
       （Register Transfer Level，寄存器传输级）开发中的真实进展、落地路径、工具生态与关键瓶颈，
       供芯片设计团队与技术决策者参考。
     </p>
     <div class="meta" aria-label="报告信息">
-      <span>资料范围：2025.06 – 2026.04 公开论文 / 新闻 / 厂商发布</span>
-      <span>更新：2026 年 4 月</span>
+      <span>资料范围：2025.06 – 2026.09 公开论文 / 新闻 / 厂商发布</span>
+      <span>更新：2026 年 9 月</span>
       <span>领域：RTL 设计 / 验证 / EDA</span>
     </div>
 
@@ -459,7 +459,7 @@ footer p{font-size:12.5px;color:var(--muted-fg);font-family:var(--font-mono)}
       </div>
       <div class="stat">
         <b>10+</b>
-        <span>已公开的 RTL 专用大模型与框架：ChipMATE、DeepV、ScaleRTL、QiMeng-CodeV-R1…</span>
+        <span>已公开的 RTL 专用大模型与框架：ChipMATE、DeepV、ScaleRTL、QiMeng-CodeV-R1、Nemotron 3 Ultra…</span>
       </div>
     </div>
   </div>
@@ -476,8 +476,8 @@ footer p{font-size:12.5px;color:var(--muted-fg);font-family:var(--font-mono)}
     <div class="grid-tldr">
       <article class="tldr reveal">
         <span class="no">结论 01</span>
-        <h3>「AI 生成 + 人工验证」是当前唯一量产主流</h3>
-        <p>LLM 写模块级 RTL 已进入企业流程，但「可流片」的最终责任仍由工程师兜底。2026 年的行业共识是：AI 负责提效，人负责正确性与时序收敛。</p>
+        <h3>「AI 生成 + 人工验证」仍是量产主流，全自主已进产线尝试</h3>
+        <p>LLM 写模块级 RTL 已进入企业流程；2026 下半年 OpenAI（Jalapeño）、Cadence 全自主虚拟工程师、Redwood 等把「全自主设计」带入产线尝试，但量产流片的最终责任仍由工程师兜底——AI 负责提效与探索，人负责正确性与决策。</p>
       </article>
       <article class="tldr reveal">
         <span class="no">结论 02</span>
@@ -486,8 +486,8 @@ footer p{font-size:12.5px;color:var(--muted-fg);font-family:var(--font-mono)}
       </article>
       <article class="tldr reveal">
         <span class="no">结论 06</span>
-        <h3>复杂度决定成败：译码器可用，NoC 仍不可靠</h3>
-        <p>四类典型功能呈现清晰梯度——组合译码器（AI 相对擅长）→ 总线矩阵（需仿真裁判）→ Ring（中低可靠）→ NoC（芯片级任务，需层次化+验证优先方法）。接入策略应按复杂度分级（详见「专项」章节）。</p>
+        <h3>复杂度梯度仍在，但「复杂芯片不可靠」已被改写</h3>
+        <p>四类典型功能呈现清晰梯度——组合译码器（AI 相对擅长）→ 总线矩阵（需仿真裁判）→ Ring（中低可靠）→ NoC（芯片级任务）。2026.8 的 Redwood 已含 NoC 的完整 SoC 端到端案例：复杂芯片从「不可靠」变为「可靠但昂贵」——数百亿 token + 强验证闭环 + 48 小时规格迭代（详见「专项」章节）。</p>
       </article>
     </div>
   </div>
@@ -517,6 +517,11 @@ footer p{font-size:12.5px;color:var(--muted-fg);font-family:var(--font-mono)}
         <span class="yr">2026 · 端到端与基准升级</span>
         <h3>从「写代码」到「造芯片」</h3>
         <p><a href="https://arxiv.org/abs/2603.08716">Design Conductor</a>（2026.3）实现首个「规格 → GDSII」端到端：自主 Agent 12 小时产出 1.5 GHz 可跑 Linux 的 RISC-V；2.0 版（2026.5）80 小时构建推理加速器。<a href="https://arxiv.org/abs/2604.14550">VeriGraphi</a>、<a href="https://arxiv.org/abs/2604.19856">ChipCraftBrain</a>（2026.4）验证层次化多智能体与验证优先路线；<a href="https://arxiv.org/abs/2601.21448">ChipBench</a>（2026.1）接棒已饱和的旧基准；<a href="https://arxiv.org/abs/2604.14709">HWE-Bench</a>（2026.4）转向真实硬件 bug 修复；「<a href="https://ieeexplore.ieee.org/document/11534671">Closing the Loop</a>」研究聚焦工具反馈 Gap——打通仿真/综合报错回灌成为主线。</p>
+      </div>
+      <div class="tl-item">
+        <span class="yr">2026.06 – 09 · 里程碑季</span>
+        <h3>大厂下场：OpenAI / Cadence / NVIDIA / Redwood</h3>
+        <p>OpenAI 首颗自研 ASIC <a href="https://www.servethehome.com/openai-jalapeno-asic-at-hot-chips-2026/">Jalapeño</a>（2026.6，与博通合作）9 个月流片，AI 深度参与设计与优化，Hot Chips 2026 亮相；Cadence 联手 NVIDIA 发布业界首个<a href="https://www.nasdaq.com/press-release/cadence-unveils-industrys-first-fully-autonomous-virtual-engineer-chip-design-powered">全自主虚拟工程师</a>（Computex 2026.6）；<a href="https://developer.nvidia.cn/blog/nvidia-nemotron-3-ultra-leads-open-models-on-accuracy-and-efficiency-in-agentic-rtl-coding/">NVIDIA Nemotron 3 Ultra</a>（2026.7）开源模型领跑 Agentic RTL 编码；<a href="https://arxiv.org/abs/2607.17528">RTL-to-GDS 工具交互基准评测</a>（2026.7）实测 Agent 全流程可行性；<a href="https://arxiv.org/abs/2608.26418">Redwood</a>（2026.8，Architect Labs）由 AI 两周内完成 AI 加速器的设计·验证·部署并在 FPGA 上跑通 Qwen3，实现「递归自我改进」雏形（<a href="redwood.html">精讲页</a>）；TenX Semi（2026.9，SPC/Khosla 投资）出隐身。</p>
       </div>
     </div>
 
@@ -585,7 +590,7 @@ footer p{font-size:12.5px;color:var(--muted-fg);font-family:var(--font-mono)}
 
     <div class="table-wrap reveal">
       <table>
-        <caption>表 2 · 四类典型功能的 AI 实现效果评估（综合 ProtocolLLM / RISC-V 整机评估 / 2026 多智能体工作等，2026.04）</caption>
+        <caption>表 2 · 四类典型功能的 AI 实现效果评估（综合 ProtocolLLM / RISC-V 整机评估 / 2026 多智能体工作等，2026.09）</caption>
         <thead>
           <tr>
             <th scope="col">功能</th>
@@ -625,7 +630,7 @@ footer p{font-size:12.5px;color:var(--muted-fg);font-family:var(--font-mono)}
             <td class="name">NoC 片上网络</td>
             <td class="desc">Mesh 路由器、多模块互连网络</td>
             <td class="desc">高</td>
-            <td class="desc"><span class="risk high">弱</span> 属芯片级任务：公开评测中单次生成完整 NoC 的通过率显著低于模块级；2025.6 后研究转向层次化/多智能体/验证优先（<a href="https://arxiv.org/abs/2604.14550">VeriGraphi</a>、<a href="https://arxiv.org/abs/2604.19856">ChipCraftBrain</a>，2026.4）与端到端 Agent（<a href="https://arxiv.org/abs/2603.08716">Design Conductor</a>，2026.3）</td>
+            <td class="desc"><span class="risk high">弱→中</span> 属芯片级任务：单次生成完整 NoC 的通过率仍显著低于模块级，但 2026.6–8 已出现端到端突破——<a href="https://arxiv.org/abs/2608.26418">Redwood</a>（AI 加速器 SoC，含 AXI4 NoC/tile 网格）由 AI 两周完成设计验证部署；路径：层次化/多智能体/验证优先（<a href="https://arxiv.org/abs/2604.14550">VeriGraphi</a>、<a href="https://arxiv.org/abs/2604.19856">ChipCraftBrain</a>，2026.4）+ 端到端 Agent（<a href="https://arxiv.org/abs/2603.08716">Design Conductor</a>，2026.3）</td>
             <td class="desc">路由算法边界（死锁/活锁）、跨模块时序交互、接口不匹配</td>
             <td class="desc">拆为 router 微架构子块逐级生成；validation-first（先建验证环境再写 RTL）；仿真 + 形式化路由验证兜底</td>
           </tr>
@@ -689,16 +694,16 @@ footer p{font-size:12.5px;color:var(--muted-fg);font-family:var(--font-mono)}
       <div class="path-top">
         <div class="path-idx" aria-hidden="true">02</div>
         <div class="path-body">
-          <h3>Agent 化设计闭环：Spec → RTL → 仿真 → 自修复 <span class="stage">6–18 个月 · 前沿</span></h3>
-          <p class="desc">多智能体系统自动完成规格拆解、RTL 生成、testbench 生成、仿真运行与错误修复的循环。2025 年成为研究主流，已在小规模模块（寄存器组、简单协议从机）上达到可用水平，但距离「无人看管」仍有距离。</p>
+          <h3>Agent 化设计闭环：Spec → RTL → 仿真 → 自修复 <span class="stage">6–18 个月 · 已现端到端验证</span></h3>
+          <p class="desc">多智能体系统自动完成规格拆解、RTL 生成、testbench 生成、仿真运行与错误修复的循环。2025 年成为研究主流；2026 下半年进入验证爆发期——Redwood 两周端到端（含规格变更 48 小时重部署）、Cadence 全自主虚拟工程师产品化，但「无人看管」的工程化仍有距离。</p>
           <ul>
-            <li>关键前提：打通工具反馈——把 lint、仿真、综合报错结构化回灌给 Agent（Tool-Feedback Gap 是当前最大瓶颈）</li>
+            <li>关键前提：打通工具反馈——把 lint、仿真、综合报错结构化回灌给 Agent（Gap 已端到端打通，瓶颈转向成本与规模化可靠性）</li>
             <li>建议从「单点闭环」切入：先只自动化「testbench 生成 + 仿真修复」这一段，再向前扩展</li>
-            <li>评估基线：ChipBench / 自建模块集，跟踪 pass@k 与「零人工干预成功率」两个指标</li>
+            <li>评估基线：RTL-to-GDS 评测 / ChipBench / 自建模块集，跟踪 pass@k 与「零人工干预成功率」两个指标</li>
           </ul>
         </div>
         <div class="path-meta">
-          <div class="m-cell"><span class="k">成熟度</span><span class="v">★★☆☆☆</span><div class="bar"><i style="width:42%"></i></div></div>
+          <div class="m-cell"><span class="k">成熟度</span><span class="v">★★★☆☆</span><div class="bar"><i style="width:55%"></i></div></div>
           <div class="m-cell"><span class="k">投入成本</span><span class="v">高（工程集成）</span></div>
           <div class="m-cell"><span class="k">见效周期</span><span class="v">1–3 个季度试点</span></div>
           <div class="m-cell"><span class="k">风险</span><span class="risk high">高</span></div>
@@ -721,7 +726,7 @@ footer p{font-size:12.5px;color:var(--muted-fg);font-family:var(--font-mono)}
 
     <div class="table-wrap reveal">
       <table class="comp">
-        <caption>表 3 · AI 直写三种语言的效果对比（2026.04，评级基于论文实测定性结论）</caption>
+        <caption>表 3 · AI 直写三种语言的效果对比（2026.09，评级基于论文实测定性结论）</caption>
         <thead>
           <tr>
             <th scope="col">维度</th>
@@ -782,8 +787,8 @@ footer p{font-size:12.5px;color:var(--muted-fg);font-family:var(--font-mono)}
       <div class="n" aria-hidden="true">2</div>
       <div>
         <h3>基准饱和 vs 真实工程差距</h3>
-        <p class="fix"><b>现象</b>VerilogEval/RTLLM 顶级通过率近 100%，但 RISC-V 整机评估显示集成、时序、面积等真实问题仍大量存在（<a href="https://ieeexplore.ieee.org/document/11570171" target="_blank" rel="noopener">IEEE 11570171</a>）。</p>
-        <p class="fix"><b>缓解</b>以 ChipBench 与自建真实模块集为评估基线；用「全流程成功率」替代「单点通过率」做采购与立项决策。</p>
+        <p class="fix"><b>现象</b>VerilogEval/RTLLM 顶级通过率近 100%，但 RISC-V 整机评估显示集成、时序、面积等真实问题仍大量存在（<a href="https://ieeexplore.ieee.org/document/11570171" target="_blank" rel="noopener">IEEE 11570171</a>）；2026.7 的 <a href="https://arxiv.org/abs/2607.17528">RTL-to-GDS 工具交互评测</a>进一步量化了「模块级高分 vs 全流程低完成率」的落差。</p>
+        <p class="fix"><b>缓解</b>以 ChipBench、RTL-to-GDS 评测与自建真实模块集为评估基线；用「全流程成功率」替代「单点通过率」做采购与立项决策。</p>
       </div>
     </article>
 
@@ -791,7 +796,7 @@ footer p{font-size:12.5px;color:var(--muted-fg);font-family:var(--font-mono)}
       <div class="n" aria-hidden="true">3</div>
       <div>
         <h3>工具反馈 Gap</h3>
-        <p class="fix"><b>现象</b>Agent 拿不到仿真/综合工具的报错反馈，无法形成自我修正闭环——这是 Agent 化路径（路径 02）的最大卡点（<a href="https://ieeexplore.ieee.org/document/11534671">Closing the Loop</a>，IEEE 11534671）。</p>
+        <p class="fix"><b>现象</b>Agent 拿不到仿真/综合工具的报错反馈，无法形成自我修正闭环——曾是 Agent 化路径（路径 02）的最大卡点（<a href="https://ieeexplore.ieee.org/document/11534671">Closing the Loop</a>，IEEE 11534671）。2026 下半年已出现端到端闭环系统：Redwood 实现「规格变更 → 重验证 → 重部署 < 48 小时」，Cadence 推出全自主虚拟工程师——Gap 从「能不能闭环」转为「闭环的成本与规模化可靠性」。</p>
         <p class="fix"><b>缓解</b>优先自动化「反馈可获取」的环节（仿真、lint、覆盖率）；推动 EDA 工具开放结构化 API/日志接口。</p>
       </div>
     </article>
@@ -1025,7 +1030,7 @@ footer p{font-size:12.5px;color:var(--muted-fg);font-family:var(--font-mono)}
     </div>
 
     <aside class="rule reveal" aria-label="方案结论">
-      <p><b>一句话：</b>别让 AI 写芯片，让 AI <em>组装</em>芯片。用验证过的闭源 CBB 建 Skill 库（接口契约 + 例化模板 + 验证夹具），AgentTeam 负责规格拆解、互连装配、验证闭环——你只需审核每个 Skill 的接口契约。这是 2026 年 SoC 级 AI 落地中风险收益比最好的形态，与 <a href="https://arxiv.org/abs/2512.23189">Agentic EDA</a> 的「Copilot → Agent」范式和 <a href="https://arxiv.org/abs/2603.08716">Design Conductor</a> 的端到端验证互为印证。</p>
+      <p><b>一句话：</b>别让 AI 写芯片，让 AI <em>组装</em>芯片。用验证过的闭源 CBB 建 Skill 库（接口契约 + 例化模板 + 验证夹具），AgentTeam 负责规格拆解、互连装配、验证闭环——你只需审核每个 Skill 的接口契约。这是 2026 年 SoC 级 AI 落地中风险收益比最好的形态，与 <a href="https://arxiv.org/abs/2512.23189">Agentic EDA</a> 的「Copilot → Agent」范式、<a href="https://arxiv.org/abs/2603.08716">Design Conductor</a> 的端到端验证和 <a href="https://arxiv.org/abs/2608.26418">Redwood</a> 的全自主路线互为印证（后两者证明端到端可行，但代价是数百亿 token；CBB 复用策略正是把这份代价压回可控范围的对冲方案）。</p>
     </aside>
   </div>
 </section>
@@ -1042,7 +1047,7 @@ footer p{font-size:12.5px;color:var(--muted-fg);font-family:var(--font-mono)}
     <h3 class="appx-h">工具生态速览</h3>
     <div class="table-wrap reveal">
       <table>
-        <caption>表 1 · AI × RTL 关键工具与基准（2026.04）</caption>
+        <caption>表 1 · AI × RTL 关键工具与基准（2026.09）</caption>
         <thead>
           <tr>
             <th scope="col">名称</th>
@@ -1145,12 +1150,17 @@ footer p{font-size:12.5px;color:var(--muted-fg);font-family:var(--font-mono)}
         <li><a href="https://spectrum.ieee.org/ai-chip-design">IEEE Spectrum：AI Agent 12 小时构建 RISC-V CPU 核报道</a></li>
         <li><a href="https://riscv-europe.org/summit/2025/media/proceedings/2025-05-13-RISC-V-Summit-Europe-15h06-WANG-slides.pdf">RISC-V Summit Europe 2025：ChipAgents Agentic AI 设计验证流程演讲（David Wang）</a></li>
         <li><a href="https://dvcon-proceedings.org/wp-content/uploads/5014-Accelerating-Design-Verification-with-AI-Agents.pdf">DVCon 2025：Agentic AI for Chip Design（Alpha Design AI / ChipAgents）</a></li>
+        <li><a href="https://arxiv.org/abs/2608.26418">Redwood：AI 端到端设计·验证·部署的前沿 AI 加速器（Architect Labs，2026.8）</a></li>
+        <li><a href="https://arxiv.org/abs/2607.17528">Can AI Agents Really Complete RTL-to-GDS？工具交互 EDA 工作流基准评测（2026.7）</a></li>
+        <li><a href="https://www.servethehome.com/openai-jalapeno-asic-at-hot-chips-2026/">OpenAI Jalapeño 自研 ASIC（Hot Chips 2026，与博通合作，9 个月流片）</a></li>
+        <li><a href="https://developer.nvidia.cn/blog/nvidia-nemotron-3-ultra-leads-open-models-on-accuracy-and-efficiency-in-agentic-rtl-coding/">NVIDIA Nemotron 3 Ultra：开源模型领跑 Agentic RTL 编码（2026.7）</a></li>
+        <li><a href="https://www.nasdaq.com/press-release/cadence-unveils-industrys-first-fully-autonomous-virtual-engineer-chip-design-powered">Cadence × NVIDIA：业界首个全自主虚拟工程师（Computex 2026）</a></li>
       </ol>
     </div>
 
     <h3 class="appx-h">本地论文库（papers/）</h3>
     <div class="sources reveal">
-      <p style="font-size:13px;color:var(--muted-fg);margin-bottom:12px">18 篇论文 PDF 已下载至本网页同目录的 <code>papers/</code> 文件夹（仅收录 2025.6 后的资料）——点击文件名即可本地打开；「原文」为在线来源。IEEE 付费论文（RISC-V 处理器评估、Closing the Loop）无法免费下载，仅保留在线链接。</p>
+      <p style="font-size:13px;color:var(--muted-fg);margin-bottom:12px">20 篇论文 PDF 已下载至本网页同目录的 <code>papers/</code> 文件夹（仅收录 2025.6 后的资料）——点击文件名即可本地打开；「原文」为在线来源。IEEE 付费论文（RISC-V 处理器评估、Closing the Loop）无法免费下载，仅保留在线链接。</p>
       <ol>
         <li><a href="papers/ScaleRTL_2506.05566.pdf">ScaleRTL：推理数据 + 测试时计算</a> · <a href="https://arxiv.org/abs/2506.05566">原文</a></li>
         <li><a href="papers/ProtocolLLM_2506.07945.pdf">ProtocolLLM：通信协议 SystemVerilog 基准</a> · <a href="https://arxiv.org/abs/2506.07945">原文</a></li>
@@ -1170,6 +1180,8 @@ footer p{font-size:12.5px;color:var(--muted-fg);font-family:var(--font-mono)}
         <li><a href="papers/HWE-Bench_2604.14709.pdf">HWE-Bench：真实世界硬件 bug 修复任务的 LLM Agent 基准</a> · <a href="https://arxiv.org/abs/2604.14709">原文</a></li>
         <li><a href="papers/ChipAgents_RISCVSummit2025.pdf">ChipAgents：Agentic AI 设计验证流程（RISC-V Summit Europe 2025 演讲）</a> · <a href="https://riscv-europe.org/summit/2025/media/proceedings/2025-05-13-RISC-V-Summit-Europe-15h06-WANG-slides.pdf">原文</a></li>
         <li><a href="papers/ChipAgents_DVCon2025.pdf">ChipAgents（Alpha Design AI）：Agentic AI for Chip Design（DVCon 2025）</a> · <a href="https://dvcon-proceedings.org/wp-content/uploads/5014-Accelerating-Design-Verification-with-AI-Agents.pdf">原文</a></li>
+        <li><a href="papers/Redwood_2608.26418.pdf">Redwood：AI 端到端设计·验证·部署的 AI 加速器（Architect Labs，2026.8）</a> · <a href="https://arxiv.org/abs/2608.26418">原文</a></li>
+        <li><a href="papers/RTL2GDS_Benchmark_2607.17528.pdf">Can AI Agents Really Complete RTL-to-GDS？工具交互 EDA 工作流基准评测</a> · <a href="https://arxiv.org/abs/2607.17528">原文</a></li>
       </ol>
     </div>
   </div>
@@ -1180,7 +1192,7 @@ footer p{font-size:12.5px;color:var(--muted-fg);font-family:var(--font-mono)}
 <!-- ======================= Footer ======================= -->
 <footer>
   <div class="foot-inner">
-    <p>AI × RTL 调研报告 · 资料截至 2026 年 4 月 · 本页为调研整理，事实以所引来源为准</p>
+    <p>AI × RTL 调研报告 · 资料截至 2026 年 9 月 · 本页为调研整理，事实以所引来源为准</p>
     <div class="foot-links">
       <a href="#tldr">摘要</a>
       <a href="#paths">路径</a>
